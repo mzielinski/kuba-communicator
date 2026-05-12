@@ -427,16 +427,6 @@ export function initializeWordManagement() {
         document.getElementById('edit-cat-name').select();
     }
 
-    // wire updateCatSelect alias used inside this closure
-    function updateCatSelect() {
-        while (catSelect.options.length > 1) catSelect.remove(1);
-        sortedCategories().forEach(([name]) => {
-            const opt = document.createElement('option');
-            opt.value = name; opt.textContent = name;
-            catSelect.appendChild(opt);
-        });
-        populateWordsCatSelect();
-    }
 
     const catTabBtn = document.querySelector('[data-tab="categories-tab"]');
     if (catTabBtn) catTabBtn.addEventListener('click', renderCategoriesManagement);
