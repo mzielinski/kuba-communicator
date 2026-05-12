@@ -427,7 +427,6 @@ export function initializeWordManagement() {
         document.getElementById('edit-cat-name').select();
     }
 
-
     const catTabBtn = document.querySelector('[data-tab="categories-tab"]');
     if (catTabBtn) catTabBtn.addEventListener('click', renderCategoriesManagement);
     renderCategoriesManagement();

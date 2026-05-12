@@ -836,6 +836,41 @@ body {
     font-size: 14px;
 }
 
+/* ============================================
+   SETTINGS SECTIONS - VISUAL SEPARATION
+   ============================================ */
+
+#settings-tab > .form-group {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #f9f9f9;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+#settings-tab > .form-group:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Alarm section styling */
+#settings-tab > .form-group:first-of-type {
+    border-left: 4px solid #ff9800;
+}
+
+/* Dwell time section styling - includes dwell-enabled-toggle and dwell-time-settings */
+#settings-tab > .form-group:nth-of-type(2),
+#settings-tab > .form-group:nth-of-type(3) {
+    border-left: 4px solid #2196F3;
+}
+
+/* Telegram section styling */
+#settings-tab > .form-group:nth-of-type(4) {
+    border-left: 4px solid #00BCD4;
+}
+
 .form-group input,
 .form-group select {
     width: 100%;
