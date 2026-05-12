@@ -42,6 +42,15 @@ if ($method === 'POST') {
         case 'save-telegram-config':
             PreferencesHandler::handleSaveTelegramConfig($input);
             break;
+        case 'add-telegram-chat':
+            PreferencesHandler::handleAddTelegramChat($input);
+            break;
+        case 'remove-telegram-chat':
+            PreferencesHandler::handleRemoveTelegramChat($input);
+            break;
+        case 'update-telegram-chat':
+            PreferencesHandler::handleUpdateTelegramChat($input);
+            break;
         default:
             http_response_code(400);
             echo json_encode(['error' => 'Invalid action']);

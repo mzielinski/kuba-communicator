@@ -15,7 +15,8 @@ class PreferencesHandler {
             'dwellTimeMs' => 2000,
             'dwellEnabled' => true,
             'telegramEnabled' => false,
-            'telegramChatId' => ''
+            'telegramChats' => [],
+            'telegramSelectedChatId' => ''
         ];
     }
 
@@ -83,15 +84,15 @@ class PreferencesHandler {
             $preferences['telegramEnabled'] = (bool)$input['telegramEnabled'];
         }
 
-        if (isset($input['telegramChatId'])) {
-            $chatId = trim($input['telegramChatId']);
-            // Validate Chat ID is a number
+
+        if (isset($input['telegramSelectedChatId'])) {
+            $chatId = trim($input['telegramSelectedChatId']);
             if ($chatId && !preg_match('/^\d+$/', $chatId)) {
                 http_response_code(400);
                 echo json_encode(['error' => 'Invalid Chat ID format. Must be a number.']);
                 exit;
             }
-            $preferences['telegramChatId'] = $chatId;
+            $preferences['telegramSelectedChatId'] = $chatId;
         }
 
         if (!empty($preferences)) {
@@ -99,6 +100,197 @@ class PreferencesHandler {
         } else {
             http_response_code(200);
             echo json_encode(['success' => true, 'message' => 'Telegram configuration saved successfully']);
+        }
+    }
+
+    /**
+     * Handle add Telegram chat request
+     */
+    public static function handleAddTelegramChat($input) {
+        requireAuth();
+
+        $userPreferencesFile = getUserJsonFile('preferences.json');
+
+        $chatId = trim($input['chatId'] ?? '');
+        $name = trim($input['name'] ?? '');
+
+        // Validate inputs
+        if (!$chatId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chat ID is required']);
+            exit;
+        }
+
+        if (!preg_match('/^\d+$/', $chatId)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid Chat ID format. Must be a number.']);
+            exit;
+        }
+
+        if (!$name) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Name is required']);
+            exit;
+        }
+
+        // Load existing preferences
+        $existingPrefs = [];
+        if (file_exists($userPreferencesFile)) {
+            $existingPrefs = json_decode(file_get_contents($userPreferencesFile), true) ?: [];
+        }
+
+        // Initialize telegramChats if not exists
+        if (!isset($existingPrefs['telegramChats'])) {
+            $existingPrefs['telegramChats'] = [];
+        }
+
+        // Check if chat ID already exists
+        foreach ($existingPrefs['telegramChats'] as $chat) {
+            if ($chat['id'] === $chatId) {
+                http_response_code(400);
+                echo json_encode(['error' => 'This Chat ID already exists']);
+                exit;
+            }
+        }
+
+        // Add new chat
+        $existingPrefs['telegramChats'][] = [
+            'id' => $chatId,
+            'name' => $name
+        ];
+
+        // If this is the first chat, select it
+        if (!isset($existingPrefs['telegramSelectedChatId']) || !$existingPrefs['telegramSelectedChatId']) {
+            $existingPrefs['telegramSelectedChatId'] = $chatId;
+        }
+
+        if (file_put_contents($userPreferencesFile, json_encode($existingPrefs, JSON_PRETTY_PRINT)) !== false) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Telegram chat added successfully']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to save Telegram chat']);
+        }
+    }
+
+    /**
+     * Handle remove Telegram chat request
+     */
+    public static function handleRemoveTelegramChat($input) {
+        requireAuth();
+
+        $userPreferencesFile = getUserJsonFile('preferences.json');
+
+        $chatId = trim($input['chatId'] ?? '');
+
+        if (!$chatId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chat ID is required']);
+            exit;
+        }
+
+        // Load existing preferences
+        $existingPrefs = [];
+        if (file_exists($userPreferencesFile)) {
+            $existingPrefs = json_decode(file_get_contents($userPreferencesFile), true) ?: [];
+        }
+
+        if (!isset($existingPrefs['telegramChats'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No Telegram chats found']);
+            exit;
+        }
+
+        // Find and remove the chat
+        $found = false;
+        $newChats = [];
+        foreach ($existingPrefs['telegramChats'] as $chat) {
+            if ($chat['id'] !== $chatId) {
+                $newChats[] = $chat;
+            } else {
+                $found = true;
+            }
+        }
+
+        if (!$found) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chat ID not found']);
+            exit;
+        }
+
+        $existingPrefs['telegramChats'] = $newChats;
+
+        // If deleted chat was selected, select the first available
+        if (isset($existingPrefs['telegramSelectedChatId']) && $existingPrefs['telegramSelectedChatId'] === $chatId) {
+            $existingPrefs['telegramSelectedChatId'] = !empty($newChats) ? $newChats[0]['id'] : '';
+        }
+
+        if (file_put_contents($userPreferencesFile, json_encode($existingPrefs, JSON_PRETTY_PRINT)) !== false) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Telegram chat removed successfully']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to remove Telegram chat']);
+        }
+    }
+
+    /**
+     * Handle update Telegram chat request
+     */
+    public static function handleUpdateTelegramChat($input) {
+        requireAuth();
+
+        $userPreferencesFile = getUserJsonFile('preferences.json');
+
+        $chatId = trim($input['chatId'] ?? '');
+        $name = trim($input['name'] ?? '');
+
+        if (!$chatId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chat ID is required']);
+            exit;
+        }
+
+        if (!$name) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Name is required']);
+            exit;
+        }
+
+        // Load existing preferences
+        $existingPrefs = [];
+        if (file_exists($userPreferencesFile)) {
+            $existingPrefs = json_decode(file_get_contents($userPreferencesFile), true) ?: [];
+        }
+
+        if (!isset($existingPrefs['telegramChats'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'No Telegram chats found']);
+            exit;
+        }
+
+        // Find and update the chat
+        $found = false;
+        foreach ($existingPrefs['telegramChats'] as &$chat) {
+            if ($chat['id'] === $chatId) {
+                $chat['name'] = $name;
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Chat ID not found']);
+            exit;
+        }
+
+        if (file_put_contents($userPreferencesFile, json_encode($existingPrefs, JSON_PRETTY_PRINT)) !== false) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Telegram chat updated successfully']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to update Telegram chat']);
         }
     }
 

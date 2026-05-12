@@ -119,7 +119,8 @@ export async function loadTelegramConfig() {
 export async function sendToTelegram(message) {
     try {
         const prefs  = await loadPreferences();
-        const chatId = prefs.telegramChatId || '';
+        const chatId = prefs.telegramSelectedChatId || '';
+
         if (!chatId) {
             showToast('⚠️ Chat ID nie skonfigurowany', 'warning');
             return false;

@@ -479,63 +479,234 @@ export function initializeWordManagement() {
 
     // ── Telegram settings ─────────────────────────────────────────────────────
 
-    const telegramToggle  = document.getElementById('telegram-toggle');
-    const chatIdInput     = document.getElementById('telegram-chat-id-input');
-    const telegramTestBtn = document.getElementById('telegram-test-btn');
-    const telegramStatus  = document.getElementById('telegram-status');
+    const telegramToggle       = document.getElementById('telegram-toggle');
+    const telegramChatSelect   = document.getElementById('telegram-chat-select');
+    const telegramNewName      = document.getElementById('telegram-new-name');
+    const telegramNewChatId    = document.getElementById('telegram-new-chat-id');
+    const telegramAddChatBtn   = document.getElementById('telegram-add-chat-btn');
+    const telegramChatsList    = document.getElementById('telegram-chats-list');
+    const telegramTestBtn      = document.getElementById('telegram-test-btn');
+    const telegramStatus       = document.getElementById('telegram-status');
 
     if (!telegramToggle) return;
 
-    async function loadTelegramSettingsIntoUI() {
+    async function loadTelegramChats() {
         try {
             const prefs = await fetch('api.php?action=load-preferences').then(r => r.json());
+
+            // Load telegram chats from new structure
+            const chats = prefs.telegramChats || [];
+            const selectedId = prefs.telegramSelectedChatId || '';
+
+            // Update select dropdown
+            telegramChatSelect.innerHTML = '<option value="">-- Brak skonfigurowanych odbiorców --</option>';
+            chats.forEach(chat => {
+                const option = document.createElement('option');
+                option.value = chat.id;
+                option.textContent = `${chat.name} (${chat.id})`;
+                if (chat.id === selectedId) {
+                    option.selected = true;
+                }
+                telegramChatSelect.appendChild(option);
+            });
+
+            // Render chats list
+            if (chats.length === 0) {
+                telegramChatsList.innerHTML = '<p style="color: #999; text-align: center; margin: 0;">Brak skonfigurowanych odbiorców</p>';
+            } else {
+                telegramChatsList.innerHTML = '';
+                chats.forEach(chat => {
+                    const chatItem = document.createElement('div');
+                    chatItem.className = 'word-item';
+                    chatItem.innerHTML = `
+                        <div class="word-item-info">
+                            <div class="word-item-title">${chat.name}</div>
+                            <div class="word-item-detail">Chat ID: ${chat.id}</div>
+                        </div>
+                        <div class="word-item-actions">
+                            <input type="text" class="edit-chat-name" data-chat-id="${chat.id}" value="${chat.name}"
+                                   style="display: none; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                            <button class="edit-chat-btn" data-chat-id="${chat.id}" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">✏️ Edytuj</button>
+                            <button class="save-chat-btn" data-chat-id="${chat.id}" style="display: none; background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">💾 Zapisz</button>
+                            <button class="delete-chat-btn" data-chat-id="${chat.id}" style="background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">🗑️ Usuń</button>
+                        </div>
+                    `;
+                    telegramChatsList.appendChild(chatItem);
+                });
+            }
+
             telegramToggle.checked = prefs.telegramEnabled || false;
-            if (chatIdInput) chatIdInput.value = prefs.telegramChatId || '';
             syncTelegramUI();
+            attachTelegramEventListeners();
         } catch (err) {
             console.warn('Could not load Telegram settings:', err);
         }
     }
 
     function syncTelegramUI() {
-        if (telegramTestBtn) telegramTestBtn.disabled = !telegramToggle.checked;
+        const hasChats = telegramChatSelect.querySelectorAll('option').length > 1;
+        if (telegramTestBtn) telegramTestBtn.disabled = !telegramToggle.checked || !hasChats;
     }
 
-    async function saveTelegramConfig(enabled, chatId) {
+    function attachTelegramEventListeners() {
+        // Edit button handlers
+        document.querySelectorAll('.edit-chat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const chatId = e.target.dataset.chatId;
+                const nameInput = document.querySelector(`.edit-chat-name[data-chat-id="${chatId}"]`);
+                const editBtn = document.querySelector(`.edit-chat-btn[data-chat-id="${chatId}"]`);
+                const saveBtn = document.querySelector(`.save-chat-btn[data-chat-id="${chatId}"]`);
+
+                nameInput.style.display = 'block';
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'block';
+                nameInput.focus();
+            });
+        });
+
+        // Save button handlers
+        document.querySelectorAll('.save-chat-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const chatId = e.target.dataset.chatId;
+                const nameInput = document.querySelector(`.edit-chat-name[data-chat-id="${chatId}"]`);
+                const newName = nameInput.value.trim();
+
+                if (!newName) {
+                    showToast('❌ Nazwa nie może być pusta', 'error');
+                    return;
+                }
+
+                try {
+                    const r = await fetch('api.php?action=update-telegram-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatId, name: newName }),
+                    });
+                    const result = await r.json();
+                    if (result.success) {
+                        showToast('✅ Odbiorca zaktualizowany', 'success');
+                        await loadTelegramChats();
+                    } else {
+                        showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                    }
+                } catch (err) {
+                    showToast('❌ Błąd przy aktualizacji odbiorcy', 'error');
+                }
+            });
+        });
+
+        // Delete button handlers
+        document.querySelectorAll('.delete-chat-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const chatId = e.target.dataset.chatId;
+                if (!confirm('Czy na pewno chcesz usunąć tego odbiorcę?')) return;
+
+                try {
+                    const r = await fetch('api.php?action=remove-telegram-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chatId }),
+                    });
+                    const result = await r.json();
+                    if (result.success) {
+                        showToast('✅ Odbiorca usunięty', 'success');
+                        await loadTelegramChats();
+                    } else {
+                        showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                    }
+                } catch (err) {
+                    showToast('❌ Błąd przy usuwaniu odbiorcy', 'error');
+                }
+            });
+        });
+    }
+
+    async function saveTelegramConfig(enabled, selectedChatId) {
         const r = await fetch('api.php?action=save-telegram-config', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegramEnabled: enabled, telegramChatId: chatId }),
+            body: JSON.stringify({ telegramEnabled: enabled, telegramSelectedChatId: selectedChatId }),
         });
         return r.json();
     }
 
+    // Load initial data
+    loadTelegramChats();
+
+    // Toggle handler
     telegramToggle.addEventListener('change', async (e) => {
         try {
-            const result = await saveTelegramConfig(e.target.checked, chatIdInput?.value || '');
+            const selectedChatId = telegramChatSelect.value || '';
+            const result = await saveTelegramConfig(e.target.checked, selectedChatId);
             if (result.success) {
-                showToast(e.target.checked ? '\u2705 Telegram włączony' : '\u274C Telegram wyłączony', 'success');
+                showToast(e.target.checked ? '✅ Telegram włączony' : '❌ Telegram wyłączony', 'success');
                 syncTelegramUI();
             } else {
-                showToast('Błąd: ' + (result.error || result.message), 'error');
+                showToast('❌ Błąd: ' + (result.error || result.message), 'error');
             }
-        } catch { showToast('Błąd przy zapisywaniu Telegram', 'error'); }
+        } catch {
+            showToast('❌ Błąd przy zapisywaniu Telegram', 'error');
+        }
     });
 
-    if (chatIdInput) {
-        chatIdInput.addEventListener('change', async (e) => {
+    // Chat select dropdown handler
+    telegramChatSelect.addEventListener('change', async (e) => {
+        try {
+            const result = await saveTelegramConfig(telegramToggle.checked, e.target.value);
+            if (result.success) {
+                showToast('✅ Odbiorca wybrany', 'success');
+            } else {
+                showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+            }
+        } catch {
+            showToast('❌ Błąd przy wyborze odbiorcy', 'error');
+        }
+    });
+
+    // Add new chat handler
+    if (telegramAddChatBtn) {
+        telegramAddChatBtn.addEventListener('click', async () => {
+            const name = telegramNewName.value.trim();
+            const chatId = telegramNewChatId.value.trim();
+
+            if (!name) {
+                showToast('❌ Podaj nazwę odbiorcy', 'error');
+                return;
+            }
+            if (!chatId) {
+                showToast('❌ Podaj Chat ID', 'error');
+                return;
+            }
+
             try {
-                const result = await saveTelegramConfig(telegramToggle.checked, e.target.value);
-                if (result.success) showToast('\u2705 Chat ID zapisany', 'success');
-                else showToast('Błąd: ' + (result.error || result.message), 'error');
-            } catch { showToast('Błąd przy zapisywaniu Chat ID', 'error'); }
+                const r = await fetch('api.php?action=add-telegram-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, chatId }),
+                });
+                const result = await r.json();
+                if (result.success) {
+                    showToast('✅ Odbiorca dodany', 'success');
+                    telegramNewName.value = '';
+                    telegramNewChatId.value = '';
+                    await loadTelegramChats();
+                } else {
+                    showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                }
+            } catch (err) {
+                showToast('❌ Błąd przy dodawaniu odbiorcy', 'error');
+            }
         });
     }
 
+    // Test button handler
     if (telegramTestBtn) {
         telegramTestBtn.addEventListener('click', async () => {
-            const chatId = chatIdInput?.value || '';
-            if (!chatId) { showToast('Podaj Chat ID', 'error'); return; }
+            const chatId = telegramChatSelect.value || '';
+            if (!chatId) {
+                showToast('❌ Wybierz odbiorcę', 'error');
+                return;
+            }
             telegramTestBtn.disabled = true;
             telegramTestBtn.textContent = 'Testowanie...';
             try {
@@ -546,21 +717,19 @@ export function initializeWordManagement() {
                 });
                 const res = await r.json();
                 if (res.success) {
-                    showToast('\u2713 Telegram połączenie OK', 'success');
-                    if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#00be00;">\u2713 Połączenie aktywne</span>';
+                    showToast('✅ Telegram połączenie OK', 'success');
+                    if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#00be00;">✓ Połączenie aktywne</span>';
                 } else {
-                    showToast('\u2717 Błąd: ' + (res.error || res.message), 'error');
-                    if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#ff6464;">\u2717 Błąd: ${res.error || res.message}</span>`;
+                    showToast('❌ Błąd: ' + (res.error || res.message), 'error');
+                    if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#ff6464;">✗ Błąd: ${res.error || res.message}</span>`;
                 }
             } catch (err) {
-                showToast('Błąd testowania: ' + err.message, 'error');
-                if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#ff6464;">\u2717 Błąd testowania</span>';
+                showToast('❌ Błąd testowania: ' + err.message, 'error');
+                if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#ff6464;">✗ Błąd testowania</span>';
             } finally {
                 telegramTestBtn.disabled = false;
                 telegramTestBtn.textContent = 'Testuj połączenie';
             }
         });
     }
-
-    syncTelegramUI();
 }
