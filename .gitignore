@@ -1,0 +1,55 @@
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+
+# Backup & Temporary Files
+*.backup
+*.bak
+*.tmp
+*.swp
+*.swo
+*~
+
+# Node & npm (if using in future)
+node_modules/
+npm-debug.log
+package-lock.json
+
+# PHP & Composer
+/vendor/
+composer.lock
+.env
+.env.local
+
+# Project specific
+*.log
+dev.log
+error.log
+
+# Sensitive files
+config.local.php
+secrets.json
+.credentials
+
+# Generated files
+dist/
+build/
+
+# User-specific data directories (preferences, individual word lists)
+data/
+data/*
+
