@@ -13,9 +13,11 @@ echo ""
 echo "📋 Checking files..."
 if [ -f "index.html" ]; then echo "✅ index.html"; else echo "❌ index.html missing"; fi
 if [ -f "styles.css" ]; then echo "✅ styles.css"; else echo "❌ styles.css missing"; fi
-if [ -f "app.js" ]; then echo "✅ app.js"; else echo "❌ app.js missing"; fi
-if [ -f "words.json" ]; then echo "✅ words.json"; else echo "❌ words.json missing"; fi
+if [ -f "js/app.js" ]; then echo "✅ js/app.js"; else echo "❌ js/app.js missing"; fi
 if [ -f "backend.php" ]; then echo "✅ backend.php"; else echo "❌ backend.php missing"; fi
+if [ -f "api.php" ]; then echo "✅ api.php"; else echo "❌ api.php missing"; fi
+if [ -d "handlers/" ]; then echo "✅ handlers/"; else echo "❌ handlers/ missing"; fi
+if [ -d "data/" ]; then echo "✅ data/"; else echo "❌ data/ missing"; fi
 
 echo ""
 echo "🌐 Starting PHP Development Server..."
@@ -29,10 +31,13 @@ echo "Press CTRL+C to stop server"
 echo ""
 
 # Load environment variables from .env file
-if [ -f ".env" ]; then
+if [ -f "data/.env" ]; then
     echo "📝 Loading .env file..."
-    export $(cat .env | grep -v '^#' | xargs)
+    export $(cat data/.env | grep -v '^#' | xargs)
     echo "✅ Environment variables loaded"
+    echo ""
+else
+    echo "⚠️  data/.env file not found"
     echo ""
 fi
 

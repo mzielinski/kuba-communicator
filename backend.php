@@ -20,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // CONFIGURATION - SETUP REQUIRED
 // ============================================
 
-// TODO: Telegram Bot Configuration will be loaded from .env below
-
 // Security
 define('ALLOWED_ORIGINS', ['http://localhost', 'http://localhost:3000', 'http://127.0.0.1']);
 define('REQUIRE_API_KEY', false);
@@ -50,7 +48,7 @@ if (file_exists($DEBUG_LOG) && filesize($DEBUG_LOG) > 1024 * 1024) {
 writeDebugLog("=== Backend.php loaded ===");
 
 // Load .env file for local development (if it exists)
-$envPath = __DIR__ . '/.env';
+$envPath = __DIR__ . '/data/.env';
 $envLoaded = false;
 
 writeDebugLog("Checking for .env file at: {$envPath}");
@@ -193,7 +191,7 @@ try {
             }
 
             // Diagnostic information
-            $envPath = __DIR__ . '/.env';
+            $envPath = __DIR__ . '/data/.env';
             $diagnostics = [
                 'env_path' => $envPath,
                 'env_file_exists' => file_exists($envPath),
@@ -385,4 +383,3 @@ function sendTelegramMessage($message, $chatId) {
 }
 
 ?>
-
