@@ -480,6 +480,7 @@ export function initializeWordManagement() {
     // ── Telegram settings ─────────────────────────────────────────────────────
 
     const telegramToggle       = document.getElementById('telegram-toggle');
+    const telegramSettings     = document.getElementById('telegram-settings');
     const telegramChatSelect   = document.getElementById('telegram-chat-select');
     const telegramNewName      = document.getElementById('telegram-new-name');
     const telegramNewChatId    = document.getElementById('telegram-new-chat-id');
@@ -536,10 +537,17 @@ export function initializeWordManagement() {
             }
 
             telegramToggle.checked = prefs.telegramEnabled || false;
+            updateTelegramSettingsVisibility();
             syncTelegramUI();
             attachTelegramEventListeners();
         } catch (err) {
             console.warn('Could not load Telegram settings:', err);
+        }
+    }
+
+    function updateTelegramSettingsVisibility() {
+        if (telegramSettings) {
+            telegramSettings.style.display = telegramToggle.checked ? 'block' : 'none';
         }
     }
 
@@ -639,7 +647,8 @@ export function initializeWordManagement() {
             const selectedChatId = telegramChatSelect.value || '';
             const result = await saveTelegramConfig(e.target.checked, selectedChatId);
             if (result.success) {
-                showToast(e.target.checked ? '✅ Telegram włączony' : '❌ Telegram wyłączony', 'success');
+                showToast(e.target.checked ? '✅ Telegram włączony' : '✅ Telegram wyłączony', 'success');
+                updateTelegramSettingsVisibility();
                 syncTelegramUI();
             } else {
                 showToast('❌ Błąd: ' + (result.error || result.message), 'error');
