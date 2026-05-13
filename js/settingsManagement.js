@@ -1,29 +1,29 @@
 // ============================================
-// WORD MANAGEMENT — modal, CRUD for words & categories
+// SETTINGS MANAGEMENT — modal, CRUD for words, categories, and app settings
 // ============================================
-import { state } from './state.js';
-import { showToast, showConfirmDialog, generateIdFromText } from './utils.js';
-import { renderCategoryGrid } from './renderer.js';
-import { loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference } from './api.js';
-import { initializeAlarmDeviceSelector } from './alarm.js';
+import {state} from './state.js';
+import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
+import {renderCategoryGrid} from './renderer.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference} from './api.js';
+import {initializeAlarmDeviceSelector} from './alarm.js';
 
-/** Initialize the entire word-management modal */
-export function initializeWordManagement() {
+/** Initialize the entire settings-management modal */
+export function initializeSettingsManagement() {
     // Element refs
-    const modal          = document.getElementById('word-modal');
-    const manageBtn      = document.getElementById('manage-words-btn');
-    const closeBtn       = document.getElementById('modal-close');
-    const cancelBtn      = document.getElementById('modal-cancel');
-    const saveAllBtn     = document.getElementById('save-all-changes-btn');
-    const addWordBtn     = document.getElementById('add-word-btn');
-    const catSelect      = document.getElementById('category-select');
-    const posSelect      = document.getElementById('position-select');
-    const useColorChk    = document.getElementById('use-color-checkbox');
-    const colorInput     = document.getElementById('word-color-input');
-    const tabBtns        = document.querySelectorAll('.tab-btn');
-    const tabContents    = document.querySelectorAll('.tab-content');
-    const wordsListEl    = document.getElementById('words-list-container');
-    const wordsCatSel    = document.getElementById('words-category-select');
+    const modal = document.getElementById('word-modal');
+    const manageBtn = document.getElementById('manage-words-btn');
+    const closeBtn = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const saveAllBtn = document.getElementById('save-all-changes-btn');
+    const addWordBtn = document.getElementById('add-word-btn');
+    const catSelect = document.getElementById('category-select');
+    const posSelect = document.getElementById('position-select');
+    const useColorChk = document.getElementById('use-color-checkbox');
+    const colorInput = document.getElementById('word-color-input');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const wordsListEl = document.getElementById('words-list-container');
+    const wordsCatSel = document.getElementById('words-category-select');
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -32,18 +32,22 @@ export function initializeWordManagement() {
         wordsCatSel.innerHTML = '<option value="">-- Wybierz kategorię --</option>';
         sortedCategories().forEach(([name]) => {
             const opt = document.createElement('option');
-            opt.value = name; opt.textContent = name;
+            opt.value = name;
+            opt.textContent = name;
             wordsCatSel.appendChild(opt);
         });
-        if (prev && state.categories[prev]) { wordsCatSel.value = prev; state.selectedWordsCategory = prev; }
-        else state.selectedWordsCategory = null;
+        if (prev && state.categories[prev]) {
+            wordsCatSel.value = prev;
+            state.selectedWordsCategory = prev;
+        } else state.selectedWordsCategory = null;
     }
 
     function updateCatSelect() {
         while (catSelect.options.length > 1) catSelect.remove(1);
         sortedCategories().forEach(([name]) => {
             const opt = document.createElement('option');
-            opt.value = name; opt.textContent = name;
+            opt.value = name;
+            opt.textContent = name;
             catSelect.appendChild(opt);
         });
         populateWordsCatSelect();
@@ -66,15 +70,19 @@ export function initializeWordManagement() {
         tabContents.forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(tab).classList.add('active');
-        if (tab === 'words-tab')      { populateWordsCatSelect(); renderWordsList(); }
+        if (tab === 'words-tab') {
+            populateWordsCatSelect();
+            renderWordsList();
+        }
         if (tab === 'categories-tab') renderCategoriesManagement();
-        if (tab !== 'words-tab')      state.editingWord = null;
+        if (tab !== 'words-tab') state.editingWord = null;
     }));
 
     // Seed the add-word category select
     sortedCategories().forEach(([name]) => {
         const opt = document.createElement('option');
-        opt.value = name; opt.textContent = name;
+        opt.value = name;
+        opt.textContent = name;
         catSelect.appendChild(opt);
     });
 
@@ -89,12 +97,15 @@ export function initializeWordManagement() {
         posSelect.appendChild(endOpt);
         words.forEach((w, i) => {
             const opt = document.createElement('option');
-            opt.value = i; opt.textContent = `Pozycja ${i} (przed "${w.text}")`;
+            opt.value = i;
+            opt.textContent = `Pozycja ${i} (przed "${w.text}")`;
             posSelect.appendChild(opt);
         });
     });
 
-    useColorChk.addEventListener('change', () => { colorInput.disabled = !useColorChk.checked; });
+    useColorChk.addEventListener('change', () => {
+        colorInput.disabled = !useColorChk.checked;
+    });
     colorInput.disabled = !useColorChk.checked;
 
     // ── Modal open / close ────────────────────────────────────────────────────
@@ -118,18 +129,22 @@ export function initializeWordManagement() {
         const ok = await showConfirmDialog(
             '\u26A0\uFE0F Odrzuć zmiany',
             'Czy na pewno chcesz zamknąć bez zapisywania? Wszystkie zmiany zostaną stracone.',
-            'Odrzuć', 'Kontynuuj edycję',
+            'Odrzuć', 'Kontynuuj edycję'
         );
         if (!ok) return;
         const data = await loadWordList();
         state.categories = data.categories;
-        renderCategoryGrid(); renderCategoriesManagement(); closeModal();
+        renderCategoryGrid();
+        renderCategoriesManagement();
+        closeModal();
         showToast('\u274C Zmiany odrzucone, załadowano dane z pliku', 'warning');
     };
 
     closeBtn.addEventListener('click', closeModal);
     cancelBtn.addEventListener('click', closeWithReload);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
 
     saveAllBtn.addEventListener('click', async () => {
         try {
@@ -156,7 +171,7 @@ export function initializeWordManagement() {
         }
         if (addForm) addForm.style.display = 'block';
 
-        const { words } = state.categories[cat];
+        const {words} = state.categories[cat];
         if (words.length === 0) {
             wordsListEl.innerHTML = '<p style="color:#999;text-align:center;padding:20px 0;margin:0;">Brak słów w tej kategorii.</p>';
             return;
@@ -178,34 +193,46 @@ export function initializeWordManagement() {
             const bs = (bg, dis = false) => `padding:6px 10px;background:${bg};color:white;border:none;border-radius:4px;cursor:${dis ? 'default' : 'pointer'};font-size:12px;${dis ? 'opacity:0.5;' : ''}`;
 
             const upBtn = document.createElement('button');
-            upBtn.textContent = '\u2191'; upBtn.title = 'Przesuń wyżej';
-            upBtn.disabled = idx === 0; upBtn.style.cssText = bs('#28a745', idx === 0);
+            upBtn.textContent = '\u2191';
+            upBtn.title = 'Przesuń wyżej';
+            upBtn.disabled = idx === 0;
+            upBtn.style.cssText = bs('#28a745', idx === 0);
             upBtn.addEventListener('click', () => {
                 [words[idx - 1], words[idx]] = [words[idx], words[idx - 1]];
-                renderCategoryGrid(); renderWordsList(); showToast('Słowo przesunięte w górę', 'success');
+                renderCategoryGrid();
+                renderWordsList();
+                showToast('Słowo przesunięte w górę', 'success');
             });
 
             const downBtn = document.createElement('button');
-            downBtn.textContent = '\u2193'; downBtn.title = 'Przesuń niżej';
-            downBtn.disabled = idx === words.length - 1; downBtn.style.cssText = bs('#28a745', idx === words.length - 1);
+            downBtn.textContent = '\u2193';
+            downBtn.title = 'Przesuń niżej';
+            downBtn.disabled = idx === words.length - 1;
+            downBtn.style.cssText = bs('#28a745', idx === words.length - 1);
             downBtn.addEventListener('click', () => {
                 [words[idx + 1], words[idx]] = [words[idx], words[idx + 1]];
-                renderCategoryGrid(); renderWordsList(); showToast('Słowo przesunięte w dół', 'success');
+                renderCategoryGrid();
+                renderWordsList();
+                showToast('Słowo przesunięte w dół', 'success');
             });
 
             const editBtn = document.createElement('button');
-            editBtn.textContent = '\u270F\uFE0F'; editBtn.title = 'Edytuj';
+            editBtn.textContent = '\u270F\uFE0F';
+            editBtn.title = 'Edytuj';
             editBtn.style.cssText = bs('#667eea');
             editBtn.addEventListener('click', () => openEditWordDialog(cat, idx));
 
             const delBtn = document.createElement('button');
-            delBtn.textContent = '\u{1F5D1}\uFE0F'; delBtn.title = 'Usuń';
+            delBtn.textContent = '\u{1F5D1}\uFE0F';
+            delBtn.title = 'Usuń';
             delBtn.style.cssText = bs('#ff6464');
             delBtn.addEventListener('click', async () => {
                 const ok = await showConfirmDialog('\u{1F5D1}\uFE0F Usuń słowo', `Czy usunąć "${word.text}"?`, 'Usuń', 'Anuluj');
                 if (ok) {
                     state.categories[cat].words.splice(idx, 1);
-                    renderCategoryGrid(); renderWordsList(); showToast(`"${word.text}" usunięte!`, 'success');
+                    renderCategoryGrid();
+                    renderWordsList();
+                    showToast(`"${word.text}" usunięte!`, 'success');
                 }
             });
 
@@ -216,7 +243,7 @@ export function initializeWordManagement() {
     }
 
     function openEditWordDialog(catName, wordIdx) {
-        state.editingWord = { category: catName, index: wordIdx };
+        state.editingWord = {category: catName, index: wordIdx};
         document.getElementById('edit-word-dialog-container')?.remove();
 
         const word = state.categories[catName].words[wordIdx];
@@ -247,20 +274,28 @@ export function initializeWordManagement() {
         document.body.appendChild(container);
 
         document.getElementById('popup-save-word').addEventListener('click', () => {
-            const { category: c, index: i } = state.editingWord;
+            const {category: c, index: i} = state.editingWord;
             const w = state.categories[c].words[i];
             const newText = document.getElementById('popup-word-text').value.trim();
-            if (!newText) { showToast('Tekst nie może być pusty', 'error'); return; }
-            w.text  = newText;
+            if (!newText) {
+                showToast('Tekst nie może być pusty', 'error');
+                return;
+            }
+            w.text = newText;
             w.color = document.getElementById('popup-word-color').value;
             const sz = document.getElementById('popup-word-size').value;
             if (sz && parseInt(sz) > 0) w.size = parseInt(sz) + 'px'; else delete w.size;
-            renderCategoryGrid(); renderWordsList();
-            container.remove(); state.editingWord = null;
+            renderCategoryGrid();
+            renderWordsList();
+            container.remove();
+            state.editingWord = null;
             showToast(`"${newText}" zaktualizowane!`, 'success');
         });
 
-        const closeDialog = () => { container.remove(); state.editingWord = null; };
+        const closeDialog = () => {
+            container.remove();
+            state.editingWord = null;
+        };
         document.getElementById('popup-cancel-word').addEventListener('click', closeDialog);
         document.getElementById('edit-word-backdrop').addEventListener('click', closeDialog);
         document.getElementById('popup-word-text').focus();
@@ -269,26 +304,37 @@ export function initializeWordManagement() {
 
     // Add word
     addWordBtn.addEventListener('click', () => {
-        const cat  = state.selectedWordsCategory;
+        const cat = state.selectedWordsCategory;
         const text = document.getElementById('word-text-input').value.trim();
-        if (!cat)  { showToast('Proszę wybrać kategorię', 'error'); return; }
-        if (!text) { showToast('Proszę wprowadzić tekst słowa', 'error'); return; }
-        state.categories[cat].words.push({ id: generateIdFromText(text), text });
-        renderCategoryGrid(); renderWordsList();
+        if (!cat) {
+            showToast('Proszę wybrać kategorię', 'error');
+            return;
+        }
+        if (!text) {
+            showToast('Proszę wprowadzić tekst słowa', 'error');
+            return;
+        }
+        state.categories[cat].words.push({id: generateIdFromText(text), text});
+        renderCategoryGrid();
+        renderWordsList();
         const input = document.getElementById('word-text-input');
-        input.value = ''; input.focus();
+        input.value = '';
+        input.focus();
         showToast(`"${text}" dodane!`, 'success');
     });
 
     document.getElementById('word-text-input').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); addWordBtn.click(); }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addWordBtn.click();
+        }
     });
 
     // ── Category management ───────────────────────────────────────────────────
 
-    const catNameInput   = document.getElementById('new-category-name');
-    const addCatBtn      = document.getElementById('add-category-btn');
-    const catListEl      = document.getElementById('categories-management-list');
+    const catNameInput = document.getElementById('new-category-name');
+    const addCatBtn = document.getElementById('add-category-btn');
+    const catListEl = document.getElementById('categories-management-list');
 
     function renderCategoriesManagement() {
         catListEl.innerHTML = '';
@@ -317,19 +363,25 @@ export function initializeWordManagement() {
             const first = idx === 0, last = idx === cats.length - 1;
 
             const upBtn = document.createElement('button');
-            upBtn.textContent = '\u2191'; upBtn.disabled = first; upBtn.style.cssText = bs('#28a745', first);
+            upBtn.textContent = '\u2191';
+            upBtn.disabled = first;
+            upBtn.style.cssText = bs('#28a745', first);
             upBtn.addEventListener('click', () => moveCatUp(name));
 
             const downBtn = document.createElement('button');
-            downBtn.textContent = '\u2193'; downBtn.disabled = last; downBtn.style.cssText = bs('#28a745', last);
+            downBtn.textContent = '\u2193';
+            downBtn.disabled = last;
+            downBtn.style.cssText = bs('#28a745', last);
             downBtn.addEventListener('click', () => moveCatDown(name));
 
             const editBtn = document.createElement('button');
-            editBtn.textContent = '\u270F\uFE0F'; editBtn.style.cssText = bs('#667eea');
+            editBtn.textContent = '\u270F\uFE0F';
+            editBtn.style.cssText = bs('#667eea');
             editBtn.addEventListener('click', () => openEditCategoryDialog(name, data));
 
             const delBtn = document.createElement('button');
-            delBtn.textContent = '\u{1F5D1}\uFE0F'; delBtn.style.cssText = bs('#ff6464');
+            delBtn.textContent = '\u{1F5D1}\uFE0F';
+            delBtn.style.cssText = bs('#ff6464');
             delBtn.addEventListener('click', () => deleteCat(name));
 
             btnWrap.append(upBtn, downBtn, editBtn, delBtn);
@@ -341,10 +393,25 @@ export function initializeWordManagement() {
 
     addCatBtn.addEventListener('click', () => {
         const name = catNameInput.value.trim();
-        if (!name) { showToast('Wpisz nazwę kategorii', 'error'); return; }
-        if (state.categories[name]) { showToast('Kategoria już istnieje', 'error'); return; }
-        state.categories[name] = { order: Object.keys(state.categories).length + 1, size: 'medium', cols: 2, rows: 1, expand: false, words: [] };
-        renderCategoryGrid(); renderCategoriesManagement(); updateCatSelect();
+        if (!name) {
+            showToast('Wpisz nazwę kategorii', 'error');
+            return;
+        }
+        if (state.categories[name]) {
+            showToast('Kategoria już istnieje', 'error');
+            return;
+        }
+        state.categories[name] = {
+            order: Object.keys(state.categories).length + 1,
+            size: 'medium',
+            cols: 2,
+            rows: 1,
+            expand: false,
+            words: []
+        };
+        renderCategoryGrid();
+        renderCategoriesManagement();
+        updateCatSelect();
         catNameInput.value = '';
         showToast(`\u2705 Kategoria "${name}" dodana!`, 'success');
     });
@@ -352,26 +419,38 @@ export function initializeWordManagement() {
     function moveCatUp(name) {
         const entries = sortedCategories();
         const idx = entries.findIndex(([n]) => n === name);
-        if (idx <= 0) { showToast('Kategoria jest już na górze', 'error'); return; }
+        if (idx <= 0) {
+            showToast('Kategoria jest już na górze', 'error');
+            return;
+        }
         const prev = entries[idx - 1];
         [state.categories[name].order, state.categories[prev[0]].order] = [state.categories[prev[0]].order, state.categories[name].order];
-        renderCategoryGrid(); renderCategoriesManagement(); showToast('Kategoria przesunięta w górę', 'success');
+        renderCategoryGrid();
+        renderCategoriesManagement();
+        showToast('Kategoria przesunięta w górę', 'success');
     }
 
     function moveCatDown(name) {
         const entries = sortedCategories();
         const idx = entries.findIndex(([n]) => n === name);
-        if (idx >= entries.length - 1) { showToast('Kategoria jest już na dole', 'error'); return; }
+        if (idx >= entries.length - 1) {
+            showToast('Kategoria jest już na dole', 'error');
+            return;
+        }
         const next = entries[idx + 1];
         [state.categories[name].order, state.categories[next[0]].order] = [state.categories[next[0]].order, state.categories[name].order];
-        renderCategoryGrid(); renderCategoriesManagement(); showToast('Kategoria przesunięta w dół', 'success');
+        renderCategoryGrid();
+        renderCategoriesManagement();
+        showToast('Kategoria przesunięta w dół', 'success');
     }
 
     async function deleteCat(name) {
         const ok = await showConfirmDialog('\u{1F5D1}\uFE0F Usuń kategorię', `Usunąć kategorię "${name}" ze wszystkimi słowami?`, 'Usuń', 'Anuluj');
         if (!ok) return;
         delete state.categories[name];
-        renderCategoryGrid(); renderCategoriesManagement(); updateCatSelect();
+        renderCategoryGrid();
+        renderCategoriesManagement();
+        updateCatSelect();
         showToast(`\u2705 Kategoria "${name}" usunięta!`, 'success');
     }
 
@@ -410,16 +489,28 @@ export function initializeWordManagement() {
 
         const close = () => container.remove();
         document.getElementById('save-edit-cat-btn').addEventListener('click', () => {
-            const newName   = document.getElementById('edit-cat-name').value.trim();
-            const newSize   = document.getElementById('edit-cat-size').value;
+            const newName = document.getElementById('edit-cat-name').value.trim();
+            const newSize = document.getElementById('edit-cat-size').value;
             const newExpand = document.getElementById('edit-cat-expand').checked;
-            if (!newName) { showToast('Nazwa nie może być pusta', 'error'); return; }
-            if (newName !== catName && state.categories[newName]) { showToast('Kategoria z taką nazwą już istnieje', 'error'); return; }
-            if (newName !== catName) { state.categories[newName] = state.categories[catName]; delete state.categories[catName]; }
-            state.categories[newName].size   = newSize;
+            if (!newName) {
+                showToast('Nazwa nie może być pusta', 'error');
+                return;
+            }
+            if (newName !== catName && state.categories[newName]) {
+                showToast('Kategoria z taką nazwą już istnieje', 'error');
+                return;
+            }
+            if (newName !== catName) {
+                state.categories[newName] = state.categories[catName];
+                delete state.categories[catName];
+            }
+            state.categories[newName].size = newSize;
             state.categories[newName].expand = newExpand;
-            renderCategoryGrid(); renderCategoriesManagement(); updateCatSelect();
-            close(); showToast(`\u2705 Kategoria "${newName}" zaktualizowana!`, 'success');
+            renderCategoryGrid();
+            renderCategoriesManagement();
+            updateCatSelect();
+            close();
+            showToast(`\u2705 Kategoria "${newName}" zaktualizowana!`, 'success');
         });
         document.getElementById('cancel-edit-cat-btn').addEventListener('click', close);
         document.getElementById('edit-cat-backdrop').addEventListener('click', close);
@@ -433,18 +524,18 @@ export function initializeWordManagement() {
 
     // ── Settings tab ──────────────────────────────────────────────────────────
 
-    const dwellToggle   = document.getElementById('dwell-enabled-toggle');
-    const dwellSlider   = document.getElementById('dwell-time-slider');
-    const dwellDisplay  = document.getElementById('dwell-time-display');
+    const dwellToggle = document.getElementById('dwell-enabled-toggle');
+    const dwellSlider = document.getElementById('dwell-time-slider');
+    const dwellDisplay = document.getElementById('dwell-time-display');
     const dwellSettings = document.getElementById('dwell-time-settings');
-    const alarmSel      = document.getElementById('alarm-output-select');
+    const alarmSel = document.getElementById('alarm-output-select');
 
     initializeAlarmDeviceSelector(alarmSel);
-    
+
     // Initialize dwell toggle
     if (dwellToggle) {
         dwellToggle.checked = state.dwellEnabled;
-        
+
         // Show/hide dwell time settings based on dwell enabled state
         const updateDwellSettingsVisibility = () => {
             if (dwellSettings) {
@@ -452,7 +543,7 @@ export function initializeWordManagement() {
             }
         };
         updateDwellSettingsVisibility();
-        
+
         dwellToggle.addEventListener('change', async (e) => {
             state.dwellEnabled = e.target.checked;
             await saveDwellEnabledPreference(state.dwellEnabled);
@@ -460,7 +551,7 @@ export function initializeWordManagement() {
             showToast(e.target.checked ? '✓ Patrzenie włączone' : '✓ Patrzenie wyłączone', 'success');
         });
     }
-    
+
     dwellSlider.value = state.dwellTimeMs;
     dwellDisplay.textContent = (state.dwellTimeMs / 1000).toFixed(1) + 's';
 
@@ -477,17 +568,17 @@ export function initializeWordManagement() {
         saveDwellTimePreference(state.dwellTimeMs);
     });
 
-    // ── Telegram settings ─────────────────────────────────────────────────────
+    // ── Telegram settings ────────────────────────────────────────��────────────
 
-    const telegramToggle       = document.getElementById('telegram-toggle');
-    const telegramSettings     = document.getElementById('telegram-settings');
-    const telegramChatSelect   = document.getElementById('telegram-chat-select');
-    const telegramNewName      = document.getElementById('telegram-new-name');
-    const telegramNewChatId    = document.getElementById('telegram-new-chat-id');
-    const telegramAddChatBtn   = document.getElementById('telegram-add-chat-btn');
-    const telegramChatsList    = document.getElementById('telegram-chats-list');
-    const telegramTestBtn      = document.getElementById('telegram-test-btn');
-    const telegramStatus       = document.getElementById('telegram-status');
+    const telegramToggle = document.getElementById('telegram-toggle');
+    const telegramSettings = document.getElementById('telegram-settings');
+    const telegramChatSelect = document.getElementById('telegram-chat-select');
+    const telegramNewName = document.getElementById('telegram-new-name');
+    const telegramNewChatId = document.getElementById('telegram-new-chat-id');
+    const telegramAddChatBtn = document.getElementById('telegram-add-chat-btn');
+    const telegramChatsList = document.getElementById('telegram-chats-list');
+    const telegramTestBtn = document.getElementById('telegram-test-btn');
+    const telegramStatus = document.getElementById('telegram-status');
 
     if (!telegramToggle) return;
 
@@ -587,8 +678,8 @@ export function initializeWordManagement() {
                 try {
                     const r = await fetch('api.php?action=update-telegram-chat', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chatId, name: newName }),
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({chatId, name: newName})
                     });
                     const result = await r.json();
                     if (result.success) {
@@ -612,8 +703,8 @@ export function initializeWordManagement() {
                 try {
                     const r = await fetch('api.php?action=remove-telegram-chat', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chatId }),
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({chatId})
                     });
                     const result = await r.json();
                     if (result.success) {
@@ -632,8 +723,8 @@ export function initializeWordManagement() {
     async function saveTelegramConfig(enabled, selectedChatId) {
         const r = await fetch('api.php?action=save-telegram-config', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegramEnabled: enabled, telegramSelectedChatId: selectedChatId }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({telegramEnabled: enabled, telegramSelectedChatId: selectedChatId})
         });
         return r.json();
     }
@@ -690,8 +781,8 @@ export function initializeWordManagement() {
             try {
                 const r = await fetch('api.php?action=add-telegram-chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, chatId }),
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, chatId})
                 });
                 const result = await r.json();
                 if (result.success) {
@@ -721,8 +812,8 @@ export function initializeWordManagement() {
             try {
                 const r = await fetch('backend.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'test-telegram-connection', chatId }),
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({action: 'test-telegram-connection', chatId})
                 });
                 const res = await r.json();
                 if (res.success) {
@@ -742,3 +833,4 @@ export function initializeWordManagement() {
         });
     }
 }
+

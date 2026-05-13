@@ -7,7 +7,7 @@ import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference } fro
 import { checkSession, initializeLogoutButton } from './auth.js';
 import { renderCategoryGrid } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
-import { initializeWordManagement } from './wordManagement.js';
+import { initializeSettingsManagement } from './settingsManagement.js';
 
 async function initializeApp() {
     console.log('Initializing KUBA App\u2026');
@@ -29,7 +29,7 @@ async function initializeApp() {
 
     renderCategoryGrid();
     await initializeAudioDevices();
-    initializeWordManagement();
+    initializeSettingsManagement();
     initializeLogoutButton();
 
     const voices = window.speechSynthesis.getVoices();
