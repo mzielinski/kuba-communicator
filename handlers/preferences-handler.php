@@ -16,6 +16,7 @@ class PreferencesHandler {
             'alarmDuration' => 6,
             'dwellTimeMs' => 2000,
             'dwellEnabled' => true,
+            'darkModeEnabled' => false,
             'telegramEnabled' => false,
             'telegramChats' => [],
             'telegramSelectedChatId' => ''
@@ -72,6 +73,11 @@ class PreferencesHandler {
         if (isset($input['dwellEnabled'])) {
             $preferences['dwellEnabled'] = (bool)$input['dwellEnabled'];
         }
+
+        if (isset($input['darkModeEnabled'])) {
+            $preferences['darkModeEnabled'] = (bool)$input['darkModeEnabled'];
+        }
+
 
         if (!empty($preferences)) {
             self::mergeAndSavePreferences($userPreferencesFile, $preferences);

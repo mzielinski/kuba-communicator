@@ -141,6 +141,25 @@ export async function saveAlarmDurationPreference(alarmDuration) {
     } catch { return false; }
 }
 
+export async function loadDarkModePreference() {
+    try { return (await loadPreferences()).darkModeEnabled === true; }
+    catch { return false; }
+}
+
+export async function saveDarkModePreference(darkModeEnabled) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ darkModeEnabled }),
+        });
+        const result = await r.json();
+        if (result.success) { console.log(`✅ Dark mode: ${darkModeEnabled}`); return true; }
+        return false;
+    } catch { return false; }
+}
+
+
 // ── Telegram ──────────────────────────────────────────────────────────────────
 
 export async function loadTelegramConfig() {

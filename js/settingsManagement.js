@@ -4,7 +4,7 @@
 import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -595,7 +595,29 @@ export async function initializeSettingsManagement() {
         });
     }
 
-    // ── Telegram settings ───────────────────────────────────���────────────────
+    // ── Dark Mode Settings ─────────────────────────────────────────────────────
+
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+    if (darkModeToggle) {
+        // Initialize dark mode toggle
+        darkModeToggle.checked = state.darkModeEnabled;
+
+        darkModeToggle.addEventListener('change', async (e) => {
+            state.darkModeEnabled = e.target.checked;
+
+            if (e.target.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+
+            await saveDarkModePreference(state.darkModeEnabled);
+            showToast(e.target.checked ? '✓ Tryb ciemny włączony' : '✓ Tryb jasny włączony', 'success');
+        });
+    }
+
+
 
     const telegramToggle = document.getElementById('telegram-toggle');
     const telegramSettings = document.getElementById('telegram-settings');

@@ -11,4 +11,5 @@ export const state = {
     dwellTimers: {},
     expandedCategory: null,
     selectedWordsCategory: null,
+    darkModeEnabled: false,
 };
