@@ -13,5 +13,6 @@ export const state = {
     selectedWordsCategory: null,
     darkModeEnabled: false,
     alarmDuration: 6,
-    language: 'pl'
+    language: 'pl',
+    recentlyClickedMessages: [] // Array of {text, category, timestamp}
 };

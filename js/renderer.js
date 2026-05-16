@@ -137,3 +137,53 @@ export function renderExpandedCategoryView(catName) {
     container.appendChild(wordsWrap);
     grid.appendChild(container);
 }
+
+/** Render the recently clicked messages list */
+export function renderRecentMessages() {
+    const container = document.getElementById('recent-messages-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (state.recentlyClickedMessages.length === 0) {
+        container.innerHTML = '<div style="color:#999;font-size:12px;padding:0 10px;flex:1;text-align:center;">-</div>';
+        return;
+    }
+
+    state.recentlyClickedMessages.forEach((msg) => {
+        const item = document.createElement('button');
+        item.className = 'recent-message-item';
+        item.type = 'button';
+
+        const text = document.createElement('div');
+        text.className = 'recent-message-text';
+        text.textContent = msg.text;
+
+        const meta = document.createElement('div');
+        meta.className = 'recent-message-meta';
+        meta.textContent = `${msg.category} • ${msg.timestamp}`;
+
+        item.appendChild(text);
+        item.appendChild(meta);
+
+        // Make it clickable to replay the message
+        item.addEventListener('click', async () => {
+            await handleWordClick(msg.word, msg.category === 'N/A' ? null : msg.category);
+        });
+
+        // Add keyboard support
+        item.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                item.click();
+            }
+        });
+
+        container.appendChild(item);
+    });
+
+    // Auto-scroll to the right (newest message)
+    setTimeout(() => {
+        container.scrollLeft = container.scrollWidth;
+    }, 0);
+}

@@ -6,7 +6,7 @@ import { showToast } from './utils.js';
 import { t, applyTranslations } from './i18n.js';
 import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference } from './api.js';
 import { checkSession, initializeLogoutButton } from './auth.js';
-import { renderCategoryGrid } from './renderer.js';
+import { renderCategoryGrid, renderRecentMessages } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
 import { initializeSettingsManagement } from './settingsManagement.js';
 
@@ -39,6 +39,7 @@ async function initializeApp() {
     console.log('Categories:', Object.keys(state.categories).length, '| Dwell:', state.dwellTimeMs + 'ms | Dwell enabled:', state.dwellEnabled, '| Dark mode:', state.darkModeEnabled, '| Alarm duration:', state.alarmDuration + 's', '| Language:', state.language);
 
     renderCategoryGrid();
+    renderRecentMessages();
     await initializeAudioDevices();
     await initializeSettingsManagement();
     initializeLogoutButton();

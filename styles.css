@@ -112,6 +112,194 @@ body {
     display: none;
 }
 
+/* ============================================
+   RECENT MESSAGES DISPLAY
+   ============================================ */
+
+.recent-messages-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-height: 65px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.recent-messages-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.recent-messages-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+    padding-right: 10px;
+    scroll-behavior: smooth;
+}
+
+.recent-messages-list::-webkit-scrollbar {
+    height: 4px;
+}
+
+.recent-messages-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.recent-messages-list::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 2px;
+}
+
+.recent-messages-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
+}
+
+.recent-message-item {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-clip: padding-box;
+}
+
+.recent-message-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+}
+
+.recent-message-item:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.15);
+}
+
+.recent-message-item:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.recent-message-text {
+    font-weight: 600;
+    color: #667eea;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.recent-message-meta {
+    font-size: 11px;
+    color: #999;
+    white-space: nowrap;
+}
+
+/* ============================================
+   DARK MODE - RECENT MESSAGES
+   ============================================ */
+
+.dark-mode .recent-messages-container {
+    background: rgba(30, 30, 30, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .recent-messages-label {
+    color: #e0e0e0;
+}
+
+.dark-mode .recent-message-item {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    color: #e0e0e0;
+}
+
+.dark-mode .recent-message-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode .recent-message-item:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.dark-mode .recent-message-text {
+    color: #8fa3ff;
+}
+
+.dark-mode .recent-message-meta {
+    color: #666;
+}
+
+/* ============================================
+   RESPONSIVE - RECENT MESSAGES
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .recent-messages-container {
+        padding: 8px 12px;
+    }
+
+    .recent-message-item {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-height: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .recent-messages-container {
+        padding: 6px 10px;
+        gap: 8px;
+    }
+
+    .recent-messages-label {
+        font-size: 12px;
+    }
+
+    .recent-message-item {
+        padding: 5px 8px;
+        font-size: 11px;
+        min-height: 36px;
+    }
+
+    .recent-message-text {
+        max-width: 80px;
+        font-size: 11px;
+    }
+
+    .recent-message-meta {
+        font-size: 9px;
+    }
+}
+
 
 
 /* ============================================

@@ -14,6 +14,9 @@ const translations = {
         statusSpeaking: 'Mówię...',
         statusError: 'Błąd',
 
+        // Recent messages
+        recentMessagesLabel: 'Ostatnio kliknięte:',
+
         // Header buttons
         manageWordsBtnTitle: 'Zarządzaj słowami',
         logoutBtnTitle: 'Wyloguj się',
@@ -242,6 +245,9 @@ const translations = {
         statusReady: 'Ready',
         statusSpeaking: 'Speaking...',
         statusError: 'Error',
+
+        // Recent messages
+        recentMessagesLabel: 'Recently clicked:',
 
         // Header buttons
         manageWordsBtnTitle: 'Manage words',
