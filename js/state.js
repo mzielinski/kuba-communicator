@@ -12,4 +12,5 @@ export const state = {
     expandedCategory: null,
     selectedWordsCategory: null,
     darkModeEnabled: false,
+    alarmDuration: 6,
 };

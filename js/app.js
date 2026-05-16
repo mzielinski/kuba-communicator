@@ -3,7 +3,7 @@
 // ============================================
 import { state } from './state.js';
 import { showToast } from './utils.js';
-import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference } from './api.js';
+import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference } from './api.js';
 import { checkSession, initializeLogoutButton } from './auth.js';
 import { renderCategoryGrid } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
@@ -25,13 +25,14 @@ async function initializeApp() {
     state.dwellTimeMs  = await loadDwellTimePreference();
     state.dwellEnabled = await loadDwellEnabledPreference();
     state.darkModeEnabled = await loadDarkModePreference();
+    state.alarmDuration = await loadAlarmDurationPreference();
 
     // Apply dark mode if enabled
     if (state.darkModeEnabled) {
         document.body.classList.add('dark-mode');
     }
 
-    console.log('Categories:', Object.keys(state.categories).length, '| Dwell:', state.dwellTimeMs + 'ms | Dwell enabled:', state.dwellEnabled, '| Dark mode:', state.darkModeEnabled);
+    console.log('Categories:', Object.keys(state.categories).length, '| Dwell:', state.dwellTimeMs + 'ms | Dwell enabled:', state.dwellEnabled, '| Dark mode:', state.darkModeEnabled, '| Alarm duration:', state.alarmDuration + 's');
 
     renderCategoryGrid();
     await initializeAudioDevices();

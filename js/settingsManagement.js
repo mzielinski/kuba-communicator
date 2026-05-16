@@ -4,7 +4,7 @@
 import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -134,6 +134,35 @@ export async function initializeSettingsManagement() {
         if (!ok) return;
         const data = await loadWordList();
         state.categories = data.categories;
+
+        // Reload all preferences from file
+        state.dwellTimeMs = await loadDwellTimePreference();
+        state.dwellEnabled = await loadDwellEnabledPreference();
+        state.darkModeEnabled = await loadDarkModePreference();
+        const savedAlarmDuration = await loadAlarmDurationPreference();
+        state.alarmDuration = savedAlarmDuration;
+
+        // Update UI to match saved state
+        dwellToggle.checked = state.dwellEnabled;
+        dwellSlider.value = state.dwellTimeMs;
+        dwellDisplay.textContent = (state.dwellTimeMs / 1000).toFixed(1) + 's';
+        const pct1 = (dwellSlider.value - dwellSlider.min) / (dwellSlider.max - dwellSlider.min) * 100;
+        dwellSlider.style.background = `linear-gradient(to right,#667eea 0%,#667eea ${pct1}%,#e0e0e0 ${pct1}%,#e0e0e0 100%)`;
+
+        if (alarmDurationSlider) {
+            alarmDurationSlider.value = savedAlarmDuration;
+            alarmDurationDisplay.textContent = savedAlarmDuration + 's';
+            const pct2 = (alarmDurationSlider.value - alarmDurationSlider.min) / (alarmDurationSlider.max - alarmDurationSlider.min) * 100;
+            alarmDurationSlider.style.background = `linear-gradient(to right,#ff9800 0%,#ff9800 ${pct2}%,#e0e0e0 ${pct2}%,#e0e0e0 100%)`;
+        }
+
+        darkModeToggle.checked = state.darkModeEnabled;
+        if (state.darkModeEnabled) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+
         renderCategoryGrid();
         renderCategoriesManagement();
         closeModal();
@@ -149,6 +178,10 @@ export async function initializeSettingsManagement() {
     saveAllBtn.addEventListener('click', async () => {
         try {
             await saveToJSON(state.categories);
+            await saveDwellTimePreference(state.dwellTimeMs);
+            await saveDwellEnabledPreference(state.dwellEnabled);
+            await saveAlarmDurationPreference(state.alarmDuration || 6);
+            await saveDarkModePreference(state.darkModeEnabled);
             renderCategoryGrid();
             showToast('\u2705 Wszystkie zmiany zapisane!', 'success');
             closeModal();
@@ -534,7 +567,7 @@ export async function initializeSettingsManagement() {
     initializeAlarmDeviceSelector(alarmSel);
     initializeAlarmTypeSelector(alarmTypeSel);
 
-    // Initialize dwell toggle
+     // Initialize dwell toggle
     if (dwellToggle) {
         dwellToggle.checked = state.dwellEnabled;
 
@@ -546,11 +579,9 @@ export async function initializeSettingsManagement() {
         };
         updateDwellSettingsVisibility();
 
-        dwellToggle.addEventListener('change', async (e) => {
+        dwellToggle.addEventListener('change', (e) => {
             state.dwellEnabled = e.target.checked;
-            await saveDwellEnabledPreference(state.dwellEnabled);
             updateDwellSettingsVisibility();
-            showToast(e.target.checked ? '✓ Patrzenie włączone' : '✓ Patrzenie wyłączone', 'success');
         });
     }
 
@@ -567,7 +598,6 @@ export async function initializeSettingsManagement() {
         state.dwellTimeMs = parseInt(e.target.value);
         dwellDisplay.textContent = (state.dwellTimeMs / 1000).toFixed(1) + 's';
         updateGrad();
-        saveDwellTimePreference(state.dwellTimeMs);
     });
 
     // ── Alarm duration settings ────────────────────────────────────────────────
@@ -591,7 +621,6 @@ export async function initializeSettingsManagement() {
             const duration = parseInt(e.target.value);
             alarmDurationDisplay.textContent = duration + 's';
             updateAlarmGrad();
-            saveAlarmDurationPreference(duration);
         });
     }
 
@@ -600,10 +629,11 @@ export async function initializeSettingsManagement() {
     const darkModeToggle = document.getElementById('dark-mode-toggle');
 
     if (darkModeToggle) {
-        // Initialize dark mode toggle
+        // Initialize dark mode toggle with current state
         darkModeToggle.checked = state.darkModeEnabled;
 
-        darkModeToggle.addEventListener('change', async (e) => {
+        // Just toggle the visual appearance, don't save immediately
+        darkModeToggle.addEventListener('change', (e) => {
             state.darkModeEnabled = e.target.checked;
 
             if (e.target.checked) {
@@ -611,9 +641,6 @@ export async function initializeSettingsManagement() {
             } else {
                 document.body.classList.remove('dark-mode');
             }
-
-            await saveDarkModePreference(state.darkModeEnabled);
-            showToast(e.target.checked ? '✓ Tryb ciemny włączony' : '✓ Tryb jasny włączony', 'success');
         });
     }
 
