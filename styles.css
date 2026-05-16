@@ -102,6 +102,16 @@ body {
     border-radius: 20px;
 }
 
+#user-display {
+    margin-right: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+#alarm-audio {
+    display: none;
+}
+
 
 
 /* ============================================
@@ -612,6 +622,7 @@ body {
 
 .logout-btn {
     color: #333;
+    margin-left: 8px;
 }
 
 .alarm-btn {
@@ -635,6 +646,120 @@ body {
 /* ============================================
     INLINE INPUT STYLES TO CLASSES
     ============================================ */
+
+/* Empty state placeholder text inside containers */
+.empty-placeholder {
+    color: #999;
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+}
+
+/* Hidden legacy form controls (kept for JS references) */
+.hidden-control {
+    display: none;
+}
+
+/* Settings row: input + action button side by side */
+.settings-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.settings-input-row select {
+    flex: 1;
+}
+
+/* Slider row: range input + value display */
+.slider-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.slider-row input[type="range"] {
+    flex: 1;
+}
+
+/* Value display span next to sliders */
+.value-display {
+    min-width: 50px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Small hint / description text under form fields */
+.form-hint {
+    color: #999;
+    margin-top: 8px;
+    display: block;
+    font-size: 13px;
+}
+
+/* Spacer sections inside panels */
+.form-section {
+    margin-top: 15px;
+}
+
+.form-action {
+    margin-top: 10px;
+}
+
+/* Initially hidden settings panels (toggled by JS) */
+#dwell-time-settings,
+#telegram-settings {
+    display: none;
+}
+
+/* Categories management list min-height */
+#categories-management-list {
+    min-height: 60px;
+}
+
+/* Add buttons in form rows */
+#add-category-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#add-word-btn,
+#telegram-add-chat-btn {
+    padding: 8px 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Test alarm sound button */
+#test-alarm-sound-btn {
+    padding: 8px 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Telegram specific */
+#telegram-chat-select {
+    margin-top: 5px;
+}
+
+#telegram-test-btn {
+    width: 100%;
+    padding: 10px;
+}
+
+#telegram-status {
+    margin-top: 8px;
+    font-size: 13px;
+    text-align: center;
+    min-height: 20px;
+}
+
+.telegram-add-section .form-row {
+    margin-bottom: 10px;
+}
 
 .inline-text-input {
     flex: 1;
@@ -1204,6 +1329,7 @@ body {
 .form-group label:has(input[type="checkbox"]) {
     display: flex;
     align-items: center;
+    gap: 8px;
     margin-bottom: 0;
 }
 
@@ -1368,7 +1494,7 @@ body.dark-mode {
 }
 
 .dark-mode #user-display {
-    color: #999 !important;
+    color: #999;
 }
 
 .dark-mode .category-grid {
@@ -1510,8 +1636,8 @@ body.dark-mode {
 .dark-mode #settings-tab > .settings-section-dwell,
 .dark-mode #settings-tab > .settings-section-darkmode,
 .dark-mode #settings-tab > .settings-section-telegram {
-    background: rgba(30, 30, 30, 0.9) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
@@ -1519,7 +1645,7 @@ body.dark-mode {
 .dark-mode #settings-tab > .settings-section-dwell h3,
 .dark-mode #settings-tab > .settings-section-darkmode h3,
 .dark-mode #settings-tab > .settings-section-telegram h3 {
-    color: #e0e0e0 !important;
+    color: #e0e0e0;
 }
 
 .dark-mode #settings-tab > .settings-section-alarm:hover,
@@ -1533,14 +1659,14 @@ body.dark-mode {
 .dark-mode .settings-section-dwell .form-group label,
 .dark-mode .settings-section-darkmode .form-group label,
 .dark-mode .settings-section-telegram .form-group label {
-    color: #e0e0e0 !important;
+    color: #e0e0e0;
 }
 
 .dark-mode .settings-section-alarm .form-group small,
 .dark-mode .settings-section-dwell .form-group small,
 .dark-mode .settings-section-darkmode .form-group small,
 .dark-mode .settings-section-telegram .form-group small {
-    color: #b0b0b0 !important;
+    color: #b0b0b0;
 }
 
 .dark-mode .settings-section-alarm .form-group input,
@@ -1551,9 +1677,9 @@ body.dark-mode {
 .dark-mode .settings-section-darkmode .form-group select,
 .dark-mode .settings-section-telegram .form-group input,
 .dark-mode .settings-section-telegram .form-group select {
-    background: rgba(20, 20, 20, 0.8) !important;
-    color: #e0e0e0 !important;
-    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(20, 20, 20, 0.8);
+    color: #e0e0e0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .dark-mode .settings-section-alarm .form-group input:focus,
@@ -1564,8 +1690,8 @@ body.dark-mode {
 .dark-mode .settings-section-darkmode .form-group select:focus,
 .dark-mode .settings-section-telegram .form-group input:focus,
 .dark-mode .settings-section-telegram .form-group select:focus {
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
 .dark-mode .btn-primary {
@@ -1617,18 +1743,11 @@ body.dark-mode {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
-.dark-mode .settings-section-alarm > div[style*="border-top"],
-.dark-mode .settings-section-dwell > div[style*="border-top"],
-.dark-mode .settings-section-darkmode > div[style*="border-top"],
-.dark-mode .settings-section-telegram > div[style*="border-top"] {
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
 .dark-mode .settings-section-alarm h4,
 .dark-mode .settings-section-dwell h4,
 .dark-mode .settings-section-darkmode h4,
 .dark-mode .settings-section-telegram h4 {
-    color: #e0e0e0 !important;
+    color: #e0e0e0;
 }
 
 .dark-mode .words-list-container {
@@ -1707,6 +1826,10 @@ body.dark-mode {
     color: #e0e0e0;
 }
 
+.dark-mode .add-category-form h4 {
+    color: #e0e0e0;
+}
+
 .dark-mode .add-category-form {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -1751,3 +1874,22 @@ body.dark-mode {
     background: rgba(102, 126, 234, 0.9);
 }
 
+/* ============================================
+   DARK MODE - UTILITY CLASSES
+   ============================================ */
+
+.dark-mode .form-hint {
+    color: #b0b0b0;
+}
+
+.dark-mode .empty-placeholder {
+    color: #666;
+}
+
+.dark-mode #telegram-status {
+    color: #b0b0b0;
+}
+
+.dark-mode .value-display {
+    color: #e0e0e0;
+}
