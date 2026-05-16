@@ -27,6 +27,7 @@ const translations = {
         // Tabs
         tabCategories: 'Zarządzaj kategoriami',
         tabWords: 'Zarządzaj Słowami',
+        tabGlobalWords: 'Globalne Słowa',
         tabSettings: 'Ustawienia',
 
         // Categories tab
@@ -36,6 +37,21 @@ const translations = {
         placeholderCategoryName: 'Nazwa nowej kategorii...',
         btnAdd: '➕ Dodaj',
         hintClickCategory: 'Kliknij na kategorię aby edytować lub usunąć',
+
+        // Global Words tab (pl)
+        globalWordsHint: 'Globalne słowa są automatycznie dodawane do kategorii. Każde słowo ma własny zakres wyświetlania — możesz ustawić czy ma być widoczne tylko w rozwijalnych kategoriach, czy we wszystkich.',
+        emptyGlobalWords: 'Brak globalnych słów. Dodaj pierwsze!',
+        headingAddGlobalWord: '➕ Dodaj globalne słowo',
+        globalWordAdded: '"{{item}}" dodane jako globalne słowo!',
+        globalWordDeleted: '"{{item}}" usunięte z globalnych słów!',
+        globalWordUpdated: '"{{item}}" zaktualizowane!',
+        globalWordMoveUp: 'Globalne słowo przesunięte w górę',
+        globalWordMoveDown: 'Globalne słowo przesunięte w dół',
+        labelWordScope: 'Zakres:',
+        scopeExpandOnly: 'Tylko rozwijalne kategorie',
+        scopeAll: 'Wszystkie kategorie',
+        globalWordsSaved: '✅ Globalne słowa zapisane!',
+        errorSavingGlobalWords: 'Błąd przy zapisywaniu globalnych słów',
 
         // Words tab
         labelSelectCategory: 'Wybierz kategorię:',
@@ -259,6 +275,7 @@ const translations = {
         // Tabs
         tabCategories: 'Manage categories',
         tabWords: 'Manage Words',
+        tabGlobalWords: 'Global Words',
         tabSettings: 'Settings',
 
         // Categories tab
@@ -268,6 +285,21 @@ const translations = {
         placeholderCategoryName: 'New category name...',
         btnAdd: '➕ Add',
         hintClickCategory: 'Click on a category to edit or delete',
+
+        // Global Words tab (en)
+        globalWordsHint: 'Global words are automatically added to categories. Each word has its own scope — you can set whether it appears only in expandable categories or in all categories.',
+        emptyGlobalWords: 'No global words yet. Add the first one!',
+        headingAddGlobalWord: '➕ Add global word',
+        globalWordAdded: '"{{item}}" added as a global word!',
+        globalWordDeleted: '"{{item}}" removed from global words!',
+        globalWordUpdated: '"{{item}}" updated!',
+        globalWordMoveUp: 'Global word moved up',
+        globalWordMoveDown: 'Global word moved down',
+        labelWordScope: 'Scope:',
+        scopeExpandOnly: 'Expandable categories only',
+        scopeAll: 'All categories',
+        globalWordsSaved: '✅ Global words saved!',
+        errorSavingGlobalWords: 'Error saving global words',
 
         // Words tab
         labelSelectCategory: 'Select category:',

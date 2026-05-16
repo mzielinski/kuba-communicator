@@ -72,6 +72,58 @@ class WordsHandler {
             echo json_encode(['categories' => []]);
         }
     }
+
+    /**
+     * Handle load global words request
+     */
+    public static function handleLoadGlobalWords() {
+        requireAuth();
+
+        $globalWordsFile = getUserJsonFile('global-words.json');
+
+        if (file_exists($globalWordsFile)) {
+            $data = json_decode(file_get_contents($globalWordsFile), true);
+            http_response_code(200);
+            echo json_encode($data);
+        } else {
+            http_response_code(200);
+            echo json_encode(['words' => []]);
+        }
+    }
+
+    /**
+     * Handle save global words request
+     */
+    public static function handleSaveGlobalWords($input) {
+        requireAuth();
+
+        if (!isset($input['words'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Missing words data']);
+            exit;
+        }
+
+        $globalWordsFile = getUserJsonFile('global-words.json');
+
+        $fullData = json_encode(
+            ['words' => $input['words']],
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+        );
+
+        if ($fullData === false) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid JSON format']);
+            exit;
+        }
+
+        if (file_put_contents($globalWordsFile, $fullData) !== false) {
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Global words saved successfully']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Failed to write to global-words.json']);
+        }
+    }
 }
 ?>
 

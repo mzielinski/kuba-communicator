@@ -5,7 +5,7 @@ import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
 import {t, applyTranslations} from './i18n.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference, saveLanguagePreference} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference, saveLanguagePreference, loadGlobalWords, saveGlobalWords} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -77,6 +77,7 @@ export async function initializeSettingsManagement() {
             renderWordsList();
         }
         if (tab === 'categories-tab') renderCategoriesManagement();
+        if (tab === 'global-words-tab') renderGlobalWordsList();
         if (tab !== 'words-tab') state.editingWord = null;
     }));
 
@@ -117,6 +118,7 @@ export async function initializeSettingsManagement() {
         populateWordsCatSelect();
         renderWordsList();
         renderCategoriesManagement();
+        renderGlobalWordsList();
         loadTelegramChats();
     });
 
@@ -125,6 +127,7 @@ export async function initializeSettingsManagement() {
         document.getElementById('word-text-input').value = '';
         state.editingWord = null;
         document.getElementById('edit-word-dialog-container')?.remove();
+        document.getElementById('edit-global-word-dialog-container')?.remove();
     };
 
     const closeWithReload = async () => {
@@ -137,6 +140,8 @@ export async function initializeSettingsManagement() {
         if (!ok) return;
         const data = await loadWordList();
         state.categories = data.categories;
+        const globalData = await loadGlobalWords();
+        state.globalWords = globalData.words || [];
 
         state.dwellTimeMs = await loadDwellTimePreference();
         state.dwellEnabled = await loadDwellEnabledPreference();
@@ -179,6 +184,7 @@ export async function initializeSettingsManagement() {
     saveAllBtn.addEventListener('click', async () => {
         try {
             await saveToJSON(state.categories);
+            await saveGlobalWords(state.globalWords);
             await saveDwellTimePreference(state.dwellTimeMs);
             await saveDwellEnabledPreference(state.dwellEnabled);
             await saveAlarmDurationPreference(state.alarmDuration || 6);
@@ -192,6 +198,170 @@ export async function initializeSettingsManagement() {
             showToast(t('errorSavingChanges'), 'error');
         }
     });
+
+    // ── Global Words management ───────────────────────────────────────────────
+
+    const globalWordsListEl = document.getElementById('global-words-list-container');
+    const addGlobalWordBtn   = document.getElementById('add-global-word-btn');
+    const globalWordTextInput = document.getElementById('global-word-text-input');
+
+    function renderGlobalWordsList() {
+        globalWordsListEl.innerHTML = '';
+        const words = state.globalWords || [];
+
+        if (words.length === 0) {
+            globalWordsListEl.innerHTML = `<p style="color:#999;text-align:center;padding:20px 0;margin:0;">${t('emptyGlobalWords')}</p>`;
+            return;
+        }
+
+        words.forEach((word, idx) => {
+            const item = document.createElement('div');
+            item.style.cssText = `background:white;padding:10px;margin:6px 0;border-radius:6px;border-left:4px solid ${word.color || '#667eea'};display:flex;justify-content:space-between;align-items:center;`;
+
+            const scopeLabel = word.scope === 'all' ? t('scopeAll') : t('scopeExpandOnly');
+            const sizeLabel  = word.size ? t('wordSize', {item: word.size}) : t('wordSizeDefault');
+            const info = document.createElement('div');
+            info.innerHTML = `
+                <div style="font-weight:600;color:#333;font-size:14px;">${word.text}</div>
+                <div style="font-size:12px;color:#999;margin-top:3px;">${sizeLabel}${word.color ? ' | 🎨 ' + word.color : ''} | 📌 ${scopeLabel}</div>
+            `;
+
+            const btnWrap = document.createElement('div');
+            btnWrap.style.cssText = 'display:flex;gap:5px;flex-shrink:0;';
+
+            const bs = (bg, dis = false) => `padding:6px 10px;background:${bg};color:white;border:none;border-radius:4px;cursor:${dis ? 'default' : 'pointer'};font-size:12px;${dis ? 'opacity:0.5;' : ''}`;
+
+            const upBtn = document.createElement('button');
+            upBtn.textContent = '↑';
+            upBtn.title = t('btnMoveUp');
+            upBtn.disabled = idx === 0;
+            upBtn.style.cssText = bs('#28a745', idx === 0);
+            upBtn.addEventListener('click', () => {
+                [words[idx - 1], words[idx]] = [words[idx], words[idx - 1]];
+                renderCategoryGrid();
+                renderGlobalWordsList();
+                showToast(t('globalWordMoveUp'), 'success');
+            });
+
+            const downBtn = document.createElement('button');
+            downBtn.textContent = '↓';
+            downBtn.title = t('btnMoveDown');
+            downBtn.disabled = idx === words.length - 1;
+            downBtn.style.cssText = bs('#28a745', idx === words.length - 1);
+            downBtn.addEventListener('click', () => {
+                [words[idx + 1], words[idx]] = [words[idx], words[idx + 1]];
+                renderCategoryGrid();
+                renderGlobalWordsList();
+                showToast(t('globalWordMoveDown'), 'success');
+            });
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '✏️';
+            editBtn.title = t('btnSave');
+            editBtn.style.cssText = bs('#667eea');
+            editBtn.addEventListener('click', () => openEditGlobalWordDialog(idx));
+
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '🗑️';
+            delBtn.title = t('confirmDeleteOk');
+            delBtn.style.cssText = bs('#ff6464');
+            delBtn.addEventListener('click', async () => {
+                const ok = await showConfirmDialog(
+                    t('confirmDeleteWordTitle'),
+                    t('confirmDeleteWordMsg', {item: word.text}),
+                    t('confirmDeleteOk'),
+                    t('confirmDeleteCancel'),
+                );
+                if (ok) {
+                    state.globalWords.splice(idx, 1);
+                    renderCategoryGrid();
+                    renderGlobalWordsList();
+                    showToast(t('globalWordDeleted', {item: word.text}), 'success');
+                }
+            });
+
+            btnWrap.append(upBtn, downBtn, editBtn, delBtn);
+            item.append(info, btnWrap);
+            globalWordsListEl.appendChild(item);
+        });
+    }
+
+    function openEditGlobalWordDialog(wordIdx) {
+        document.getElementById('edit-global-word-dialog-container')?.remove();
+        const word = state.globalWords[wordIdx];
+        const container = document.createElement('div');
+        container.id = 'edit-global-word-dialog-container';
+        container.innerHTML = `
+            <div class="dialog-container">
+                <h3>${t('editWordTitle')}</h3>
+                <div class="dialog-group">
+                    <label>${t('labelWordText')}</label>
+                    <input type="text" id="gw-popup-text" value="${word.text.replace(/"/g, '&quot;')}">
+                </div>
+                <div class="dialog-group">
+                    <label>${t('labelColor')}</label>
+                    <input type="color" id="gw-popup-color" value="${word.color || '#667eea'}">
+                </div>
+                <div class="dialog-group">
+                    <label>${t('labelFontSize')}</label>
+                    <input type="number" id="gw-popup-size" value="${word.size ? parseInt(word.size) : ''}" placeholder="${t('placeholderFontSize')}" min="8" max="200">
+                </div>
+                <div class="dialog-group">
+                    <label>${t('labelWordScope')}</label>
+                    <select id="gw-popup-scope">
+                        <option value="expand-only" ${word.scope !== 'all' ? 'selected' : ''}>${t('scopeExpandOnly')}</option>
+                        <option value="all" ${word.scope === 'all' ? 'selected' : ''}>${t('scopeAll')}</option>
+                    </select>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="gw-popup-save" class="btn-primary" style="flex:1;padding:10px;">${t('btnSave')}</button>
+                    <button id="gw-popup-cancel" class="btn-secondary" style="flex:1;padding:10px;">${t('btnCancel')}</button>
+                </div>
+            </div>
+            <div id="gw-edit-backdrop" class="dialog-backdrop"></div>
+        `;
+        document.body.appendChild(container);
+
+        document.getElementById('gw-popup-save').addEventListener('click', () => {
+            const newText = document.getElementById('gw-popup-text').value.trim();
+            if (!newText) { showToast(t('errorTextEmpty'), 'error'); return; }
+            const w = state.globalWords[wordIdx];
+            w.text  = newText;
+            w.color = document.getElementById('gw-popup-color').value;
+            w.scope = document.getElementById('gw-popup-scope').value;
+            const sz = document.getElementById('gw-popup-size').value;
+            if (sz && parseInt(sz) > 0) w.size = parseInt(sz) + 'px'; else delete w.size;
+            renderCategoryGrid();
+            renderGlobalWordsList();
+            container.remove();
+            showToast(t('globalWordUpdated', {item: newText}), 'success');
+        });
+
+        const closeGwDialog = () => container.remove();
+        document.getElementById('gw-popup-cancel').addEventListener('click', closeGwDialog);
+        document.getElementById('gw-edit-backdrop').addEventListener('click', closeGwDialog);
+        document.getElementById('gw-popup-text').focus();
+        document.getElementById('gw-popup-text').select();
+    }
+
+    if (addGlobalWordBtn) {
+        addGlobalWordBtn.addEventListener('click', () => {
+            const text = globalWordTextInput.value.trim();
+            if (!text) { showToast(t('errorEnterWordText'), 'error'); return; }
+            state.globalWords.push({id: generateIdFromText(text), text, scope: 'expand-only'});
+            renderCategoryGrid();
+            renderGlobalWordsList();
+            globalWordTextInput.value = '';
+            globalWordTextInput.focus();
+            showToast(t('globalWordAdded', {item: text}), 'success');
+        });
+    }
+
+    if (globalWordTextInput) {
+        globalWordTextInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); addGlobalWordBtn.click(); }
+        });
+    }
 
     // ── Words list ────────────────────────────────────────────────────────────
 

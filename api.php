@@ -36,6 +36,9 @@ if ($method === 'POST') {
         case 'save':
             WordsHandler::handleSaveWords($input);
             break;
+        case 'save-global-words':
+            WordsHandler::handleSaveGlobalWords($input);
+            break;
         case 'save-preferences':
             PreferencesHandler::handleSavePreferences($input);
             break;
@@ -62,6 +65,9 @@ if ($method === 'POST') {
             break;
         case 'load-words':
             WordsHandler::handleLoadWords();
+            break;
+        case 'load-global-words':
+            WordsHandler::handleLoadGlobalWords();
             break;
         case 'get-file':
             FileHandler::handleGetFile($_GET['file'] ?? '');

@@ -52,6 +52,42 @@ export async function saveToJSON(categories) {
     }
 }
 
+/** Load global words for the authenticated user */
+export async function loadGlobalWords() {
+    try {
+        const r = await fetch('api.php?action=load-global-words');
+        if (!r.ok) {
+            if (r.status === 401) return { words: [] };
+            throw new Error(`HTTP ${r.status}`);
+        }
+        return await r.json();
+    } catch (err) {
+        console.error('Failed to load global words:', err);
+        return { words: [] };
+    }
+}
+
+/** Persist global words to the backend */
+export async function saveGlobalWords(words) {
+    try {
+        const r = await fetch('api.php?action=save-global-words', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ words }),
+        });
+        const result = await r.json();
+        if (!r.ok) {
+            console.error('Save global words error:', result.error || r.status);
+            return false;
+        }
+        console.log('✅ Global words saved:', result);
+        return true;
+    } catch (err) {
+        console.error('Save global words error:', err);
+        return false;
+    }
+}
+
 // ── Preferences ───────────────────────────────────────────────────────────────
 
 export async function loadDwellTimePreference() {

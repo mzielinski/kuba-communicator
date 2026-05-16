@@ -50,6 +50,7 @@
                 <div class="modal-tabs">
                     <button class="tab-btn active" data-tab="categories-tab" data-i18n="tabCategories">Zarządzaj kategoriami</button>
                     <button class="tab-btn" data-tab="words-tab" data-i18n="tabWords">Zarządzaj Słowami</button>
+                    <button class="tab-btn" data-tab="global-words-tab" data-i18n="tabGlobalWords">Globalne Słowa</button>
                     <button class="tab-btn" data-tab="settings-tab" data-i18n="tabSettings">Ustawienia</button>
                 </div>
 
@@ -113,6 +114,25 @@
                         <button id="edit-cancel-btn"></button>
                         <button id="edit-move-up-btn"></button>
                         <button id="edit-move-down-btn"></button>
+                    </div>
+                </div>
+
+                <!-- Global Words Tab -->
+                <div id="global-words-tab" class="tab-content">
+                    <div class="form-group">
+                        <p class="form-hint" data-i18n="globalWordsHint">Globalne słowa są dodawane do kategorii automatycznie. Każde słowo ma własny zakres.</p>
+                    </div>
+
+                    <div id="global-words-list-container" class="words-list-container">
+                        <p class="empty-placeholder" data-i18n="emptyGlobalWords">Brak globalnych słów</p>
+                    </div>
+
+                    <div class="add-word-form active">
+                        <h4 data-i18n="headingAddGlobalWord">➕ Dodaj globalne słowo</h4>
+                        <div class="form-row">
+                            <input type="text" id="global-word-text-input" data-i18n-placeholder="placeholderWordText" placeholder="Tekst słowa..." class="inline-text-input">
+                            <button id="add-global-word-btn" class="btn-primary" data-i18n="btnAdd">➕ Dodaj</button>
+                        </div>
                     </div>
                 </div>
 

@@ -4,6 +4,7 @@
 
 export const state = {
     categories: {},
+    globalWords: [],
     isSpeaking: false,
     editingWord: null,
     dwellTimeMs: 2000,
