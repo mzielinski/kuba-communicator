@@ -51,20 +51,28 @@ A special **alarm button** plays a 6-second beeping alert to call for assistance
 
 ### ✏️ Word & Category Management
 
-Accessed via the ⚙️ button in the header. The management modal has three tabs:
+Accessed via the ⚙️ button in the header. The management modal has four tabs:
 
-| Tab                   | What you can do                                                                 |
-|-----------------------|---------------------------------------------------------------------------------|
-| **Manage Categories** | Add, rename, resize, reorder, toggle expand mode, or delete categories          |
-| **Manage Words**      | Add, edit (text, colour, font size), reorder, or delete words within a category |
-| **Settings**          | Configure alarm device, dwell time, and Telegram integration                    |
+| Tab                   | What you can do                                                                                              |
+|-----------------------|--------------------------------------------------------------------------------------------------------------|
+| **Manage Categories** | Add, rename, resize, reorder, toggle expand mode, or delete categories                                       |
+| **Manage Words**      | Add, edit (text, colour, font size), reorder, or delete words within a category                              |
+| **Global Words**      | Add words that appear across multiple categories with configurable scope (all categories or expandable only) |
+| **Settings**          | Configure language, alarm (sound type, device, duration), dwell time, dark mode, and Telegram integration    |
 
 Changes are applied to the live grid immediately; they are only **persisted** when you click **💾 Save changes**.
 
 ### 🚨 Alarm
 
-- A dedicated alarm button (word id `alarm`) generates and plays a 6-second synthesised two-tone beeping sound.
-- The alarm is routed to a configurable audio output device (see Settings).
+- A dedicated alarm button (word id `alarm`) generates and plays a synthesised beeping sound.
+- **Configurable sound profiles:**
+    - **High tone** (900 / 750 Hz) — sharp, attention-grabbing pitch
+    - **Mid tone** (500 / 400 Hz) — medium pitch
+    - **Low tone** (220 / 160 Hz) — low, gentle pitch
+    - **Siren** (150 → 800 Hz sweep) — sweeping frequency
+- **Configurable duration:** 1–10 seconds (default: 6 seconds)
+- The alarm is routed to a configurable audio output device (see Settings)
+- All alarm settings are saved per user in preferences
 
 ### 🖱️ Dwell Time (Gaze / Pointer Input)
 
@@ -74,9 +82,20 @@ Changes are applied to the live grid immediately; they are only **persisted** wh
 - The dwell time and enabled state are saved per user in preferences.
 - Useful for eye-tracking hardware or switch-access devices.
 
+### 🌍 Global Words
+
+Global words are words that automatically appear in multiple (or all) categories:
+
+- **Scope options:**
+    - **All categories** — word appears in every category (normal and expandable)
+    - **Expand-only** — word appears only in expanded category views
+- Each global word has a unique ID and custom color/size
+- Useful for common phrases like "Yes", "No", or "Help" that should be accessible everywhere
+
 ### 📱 Telegram Integration
 
 - Optionally forward every selected word/phrase to a Telegram chat.
+- **Message format:** `[Category]: [Word/Phrase]` — includes the category to provide context.
 - Multiple named recipients can be stored; one is selected as the active target.
 - A test button lets you verify the connection from the Settings tab.
 - Uses a Telegram Bot configured via an environment variable (see [Configuration](#configuration)).
@@ -85,6 +104,29 @@ Changes are applied to the live grid immediately; they are only **persisted** wh
 
 - Lists all available audio output devices (requires microphone permission to expose device labels).
 - The chosen device is saved as a user preference and used for alarm playback.
+
+### 🌙 Dark Mode
+
+- Toggle dark mode in the Settings tab for comfortable use in low-light environments.
+- The dark mode preference is saved per user.
+- High contrast colours ensure readability in dark backgrounds.
+
+### 🌐 Language Support
+
+- Select between **Polish** and **English** in the Settings tab.
+- All UI text, labels, hints, and toast notifications are translated.
+- Language preference is saved per user.
+- The app automatically uses the browser's Web Speech API for the selected language.
+
+### 📜 Recently Clicked Messages
+
+- A scrollable timeline above the main grid shows the **last 10 clicked words/phrases**.
+- Each message displays:
+    - The word text
+    - The category it came from
+    - The timestamp of the click
+- Click any recent message to **replay** it (speak, copy, and optionally send to Telegram).
+- Useful for reviewing the communication history during a session.
 
 ### 🔐 Authentication
 
@@ -117,15 +159,16 @@ kuba-komunikacja/
 │
 ├── js/
 │   ├── app.js               # Bootstrap / entry point
-│   ├── state.js             # Shared mutable state
+│   ├── state.js             # Shared mutable state (categories, preferences, recentMessages)
 │   ├── api.js               # All fetch calls to the PHP backend
 │   ├── auth.js              # Session check & logout button
-│   ├── renderer.js          # Render category grid & expanded view
-│   ├── wordActions.js       # Word-click pipeline (speak → copy → Telegram)
+│   ├── renderer.js          # Render category grid & expanded view, recent messages timeline
+│   ├── wordActions.js       # Word-click pipeline (speak → copy → Telegram → track in history)
 │   ├── speech.js            # Web Speech API wrapper
-│   ├── alarm.js             # Alarm sound generation & device selection
+│   ├── alarm.js             # Alarm sound generation (multiple profiles), device selection
 │   ├── dwell.js             # Dwell-time (hover-to-click) behaviour
-│   ├── settingsManagement.js # Settings modal — categories, words, preferences
+│   ├── i18n.js              # Internationalization (Polish / English)
+│   ├── settingsManagement.js # Settings modal — categories, words, global words, preferences
 │   └── utils.js             # Shared utilities (toast, clipboard, ID generation…)
 │
 ├── data/
@@ -201,7 +244,7 @@ Create a directory for each user and seed it with an initial `words.json` and `p
 
 ```bash
 mkdir -p data/admin
-cp data/demo/words.json      data/admin/words.json
+cp data/demo/words.json data/admin/words.json
 cp data/demo/preferences.json data/admin/preferences.json
 ```
 
@@ -247,6 +290,8 @@ Defines all categories and their words.
     "Category Name": {
       "order": 1,
       "size": "large",
+      "cols": 2,
+      "rows": 2,
       "expand": false,
       "words": [
         {
@@ -265,10 +310,44 @@ Defines all categories and their words.
 |-----------------|--------------------------------------|----------------------------------------------------------------|
 | `order`         | number                               | Display order (ascending)                                      |
 | `size`          | `"small"` \| `"medium"` \| `"large"` | Visual tile size                                               |
+| `cols`          | number                               | Grid columns for this category (affects layout)                |
+| `rows`          | number                               | Grid rows for this category (affects layout)                   |
 | `expand`        | boolean                              | If `true`, clicking the tile opens a full-screen word grid     |
 | `words[].id`    | string                               | Unique identifier; use `"alarm"` to trigger the built-in alarm |
+| `words[].text`  | string                               | Display text (can include emoji)                               |
 | `words[].color` | string                               | CSS colour for the button background                           |
 | `words[].size`  | string                               | CSS font size (e.g. `"30px"`)                                  |
+
+### `global-words.json` (optional per user)
+
+Stores global words that appear across multiple categories.
+
+```json
+{
+  "words": [
+    {
+      "id": "yes-global",
+      "text": "✅ Yes",
+      "color": "#00be00",
+      "size": "25px",
+      "scope": "all"
+    },
+    {
+      "id": "help-global",
+      "text": "🆘 Help",
+      "scope": "expand-only"
+    }
+  ]
+}
+```
+
+| Field   | Type                       | Description                                                                             |
+|---------|----------------------------|-----------------------------------------------------------------------------------------|
+| `id`    | string                     | Unique identifier for the global word                                                   |
+| `text`  | string                     | Display text (can include emoji)                                                        |
+| `color` | string                     | CSS colour for the button background (optional)                                         |
+| `size`  | string                     | CSS font size (optional, defaults to `20px` in expanded, `30px` in categories)          |
+| `scope` | `"all"` \| `"expand-only"` | Where the word appears: `"all"` = every category, `"expand-only"` = expanded views only |
 
 ### `preferences.json`
 
@@ -278,7 +357,11 @@ Stores per-user settings.
 {
   "dwellTimeMs": 2000,
   "dwellEnabled": false,
-  "alarmDevice": "",
+  "selectedAlarmDeviceId": "",
+  "alarmType": "high",
+  "alarmDuration": 6,
+  "darkModeEnabled": false,
+  "language": "en",
   "telegramEnabled": false,
   "telegramSelectedChatId": "",
   "telegramChats": [
@@ -289,6 +372,20 @@ Stores per-user settings.
   ]
 }
 ```
+
+| Field                   | Type    | Description                                                |
+|-------------------------|---------|------------------------------------------------------------|
+| `dwellTimeMs`           | number  | Hover duration before auto-activation (500–5000 ms)        |
+| `dwellEnabled`          | boolean | Enable/disable dwell time feature                          |
+| `selectedAlarmDeviceId` | string  | Audio device ID for alarm playback; empty = system default |
+| `alarmType`             | string  | Alarm sound profile: `high`, `mid`, `low`, or `siren`      |
+| `alarmDuration`         | number  | Alarm duration in seconds (1–10)                           |
+| `darkModeEnabled`       | boolean | Enable/disable dark mode                                   |
+| `language`              | string  | UI language: `pl` (Polish) or `en` (English)               |
+| `telegramEnabled`       | boolean | Enable/disable Telegram message forwarding                 |
+| `telegramSelectedChatId` | string  | Active recipient's Chat ID                                 |
+| `telegramChats[].id`    | string  | Chat ID of a Telegram recipient                            |
+| `telegramChats[].name`  | string  | Display name for the recipient                             |
 
 ---
 
@@ -306,8 +403,14 @@ Stores per-user settings.
 
 ### Alarm Sound
 
-The alarm is a synthesised two-tone beep (900 Hz / 750 Hz, alternating at 200 ms intervals, 6 seconds total) generated
-entirely in the browser — no audio files required. The output device can be selected in **Settings → Audio device**.
+The alarm is a synthesised sound generated entirely in the browser — no audio files required.
+
+**Features:**
+
+- **Multiple sound profiles** — Choose between high, mid, low tones, or a sweeping siren
+- **Configurable duration** — Set alarm length from 1–10 seconds
+- **Device selection** — Route alarm to any available audio output device
+- The chosen profile, duration, and device are saved as user preferences in **Settings → Alarm Settings**
 
 ---
 
@@ -325,16 +428,18 @@ All endpoints return JSON.
 
 ### `api.php`
 
-| Method | `action` param         | Description                                         |
-|--------|------------------------|-----------------------------------------------------|
-| `GET`  | `load-words`           | Load current user's `words.json`                    |
-| `GET`  | `load-preferences`     | Load current user's `preferences.json`              |
-| `POST` | `save`                 | Save word list — body: `{ categories }`             |
-| `POST` | `save-preferences`     | Save preferences — body: preference fields          |
-| `POST` | `save-telegram-config` | Save Telegram enabled state and selected chat       |
-| `POST` | `add-telegram-chat`    | Add a Telegram recipient — body: `{ name, chatId }` |
-| `POST` | `remove-telegram-chat` | Remove a recipient — body: `{ chatId }`             |
-| `POST` | `update-telegram-chat` | Rename a recipient — body: `{ chatId, name }`       |
+| Method | `action` param         | Description                                                    |
+|--------|------------------------|----------------------------------------------------------------|
+| `GET`  | `load-words`           | Load current user's `words.json`                               |
+| `GET`  | `load-preferences`     | Load current user's `preferences.json`                         |
+| `GET`  | `load-global-words`    | Load current user's global words                               |
+| `POST` | `save`                 | Save categories and word list — body: `{ categories }`         |
+| `POST` | `save-global-words`    | Save global words — body: `{ words }`                          |
+| `POST` | `save-preferences`     | Save preferences — body: preference fields (dwell, alarm, etc) |
+| `POST` | `save-telegram-config` | Save Telegram enabled state and selected chat                  |
+| `POST` | `add-telegram-chat`    | Add a Telegram recipient — body: `{ name, chatId }`            |
+| `POST` | `remove-telegram-chat` | Remove a recipient — body: `{ chatId }`                        |
+| `POST` | `update-telegram-chat` | Rename a recipient — body: `{ chatId, name }`                  |
 
 ### `backend.php`
 
