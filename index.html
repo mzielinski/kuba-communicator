@@ -133,7 +133,6 @@
                             </div>
                             <small style="color: #999; margin-top: 8px; display: block;">
                                 Wybierz rodzaj dźwięku dostosowany do potrzeb słuchowych użytkownika.
-                                Niskie tony są lepiej słyszalne przez osoby z utratą słuchu na wysokich cz��stotliwościach.
                             </small>
                         </div>
 
@@ -144,6 +143,21 @@
                             </select>
                             <small style="color: #999; margin-top: 8px; display: block;">
                                 Alarm zawsze będzie grał na wybranym urządzeniu, niezależnie od ustawień systemowych.
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alarm-duration-slider">Długość alarmu:</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="range" id="alarm-duration-slider" min="1" max="10" step="1" value="6"
+                                       style="flex: 1;">
+                                <span id="alarm-duration-display" style="min-width: 50px; text-align: right;">6s</span>
+                            </div>
+                            <small style="color: #28a745; margin-top: 8px; display: block; font-weight: 600;">
+                                ✓ Zmiany są zapisywane automatycznie
+                            </small>
+                            <small style="color: #999; margin-top: 8px; display: block;">
+                                Ustaw czas trwania alarmu od 1 do 10 sekund.
                             </small>
                         </div>
                     </div>
@@ -158,7 +172,7 @@
                                  <span>Włącz patrzenie na przycisk (Dwell Time)</span>
                              </label>
                              <small style="color: #999; margin-top: 8px; display: block;">
-                                 Gdy włączysz, przycisk będzie automatycznie aktywowany po patrzeniu nań przez wskazany czas.
+                                 Gdy włączysz, przycisk będzie automatycznie aktywowany po patrzeniu na niego przez wskazany czas.
                              </small>
                          </div>
 
@@ -173,9 +187,7 @@
                                  ✓ Zmiany są zapisywane automatycznie
                              </small>
                              <small style="color: #999; margin-top: 8px; display: block;">
-                                 Przycisk zostanie automatycznie aktywowany po patrzeniu na niego przez wskazany czas.
-                                 <br>
-                                 Gdy odsuniesz kursor - licznik zresetuje się.
+                                 Przycisk zostanie automatycznie aktywowany po patrzeniu na niego przez wskazany czas. Gdy odsuniesz kursor licznik zresetuje się.
                              </small>
                          </div>
                     </div>

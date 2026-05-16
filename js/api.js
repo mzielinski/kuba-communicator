@@ -124,6 +124,23 @@ export async function saveAlarmTypePreference(alarmType) {
     } catch { return false; }
 }
 
+export async function loadAlarmDurationPreference() {
+    try { return (await loadPreferences()).alarmDuration || 6; }
+    catch { return 6; }
+}
+
+export async function saveAlarmDurationPreference(alarmDuration) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ alarmDuration }),
+        });
+        const result = await r.json();
+        return result.success === true;
+    } catch { return false; }
+}
+
 // ── Telegram ──────────────────────────────────────────────────────────────────
 
 export async function loadTelegramConfig() {

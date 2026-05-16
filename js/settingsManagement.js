@@ -4,11 +4,11 @@
 import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
-export function initializeSettingsManagement() {
+export async function initializeSettingsManagement() {
     // Element refs
     const modal = document.getElementById('word-modal');
     const manageBtn = document.getElementById('manage-words-btn');
@@ -570,7 +570,32 @@ export function initializeSettingsManagement() {
         saveDwellTimePreference(state.dwellTimeMs);
     });
 
-    // ── Telegram settings ────────────────────────────────────────��────────────
+    // ── Alarm duration settings ────────────────────────────────────────────────
+    const alarmDurationSlider = document.getElementById('alarm-duration-slider');
+    const alarmDurationDisplay = document.getElementById('alarm-duration-display');
+
+    if (alarmDurationSlider) {
+        // Load and initialize alarm duration
+        const savedDuration = await loadAlarmDurationPreference();
+        alarmDurationSlider.value = savedDuration;
+        alarmDurationDisplay.textContent = savedDuration + 's';
+
+        // Update gradient for alarm duration slider
+        const updateAlarmGrad = () => {
+            const pct = (alarmDurationSlider.value - alarmDurationSlider.min) / (alarmDurationSlider.max - alarmDurationSlider.min) * 100;
+            alarmDurationSlider.style.background = `linear-gradient(to right,#ff9800 0%,#ff9800 ${pct}%,#e0e0e0 ${pct}%,#e0e0e0 100%)`;
+        };
+        updateAlarmGrad();
+
+        alarmDurationSlider.addEventListener('input', (e) => {
+            const duration = parseInt(e.target.value);
+            alarmDurationDisplay.textContent = duration + 's';
+            updateAlarmGrad();
+            saveAlarmDurationPreference(duration);
+        });
+    }
+
+    // ── Telegram settings ───────────────────────────────────���────────────────
 
     const telegramToggle = document.getElementById('telegram-toggle');
     const telegramSettings = document.getElementById('telegram-settings');

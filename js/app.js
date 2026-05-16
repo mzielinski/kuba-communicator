@@ -29,7 +29,7 @@ async function initializeApp() {
 
     renderCategoryGrid();
     await initializeAudioDevices();
-    initializeSettingsManagement();
+    await initializeSettingsManagement();
     initializeLogoutButton();
 
     const voices = window.speechSynthesis.getVoices();

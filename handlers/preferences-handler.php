@@ -13,6 +13,7 @@ class PreferencesHandler {
         return [
             'selectedAlarmDeviceId' => '',
             'alarmType' => 'high',
+            'alarmDuration' => 6,
             'dwellTimeMs' => 2000,
             'dwellEnabled' => true,
             'telegramEnabled' => false,
@@ -58,6 +59,10 @@ class PreferencesHandler {
 
         if (isset($input['alarmType'])) {
             $preferences['alarmType'] = $input['alarmType'];
+        }
+
+        if (isset($input['alarmDuration'])) {
+            $preferences['alarmDuration'] = (int)$input['alarmDuration'];
         }
 
         if (isset($input['dwellTimeMs'])) {

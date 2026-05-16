@@ -2,7 +2,7 @@
 // ALARM — audio generation and playback
 // ============================================
 import {showToast, updateStatus} from './utils.js';
-import {loadAlarmDevicePreference, saveAlarmDevicePreference, loadAlarmTypePreference, saveAlarmTypePreference} from './api.js';
+import {loadAlarmDevicePreference, saveAlarmDevicePreference, loadAlarmTypePreference, saveAlarmTypePreference, loadAlarmDurationPreference} from './api.js';
 
 /**
  * Available alarm sound profiles.
@@ -120,12 +120,13 @@ export async function playAlarm() {
     showToast('🚨 ALARM - Osoba potrzebuje wsparcia!', 'warning');
     updateStatus('ALARM!');
 
-    // Load selected alarm type preference
+    // Load selected alarm type and duration preferences
     const alarmType = await loadAlarmTypePreference();
+    const alarmDuration = await loadAlarmDurationPreference();
 
     let blob;
     try {
-        blob = await generateAlarmAudioBlob(alarmType);
+        blob = await generateAlarmAudioBlob(alarmType, alarmDuration);
     } catch (err) {
         console.error('Failed to generate alarm audio:', err);
         showToast('Błąd generowania alarmu', 'error');
@@ -160,7 +161,7 @@ export async function playAlarm() {
 
     await new Promise(resolve => {
         alarmAudio.onended = resolve;
-        setTimeout(resolve, 7000);
+        setTimeout(resolve, (alarmDuration + 1) * 1000);
     });
 
     updateStatus('Gotowe');
