@@ -12,6 +12,7 @@ class PreferencesHandler {
     public static function getDefaults() {
         return [
             'selectedAlarmDeviceId' => '',
+            'alarmType' => 'high',
             'dwellTimeMs' => 2000,
             'dwellEnabled' => true,
             'telegramEnabled' => false,
@@ -53,6 +54,10 @@ class PreferencesHandler {
 
         if (isset($input['selectedAlarmDeviceId'])) {
             $preferences['selectedAlarmDeviceId'] = $input['selectedAlarmDeviceId'];
+        }
+
+        if (isset($input['alarmType'])) {
+            $preferences['alarmType'] = $input['alarmType'];
         }
 
         if (isset($input['dwellTimeMs'])) {

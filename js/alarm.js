@@ -2,13 +2,25 @@
 // ALARM — audio generation and playback
 // ============================================
 import {showToast, updateStatus} from './utils.js';
-import {loadAlarmDevicePreference, saveAlarmDevicePreference} from './api.js';
+import {loadAlarmDevicePreference, saveAlarmDevicePreference, loadAlarmTypePreference, saveAlarmTypePreference} from './api.js';
+
+/**
+ * Available alarm sound profiles.
+ * Each entry: { label, freqA, freqB, beep?, pause?, oscType? }
+ * Special type 'siren' uses a frequency sweep instead of alternating tones.
+ */
+export const ALARM_PROFILES = {
+    'high':  { label: '🔔 Wysokie tony (900 / 750 Hz)',    freqA: 900, freqB: 750, beep: 0.2, pause: 0.1, oscType: 'square' },
+    'mid':   { label: '🎵 Średnie tony (500 / 400 Hz)',    freqA: 500, freqB: 400, beep: 0.25, pause: 0.1, oscType: 'square' },
+    'low':   { label: '🔊 Niskie tony (220 / 160 Hz)',     freqA: 220, freqB: 160, beep: 0.3, pause: 0.15, oscType: 'square' },
+    'siren': { label: '🚨 Syrena (150 → 800 Hz sweep)',    type: 'siren' },
+};
 
 /** Convert an AudioBuffer to a WAV Blob */
 function audioBufferToWav(buf) {
     const numCh = buf.numberOfChannels;
     const sr = buf.sampleRate;
-    const blockAlign = numCh * 2;                   // 16-bit
+    const blockAlign = numCh * 2;
     const dataLen = buf.length * blockAlign;
     const ab = new ArrayBuffer(44 + dataLen);
     const view = new DataView(ab);
@@ -42,30 +54,56 @@ function audioBufferToWav(buf) {
     return new Blob([ab], {type: 'audio/wav'});
 }
 
-/** Generate a 6-second beeping alarm sound as a WAV Blob */
-function generateAlarmAudioBlob() {
+/**
+ * Generate alarm sound with configurable duration (useful for testing)
+ * @param {string} profileKey - key from ALARM_PROFILES (default: 'high')
+ * @param {number} duration - duration in seconds (default: 6)
+ */
+function generateAlarmAudioBlob(profileKey = 'high', duration = 6) {
     return new Promise((resolve, reject) => {
         try {
-            const AC = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AC();
-            const offline = new OfflineAudioContext(1, ctx.sampleRate * 6, ctx.sampleRate);
+            const SAMPLE_RATE = 44100;
+            const offline = new OfflineAudioContext(1, SAMPLE_RATE * duration, SAMPLE_RATE);
             const osc = offline.createOscillator();
             const gain = offline.createGain();
             osc.connect(gain);
             gain.connect(offline.destination);
 
-            let t = 0, high = true;
-            const BEEP = 0.2, PAUSE = 0.1, TOTAL = 6;
-            while (t < TOTAL) {
-                osc.frequency.setValueAtTime(high ? 900 : 750, t);
-                gain.gain.setValueAtTime(0.6, t);
-                gain.gain.setValueAtTime(0.01, t + BEEP);
-                t += BEEP + PAUSE;
-                high = !high;
+            const profile = ALARM_PROFILES[profileKey] || ALARM_PROFILES['high'];
+
+            if (profile.type === 'siren') {
+                // Sweeping siren: low → high → low, repeated
+                osc.type = 'sawtooth';
+                const SWEEP = 0.75; // seconds per half-sweep
+                let t = 0;
+                while (t < duration) {
+                    osc.frequency.setValueAtTime(150, t);
+                    osc.frequency.linearRampToValueAtTime(800, t + SWEEP);
+                    gain.gain.setValueAtTime(0.5, t);
+                    t += SWEEP;
+                    if (t < duration) {
+                        osc.frequency.linearRampToValueAtTime(150, t + SWEEP);
+                        gain.gain.setValueAtTime(0.5, t);
+                        t += SWEEP;
+                    }
+                }
+            } else {
+                // Alternating two-tone beep pattern
+                const {freqA, freqB, beep = 0.2, pause = 0.1, oscType = 'square'} = profile;
+                osc.type = oscType;
+                let t = 0, high = true;
+                while (t < duration) {
+                    osc.frequency.setValueAtTime(high ? freqA : freqB, t);
+                    gain.gain.setValueAtTime(0.6, t);
+                    gain.gain.setValueAtTime(0.01, t + beep);
+                    t += beep + pause;
+                    high = !high;
+                }
             }
-            gain.gain.setValueAtTime(0.0, TOTAL);
+
+            gain.gain.setValueAtTime(0.0, duration);
             osc.start(0);
-            osc.stop(TOTAL);
+            osc.stop(duration);
 
             offline.startRendering().then(b => resolve(audioBufferToWav(b))).catch(reject);
         } catch (err) {
@@ -82,9 +120,12 @@ export async function playAlarm() {
     showToast('🚨 ALARM - Osoba potrzebuje wsparcia!', 'warning');
     updateStatus('ALARM!');
 
+    // Load selected alarm type preference
+    const alarmType = await loadAlarmTypePreference();
+
     let blob;
     try {
-        blob = await generateAlarmAudioBlob();
+        blob = await generateAlarmAudioBlob(alarmType);
     } catch (err) {
         console.error('Failed to generate alarm audio:', err);
         showToast('Błąd generowania alarmu', 'error');
@@ -127,6 +168,39 @@ export async function playAlarm() {
     URL.revokeObjectURL(url);
 }
 
+/** Test the currently selected alarm sound (shorter duration) */
+async function testAlarmSound(profileKey = 'high') {
+    const alarmAudio = document.getElementById('alarm-audio');
+
+    let blob;
+    try {
+        blob = await generateAlarmAudioBlob(profileKey, 2); // 2-second test
+    } catch (err) {
+        console.error('Failed to generate test alarm:', err);
+        showToast('Błąd generowania dźwięku testowego', 'error');
+        return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    alarmAudio.src = url;
+    alarmAudio.volume = 1.0;
+
+    try {
+        await alarmAudio.play();
+    } catch (err) {
+        console.error('Failed to play test alarm:', err);
+        showToast('Błąd odtwarzania dźwięku', 'error');
+        URL.revokeObjectURL(url);
+        return;
+    }
+
+    await new Promise(resolve => {
+        alarmAudio.onended = resolve;
+        setTimeout(resolve, 3000);
+    });
+
+    URL.revokeObjectURL(url);
+}
 
 /**
  * Request microphone permission so the browser exposes all audio device labels,
@@ -179,4 +253,48 @@ export async function initializeAlarmDeviceSelector(alarmSelect) {
     if (outputs.length === 0) showToast('❌ Brak dostępnych urządzeń audio', 'error');
     else if (outputs.length === 1) showToast('📱 Jedno urządzenie audio dostępne', 'info');
     else showToast(`✅ ${outputs.length} urządzeń audio dostępnych`, 'success');
+}
+
+/** Populate #alarm-type-select with available alarm profiles and wire up persistence */
+export async function initializeAlarmTypeSelector(typeSelect) {
+    if (!typeSelect) return;
+
+    // Build options from ALARM_PROFILES
+    typeSelect.innerHTML = '';
+    Object.entries(ALARM_PROFILES).forEach(([key, profile]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = profile.label;
+        typeSelect.appendChild(opt);
+    });
+
+    // Load saved preference
+    const saved = await loadAlarmTypePreference();
+    if (saved && ALARM_PROFILES[saved]) typeSelect.value = saved;
+
+    typeSelect.addEventListener('change', async (e) => {
+        const key = e.target.value;
+        await saveAlarmTypePreference(key);
+        const label = ALARM_PROFILES[key]?.label || key;
+        showToast(`🔔 Rodzaj alarmu: ${label}`, 'info');
+    });
+
+    // Wire up test button
+    const testBtn = document.getElementById('test-alarm-sound-btn');
+    if (testBtn) {
+        testBtn.addEventListener('click', async () => {
+            const selectedType = typeSelect.value || 'high';
+            testBtn.disabled = true;
+            testBtn.textContent = '🔄 Testowanie...';
+            try {
+                await testAlarmSound(selectedType);
+            } catch (err) {
+                console.error('Test failed:', err);
+                showToast('Błąd podczas testowania alarmu', 'error');
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '🔊 Testuj';
+            }
+        });
+    }
 }

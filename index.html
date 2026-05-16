@@ -119,45 +119,70 @@
 
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
-                    <div class="form-group">
-                        <label for="alarm-output-select">Urządzenie dla alarmu:</label>
-                        <select id="alarm-output-select">
-                            <option value="">Domyślne</option>
-                        </select>
-                        <small style="color: #999; margin-top: 8px; display: block;">
-                            Alarm zawsze będzie grał na wybranym urządzeniu, niezależnie od ustawień systemowych.
-                        </small>
+                    <!-- Alarm Settings (Orange section) -->
+                    <div class="settings-section-alarm" style="border-left: 4px solid #ff9800; background: #fff; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px; color: #333; font-size: 16px;">🔔 Ustawienia alarmu</h3>
+
+                        <div class="form-group">
+                            <label for="alarm-type-select">Rodzaj dźwięku alarmu:</label>
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <select id="alarm-type-select" style="flex: 1;">
+                                    <!-- Populated by JavaScript from ALARM_PROFILES -->
+                                </select>
+                                <button id="test-alarm-sound-btn" class="btn-secondary" style="padding: 8px 16px; white-space: nowrap; margin-top: 0;">🔊 Testuj</button>
+                            </div>
+                            <small style="color: #999; margin-top: 8px; display: block;">
+                                Wybierz rodzaj dźwięku dostosowany do potrzeb słuchowych użytkownika.
+                                Niskie tony są lepiej słyszalne przez osoby z utratą słuchu na wysokich cz��stotliwościach.
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alarm-output-select">Urządzenie dla alarmu:</label>
+                            <select id="alarm-output-select">
+                                <option value="">Domyślne</option>
+                            </select>
+                            <small style="color: #999; margin-top: 8px; display: block;">
+                                Alarm zawsze będzie grał na wybranym urządzeniu, niezależnie od ustawień systemowych.
+                            </small>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                         <label style="display: flex; align-items: center; gap: 8px;">
-                             <input type="checkbox" id="dwell-enabled-toggle">
-                             <span>Włącz patrzenie na przycisk (Dwell Time)</span>
-                         </label>
-                         <small style="color: #999; margin-top: 8px; display: block;">
-                             Gdy włączysz, przycisk będzie automatycznie aktywowany po patrzeniu nań przez wskazany czas.
-                         </small>
-                     </div>
+                    <!-- Dwell Time Settings (Blue section) -->
+                    <div class="settings-section-dwell" style="border-left: 4px solid #2196f3; background: #fff; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
+                        <h3 style="margin: 0 0 15px; color: #333; font-size: 16px;">👁️ Patrzenie na przycisk (Dwell Time)</h3>
 
-                     <div class="form-group" id="dwell-time-settings" style="display: none;">
-                         <label for="dwell-time-slider">Czas patrzenia na przycisk (Dwell Time):</label>
-                         <div style="display: flex; gap: 10px; align-items: center;">
-                             <input type="range" id="dwell-time-slider" min="500" max="5000" step="100" value="2000"
-                                    style="flex: 1;">
-                             <span id="dwell-time-display" style="min-width: 50px; text-align: right;">2.0s</span>
+                        <div class="form-group">
+                             <label style="display: flex; align-items: center; gap: 8px;">
+                                 <input type="checkbox" id="dwell-enabled-toggle">
+                                 <span>Włącz patrzenie na przycisk (Dwell Time)</span>
+                             </label>
+                             <small style="color: #999; margin-top: 8px; display: block;">
+                                 Gdy włączysz, przycisk będzie automatycznie aktywowany po patrzeniu nań przez wskazany czas.
+                             </small>
                          </div>
-                         <small style="color: #28a745; margin-top: 8px; display: block; font-weight: 600;">
-                             ✓ Zmiany są zapisywane automatycznie
-                         </small>
-                         <small style="color: #999; margin-top: 8px; display: block;">
-                             Przycisk zostanie automatycznie aktywowany po patrzeniu na niego przez wskazany czas.
-                             <br>
-                             Gdy odsuniesz kursor - licznik zresetuje się.
-                         </small>
-                     </div>
 
-                      <!-- Telegram Integration -->
-                      <div class="form-group">
+                         <div class="form-group" id="dwell-time-settings" style="display: none;">
+                             <label for="dwell-time-slider">Czas patrzenia na przycisk (Dwell Time):</label>
+                             <div style="display: flex; gap: 10px; align-items: center;">
+                                 <input type="range" id="dwell-time-slider" min="500" max="5000" step="100" value="2000"
+                                        style="flex: 1;">
+                                 <span id="dwell-time-display" style="min-width: 50px; text-align: right;">2.0s</span>
+                             </div>
+                             <small style="color: #28a745; margin-top: 8px; display: block; font-weight: 600;">
+                                 ✓ Zmiany są zapisywane automatycznie
+                             </small>
+                             <small style="color: #999; margin-top: 8px; display: block;">
+                                 Przycisk zostanie automatycznie aktywowany po patrzeniu na niego przez wskazany czas.
+                                 <br>
+                                 Gdy odsuniesz kursor - licznik zresetuje się.
+                             </small>
+                         </div>
+                    </div>
+
+                    <!-- Telegram Integration -->
+                    <div class="settings-section-telegram" style="border-left: 4px solid #4caf50; background: #fff; padding: 20px; border-radius: 6px;">
+                       <div class="form-group">
                           <label style="display: flex; align-items: center; gap: 8px;">
                               <input type="checkbox" id="telegram-toggle">
                               <span>Włącz wysyłanie wiadomości na Telegram</span>
@@ -203,10 +228,11 @@
                               <button id="telegram-test-btn" class="btn-secondary" style="width: 100%; padding: 10px;">
                                   Testuj połączenie
                               </button>
-                              <div id="telegram-status"
-                                   style="margin-top: 8px; font-size: 13px; text-align: center; min-height: 20px;"></div>
-                          </div>
-                      </div>
+                               <div id="telegram-status"
+                                    style="margin-top: 8px; font-size: 13px; text-align: center; min-height: 20px;"></div>
+                           </div>
+                       </div>
+                    </div>
                 </div>
             </div>
 

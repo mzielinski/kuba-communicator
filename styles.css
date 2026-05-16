@@ -855,20 +855,29 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Alarm section styling */
-#settings-tab > .form-group:first-of-type {
-    border-left: 4px solid #ff9800;
+/* Settings section containers */
+#settings-tab > .settings-section-alarm,
+#settings-tab > .settings-section-dwell,
+#settings-tab > .settings-section-telegram {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 }
 
-/* Dwell time section styling - includes dwell-enabled-toggle and dwell-time-settings */
-#settings-tab > .form-group:nth-of-type(2),
-#settings-tab > .form-group:nth-of-type(3) {
-    border-left: 4px solid #2196F3;
+#settings-tab > .settings-section-alarm:hover,
+#settings-tab > .settings-section-dwell:hover,
+#settings-tab > .settings-section-telegram:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Telegram section styling */
-#settings-tab > .form-group:nth-of-type(4) {
-    border-left: 4px solid #00BCD4;
+/* Nested form-groups inside sections */
+.settings-section-alarm > .form-group,
+.settings-section-dwell > .form-group,
+.settings-section-telegram > .form-group {
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .form-group input,

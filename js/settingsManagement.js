@@ -5,7 +5,7 @@ import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
 import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference} from './api.js';
-import {initializeAlarmDeviceSelector} from './alarm.js';
+import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
 export function initializeSettingsManagement() {
@@ -529,8 +529,10 @@ export function initializeSettingsManagement() {
     const dwellDisplay = document.getElementById('dwell-time-display');
     const dwellSettings = document.getElementById('dwell-time-settings');
     const alarmSel = document.getElementById('alarm-output-select');
+    const alarmTypeSel = document.getElementById('alarm-type-select');
 
     initializeAlarmDeviceSelector(alarmSel);
+    initializeAlarmTypeSelector(alarmTypeSel);
 
     // Initialize dwell toggle
     if (dwellToggle) {

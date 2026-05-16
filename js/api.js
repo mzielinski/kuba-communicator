@@ -107,6 +107,23 @@ export async function saveAlarmDevicePreference(deviceId) {
     } catch { return false; }
 }
 
+export async function loadAlarmTypePreference() {
+    try { return (await loadPreferences()).alarmType || 'high'; }
+    catch { return 'high'; }
+}
+
+export async function saveAlarmTypePreference(alarmType) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ alarmType }),
+        });
+        const result = await r.json();
+        return result.success === true;
+    } catch { return false; }
+}
+
 // ── Telegram ──────────────────────────────────────────────────────────────────
 
 export async function loadTelegramConfig() {
