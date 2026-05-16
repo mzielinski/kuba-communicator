@@ -4,7 +4,8 @@
 import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference} from './api.js';
+import {t, applyTranslations} from './i18n.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference, saveLanguagePreference} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -29,7 +30,7 @@ export async function initializeSettingsManagement() {
 
     function populateWordsCatSelect() {
         const prev = wordsCatSel.value;
-        wordsCatSel.innerHTML = '<option value="">-- Wybierz kategorię --</option>';
+        wordsCatSel.innerHTML = `<option value="">${t('optionSelectCategory')}</option>`;
         sortedCategories().forEach(([name]) => {
             const opt = document.createElement('option');
             opt.value = name;
@@ -87,7 +88,7 @@ export async function initializeSettingsManagement() {
     });
 
     catSelect.addEventListener('change', () => {
-        posSelect.innerHTML = '<option value="">-- Wybierz pozycję --</option>';
+        posSelect.innerHTML = `<option value="">-- ${t('optionSelectCategory')} --</option>`;
         const cat = catSelect.value;
         if (!cat) return;
         const words = state.categories[cat].words;
@@ -127,22 +128,21 @@ export async function initializeSettingsManagement() {
 
     const closeWithReload = async () => {
         const ok = await showConfirmDialog(
-            '\u26A0\uFE0F Odrzuć zmiany',
-            'Czy na pewno chcesz zamknąć bez zapisywania? Wszystkie zmiany zostaną stracone.',
-            'Odrzuć', 'Kontynuuj edycję'
+            t('confirmDiscardTitle'),
+            t('confirmDiscardMsg'),
+            t('confirmDiscardOk'),
+            t('confirmDiscardCancel'),
         );
         if (!ok) return;
         const data = await loadWordList();
         state.categories = data.categories;
 
-        // Reload all preferences from file
         state.dwellTimeMs = await loadDwellTimePreference();
         state.dwellEnabled = await loadDwellEnabledPreference();
         state.darkModeEnabled = await loadDarkModePreference();
         const savedAlarmDuration = await loadAlarmDurationPreference();
         state.alarmDuration = savedAlarmDuration;
 
-        // Update UI to match saved state
         dwellToggle.checked = state.dwellEnabled;
         dwellSlider.value = state.dwellTimeMs;
         dwellDisplay.textContent = (state.dwellTimeMs / 1000).toFixed(1) + 's';
@@ -166,7 +166,7 @@ export async function initializeSettingsManagement() {
         renderCategoryGrid();
         renderCategoriesManagement();
         closeModal();
-        showToast('\u274C Zmiany odrzucone, załadowano dane z pliku', 'warning');
+        showToast(t('changesDiscarded'), 'warning');
     };
 
     closeBtn.addEventListener('click', closeModal);
@@ -182,11 +182,13 @@ export async function initializeSettingsManagement() {
             await saveDwellEnabledPreference(state.dwellEnabled);
             await saveAlarmDurationPreference(state.alarmDuration || 6);
             await saveDarkModePreference(state.darkModeEnabled);
+            await saveLanguagePreference(state.language);
+            applyTranslations();
             renderCategoryGrid();
-            showToast('\u2705 Wszystkie zmiany zapisane!', 'success');
+            showToast(t('allChangesSaved'), 'success');
             closeModal();
         } catch (err) {
-            showToast('Błąd przy zapisywaniu zmian', 'error');
+            showToast(t('errorSavingChanges'), 'error');
         }
     });
 
@@ -198,7 +200,7 @@ export async function initializeSettingsManagement() {
         const cat = state.selectedWordsCategory;
 
         if (!cat || !state.categories[cat]) {
-            wordsListEl.innerHTML = '<p style="color:#999;text-align:center;padding:20px 0;margin:0;">Wybierz kategorię aby zobaczyć słowa</p>';
+            wordsListEl.innerHTML = `<p style="color:#999;text-align:center;padding:20px 0;margin:0;">${t('emptySelectCategory')}</p>`;
             if (addForm) addForm.style.display = 'none';
             return;
         }
@@ -206,7 +208,7 @@ export async function initializeSettingsManagement() {
 
         const {words} = state.categories[cat];
         if (words.length === 0) {
-            wordsListEl.innerHTML = '<p style="color:#999;text-align:center;padding:20px 0;margin:0;">Brak słów w tej kategorii.</p>';
+            wordsListEl.innerHTML = `<p style="color:#999;text-align:center;padding:20px 0;margin:0;">${t('emptyWordsInCategory')}</p>`;
             return;
         }
 
@@ -215,9 +217,10 @@ export async function initializeSettingsManagement() {
             item.style.cssText = `background:white;padding:10px;margin:6px 0;border-radius:6px;border-left:4px solid ${word.color || '#667eea'};display:flex;justify-content:space-between;align-items:center;`;
 
             const info = document.createElement('div');
+            const sizeLabel = word.size ? t('wordSize', { item: word.size }) : t('wordSizeDefault');
             info.innerHTML = `
                 <div style="font-weight:600;color:#333;font-size:14px;">${word.text}</div>
-                <div style="font-size:12px;color:#999;margin-top:3px;">${word.size ? 'Rozmiar: ' + word.size : 'Rozmiar: domyślny'}${word.color ? ' | \u{1F3A8} ' + word.color : ''}</div>
+                <div style="font-size:12px;color:#999;margin-top:3px;">${sizeLabel}${word.color ? ' | 🎨 ' + word.color : ''}</div>
             `;
 
             const btnWrap = document.createElement('div');
@@ -226,46 +229,51 @@ export async function initializeSettingsManagement() {
             const bs = (bg, dis = false) => `padding:6px 10px;background:${bg};color:white;border:none;border-radius:4px;cursor:${dis ? 'default' : 'pointer'};font-size:12px;${dis ? 'opacity:0.5;' : ''}`;
 
             const upBtn = document.createElement('button');
-            upBtn.textContent = '\u2191';
-            upBtn.title = 'Przesuń wyżej';
+            upBtn.textContent = '↑';
+            upBtn.title = t('btnMoveUp');
             upBtn.disabled = idx === 0;
             upBtn.style.cssText = bs('#28a745', idx === 0);
             upBtn.addEventListener('click', () => {
                 [words[idx - 1], words[idx]] = [words[idx], words[idx - 1]];
                 renderCategoryGrid();
                 renderWordsList();
-                showToast('Słowo przesunięte w górę', 'success');
+                showToast(t('wordMoveUp'), 'success');
             });
 
             const downBtn = document.createElement('button');
-            downBtn.textContent = '\u2193';
-            downBtn.title = 'Przesuń niżej';
+            downBtn.textContent = '↓';
+            downBtn.title = t('btnMoveDown');
             downBtn.disabled = idx === words.length - 1;
             downBtn.style.cssText = bs('#28a745', idx === words.length - 1);
             downBtn.addEventListener('click', () => {
                 [words[idx + 1], words[idx]] = [words[idx], words[idx + 1]];
                 renderCategoryGrid();
                 renderWordsList();
-                showToast('Słowo przesunięte w dół', 'success');
+                showToast(t('wordMoveDown'), 'success');
             });
 
             const editBtn = document.createElement('button');
-            editBtn.textContent = '\u270F\uFE0F';
-            editBtn.title = 'Edytuj';
+            editBtn.textContent = '✏️';
+            editBtn.title = t('btnSave');
             editBtn.style.cssText = bs('#667eea');
             editBtn.addEventListener('click', () => openEditWordDialog(cat, idx));
 
             const delBtn = document.createElement('button');
-            delBtn.textContent = '\u{1F5D1}\uFE0F';
-            delBtn.title = 'Usuń';
+            delBtn.textContent = '🗑️';
+            delBtn.title = t('confirmDeleteOk');
             delBtn.style.cssText = bs('#ff6464');
             delBtn.addEventListener('click', async () => {
-                const ok = await showConfirmDialog('\u{1F5D1}\uFE0F Usuń słowo', `Czy usunąć "${word.text}"?`, 'Usuń', 'Anuluj');
+                const ok = await showConfirmDialog(
+                    t('confirmDeleteWordTitle'),
+                    t('confirmDeleteWordMsg', { item: word.text }),
+                    t('confirmDeleteOk'),
+                    t('confirmDeleteCancel'),
+                );
                 if (ok) {
                     state.categories[cat].words.splice(idx, 1);
                     renderCategoryGrid();
                     renderWordsList();
-                    showToast(`"${word.text}" usunięte!`, 'success');
+                    showToast(t('wordDeleted', { item: word.text }), 'success');
                 }
             });
 
@@ -284,22 +292,22 @@ export async function initializeSettingsManagement() {
         container.id = 'edit-word-dialog-container';
         container.innerHTML = `
             <div class="dialog-container">
-                <h3>✏️ Edytuj słowo</h3>
+                <h3>${t('editWordTitle')}</h3>
                 <div class="dialog-group">
-                    <label>Tekst słowa:</label>
+                    <label>${t('labelWordText')}</label>
                     <input type="text" id="popup-word-text" value="${word.text.replace(/"/g, '&quot;')}">
                 </div>
                 <div class="dialog-group">
-                    <label>Kolor:</label>
+                    <label>${t('labelColor')}</label>
                     <input type="color" id="popup-word-color" value="${word.color || '#667eea'}">
                 </div>
                 <div class="dialog-group">
-                    <label>Rozmiar fontu (px):</label>
-                    <input type="number" id="popup-word-size" value="${word.size ? parseInt(word.size) : ''}" placeholder="domyślny (30px)" min="8" max="200">
+                    <label>${t('labelFontSize')}</label>
+                    <input type="number" id="popup-word-size" value="${word.size ? parseInt(word.size) : ''}" placeholder="${t('placeholderFontSize')}" min="8" max="200">
                 </div>
                 <div class="dialog-buttons">
-                    <button id="popup-save-word" class="btn-primary" style="flex:1;padding:10px;">Zapisz</button>
-                    <button id="popup-cancel-word" class="btn-secondary" style="flex:1;padding:10px;">Anuluj</button>
+                    <button id="popup-save-word" class="btn-primary" style="flex:1;padding:10px;">${t('btnSave')}</button>
+                    <button id="popup-cancel-word" class="btn-secondary" style="flex:1;padding:10px;">${t('btnCancel')}</button>
                 </div>
             </div>
             <div id="edit-word-backdrop" class="dialog-backdrop"></div>
@@ -311,7 +319,7 @@ export async function initializeSettingsManagement() {
             const w = state.categories[c].words[i];
             const newText = document.getElementById('popup-word-text').value.trim();
             if (!newText) {
-                showToast('Tekst nie może być pusty', 'error');
+                showToast(t('errorTextEmpty'), 'error');
                 return;
             }
             w.text = newText;
@@ -322,7 +330,7 @@ export async function initializeSettingsManagement() {
             renderWordsList();
             container.remove();
             state.editingWord = null;
-            showToast(`"${newText}" zaktualizowane!`, 'success');
+            showToast(t('wordUpdated', { item: newText }), 'success');
         });
 
         const closeDialog = () => {
@@ -340,11 +348,11 @@ export async function initializeSettingsManagement() {
         const cat = state.selectedWordsCategory;
         const text = document.getElementById('word-text-input').value.trim();
         if (!cat) {
-            showToast('Proszę wybrać kategorię', 'error');
+            showToast(t('errorSelectCategory'), 'error');
             return;
         }
         if (!text) {
-            showToast('Proszę wprowadzić tekst słowa', 'error');
+            showToast(t('errorEnterWordText'), 'error');
             return;
         }
         state.categories[cat].words.push({id: generateIdFromText(text), text});
@@ -353,7 +361,7 @@ export async function initializeSettingsManagement() {
         const input = document.getElementById('word-text-input');
         input.value = '';
         input.focus();
-        showToast(`"${text}" dodane!`, 'success');
+        showToast(t('wordAdded', { item: text }), 'success');
     });
 
     document.getElementById('word-text-input').addEventListener('keydown', (e) => {
@@ -374,7 +382,7 @@ export async function initializeSettingsManagement() {
         const cats = sortedCategories();
 
         if (cats.length === 0) {
-            catListEl.innerHTML = '<p style="color:#999;text-align:center;padding:20px 0;">Brak kategorii</p>';
+            catListEl.innerHTML = `<p style="color:#999;text-align:center;padding:20px 0;">${t('emptyCategories')}</p>`;
             return;
         }
 
@@ -386,7 +394,7 @@ export async function initializeSettingsManagement() {
             const info = document.createElement('div');
             info.innerHTML = `
                 <div style="font-weight:600;color:#333;font-size:14px;">${name}</div>
-                <div style="font-size:12px;color:#999;margin-top:4px;">${data.words.length} słów | Rozmiar: ${data.size}</div>
+                <div style="font-size:12px;color:#999;margin-top:4px;">${t('catWordCount', { count: data.words.length, size: data.size })}</div>
             `;
 
             const btnWrap = document.createElement('div');
@@ -396,24 +404,24 @@ export async function initializeSettingsManagement() {
             const first = idx === 0, last = idx === cats.length - 1;
 
             const upBtn = document.createElement('button');
-            upBtn.textContent = '\u2191';
+            upBtn.textContent = '↑';
             upBtn.disabled = first;
             upBtn.style.cssText = bs('#28a745', first);
             upBtn.addEventListener('click', () => moveCatUp(name));
 
             const downBtn = document.createElement('button');
-            downBtn.textContent = '\u2193';
+            downBtn.textContent = '↓';
             downBtn.disabled = last;
             downBtn.style.cssText = bs('#28a745', last);
             downBtn.addEventListener('click', () => moveCatDown(name));
 
             const editBtn = document.createElement('button');
-            editBtn.textContent = '\u270F\uFE0F';
+            editBtn.textContent = '✏️';
             editBtn.style.cssText = bs('#667eea');
             editBtn.addEventListener('click', () => openEditCategoryDialog(name, data));
 
             const delBtn = document.createElement('button');
-            delBtn.textContent = '\u{1F5D1}\uFE0F';
+            delBtn.textContent = '🗑️';
             delBtn.style.cssText = bs('#ff6464');
             delBtn.addEventListener('click', () => deleteCat(name));
 
@@ -427,11 +435,11 @@ export async function initializeSettingsManagement() {
     addCatBtn.addEventListener('click', () => {
         const name = catNameInput.value.trim();
         if (!name) {
-            showToast('Wpisz nazwę kategorii', 'error');
+            showToast(t('errorCatNameEmpty'), 'error');
             return;
         }
         if (state.categories[name]) {
-            showToast('Kategoria już istnieje', 'error');
+            showToast(t('errorCatExists'), 'error');
             return;
         }
         state.categories[name] = {
@@ -446,45 +454,50 @@ export async function initializeSettingsManagement() {
         renderCategoriesManagement();
         updateCatSelect();
         catNameInput.value = '';
-        showToast(`\u2705 Kategoria "${name}" dodana!`, 'success');
+        showToast(t('catAdded', { item: name }), 'success');
     });
 
     function moveCatUp(name) {
         const entries = sortedCategories();
         const idx = entries.findIndex(([n]) => n === name);
         if (idx <= 0) {
-            showToast('Kategoria jest już na górze', 'error');
+            showToast(t('catMoveUpAlready'), 'error');
             return;
         }
         const prev = entries[idx - 1];
         [state.categories[name].order, state.categories[prev[0]].order] = [state.categories[prev[0]].order, state.categories[name].order];
         renderCategoryGrid();
         renderCategoriesManagement();
-        showToast('Kategoria przesunięta w górę', 'success');
+        showToast(t('catMoveUp'), 'success');
     }
 
     function moveCatDown(name) {
         const entries = sortedCategories();
         const idx = entries.findIndex(([n]) => n === name);
         if (idx >= entries.length - 1) {
-            showToast('Kategoria jest już na dole', 'error');
+            showToast(t('catMoveDownAlready'), 'error');
             return;
         }
         const next = entries[idx + 1];
         [state.categories[name].order, state.categories[next[0]].order] = [state.categories[next[0]].order, state.categories[name].order];
         renderCategoryGrid();
         renderCategoriesManagement();
-        showToast('Kategoria przesunięta w dół', 'success');
+        showToast(t('catMoveDown'), 'success');
     }
 
     async function deleteCat(name) {
-        const ok = await showConfirmDialog('\u{1F5D1}\uFE0F Usuń kategorię', `Usunąć kategorię "${name}" ze wszystkimi słowami?`, 'Usuń', 'Anuluj');
+        const ok = await showConfirmDialog(
+            t('confirmDeleteCatTitle'),
+            t('confirmDeleteCatMsg', { item: name }),
+            t('confirmDeleteOk'),
+            t('confirmDeleteCancel'),
+        );
         if (!ok) return;
         delete state.categories[name];
         renderCategoryGrid();
         renderCategoriesManagement();
         updateCatSelect();
-        showToast(`\u2705 Kategoria "${name}" usunięta!`, 'success');
+        showToast(t('catDeleted', { item: name }), 'success');
     }
 
     function openEditCategoryDialog(catName, catData) {
@@ -492,28 +505,28 @@ export async function initializeSettingsManagement() {
         container.id = 'edit-category-dialog-container';
         container.innerHTML = `
             <div class="dialog-container">
-                <h3>Edytuj kategorię: ${catName}</h3>
+                <h3>${t('editCatTitle', { item: catName })}</h3>
                 <div class="dialog-group">
-                    <label>Nazwa kategorii:</label>
+                    <label>${t('labelCatName')}</label>
                     <input type="text" id="edit-cat-name" value="${catName}">
                 </div>
                 <div class="dialog-group">
-                    <label>Rozmiar wyświetlania:</label>
+                    <label>${t('labelDisplaySize')}</label>
                     <select id="edit-cat-size">
-                        <option value="small" ${catData.size === 'small' ? 'selected' : ''}>Mały (small)</option>
-                        <option value="medium" ${catData.size === 'medium' ? 'selected' : ''}>Średni (medium)</option>
-                        <option value="large" ${catData.size === 'large' ? 'selected' : ''}>Duży (large)</option>
+                        <option value="small" ${catData.size === 'small' ? 'selected' : ''}>${t('sizeSmall')}</option>
+                        <option value="medium" ${catData.size === 'medium' ? 'selected' : ''}>${t('sizeMedium')}</option>
+                        <option value="large" ${catData.size === 'large' ? 'selected' : ''}>${t('sizeLarge')}</option>
                     </select>
                 </div>
                 <div class="dialog-group">
                     <label style="display:flex;align-items:center;gap:8px;">
                         <input type="checkbox" id="edit-cat-expand" ${catData.expand ? 'checked' : ''}>
-                        <span>Rozwijalna kategoria (otwiera osobny widok)</span>
+                        <span>${t('labelExpandable')}</span>
                     </label>
                 </div>
                 <div class="dialog-buttons">
-                    <button id="save-edit-cat-btn" class="btn-primary" style="flex:1;padding:10px;">Zapisz</button>
-                    <button id="cancel-edit-cat-btn" class="btn-secondary" style="flex:1;padding:10px;">Anuluj</button>
+                    <button id="save-edit-cat-btn" class="btn-primary" style="flex:1;padding:10px;">${t('btnSave')}</button>
+                    <button id="cancel-edit-cat-btn" class="btn-secondary" style="flex:1;padding:10px;">${t('btnCancel')}</button>
                 </div>
             </div>
             <div id="edit-cat-backdrop" class="dialog-backdrop"></div>
@@ -526,11 +539,11 @@ export async function initializeSettingsManagement() {
             const newSize = document.getElementById('edit-cat-size').value;
             const newExpand = document.getElementById('edit-cat-expand').checked;
             if (!newName) {
-                showToast('Nazwa nie może być pusta', 'error');
+                showToast(t('errorCatNameEmptyEdit'), 'error');
                 return;
             }
             if (newName !== catName && state.categories[newName]) {
-                showToast('Kategoria z taką nazwą już istnieje', 'error');
+                showToast(t('errorCatNameExistsEdit'), 'error');
                 return;
             }
             if (newName !== catName) {
@@ -543,7 +556,7 @@ export async function initializeSettingsManagement() {
             renderCategoriesManagement();
             updateCatSelect();
             close();
-            showToast(`\u2705 Kategoria "${newName}" zaktualizowana!`, 'success');
+            showToast(t('catUpdated', { item: newName }), 'success');
         });
         document.getElementById('cancel-edit-cat-btn').addEventListener('click', close);
         document.getElementById('edit-cat-backdrop').addEventListener('click', close);
@@ -567,18 +580,12 @@ export async function initializeSettingsManagement() {
     initializeAlarmDeviceSelector(alarmSel);
     initializeAlarmTypeSelector(alarmTypeSel);
 
-     // Initialize dwell toggle
     if (dwellToggle) {
         dwellToggle.checked = state.dwellEnabled;
-
-        // Show/hide dwell time settings based on dwell enabled state
         const updateDwellSettingsVisibility = () => {
-            if (dwellSettings) {
-                dwellSettings.style.display = dwellToggle.checked ? 'block' : 'none';
-            }
+            if (dwellSettings) dwellSettings.style.display = dwellToggle.checked ? 'block' : 'none';
         };
         updateDwellSettingsVisibility();
-
         dwellToggle.addEventListener('change', (e) => {
             state.dwellEnabled = e.target.checked;
             updateDwellSettingsVisibility();
@@ -600,17 +607,15 @@ export async function initializeSettingsManagement() {
         updateGrad();
     });
 
-    // ── Alarm duration settings ────────────────────────────────────────────────
+    // ── Alarm duration ─────────────────────────────────────────────────────────
     const alarmDurationSlider = document.getElementById('alarm-duration-slider');
     const alarmDurationDisplay = document.getElementById('alarm-duration-display');
 
     if (alarmDurationSlider) {
-        // Load and initialize alarm duration
         const savedDuration = await loadAlarmDurationPreference();
         alarmDurationSlider.value = savedDuration;
         alarmDurationDisplay.textContent = savedDuration + 's';
 
-        // Update gradient for alarm duration slider
         const updateAlarmGrad = () => {
             const pct = (alarmDurationSlider.value - alarmDurationSlider.min) / (alarmDurationSlider.max - alarmDurationSlider.min) * 100;
             alarmDurationSlider.style.background = `linear-gradient(to right,#ff9800 0%,#ff9800 ${pct}%,#e0e0e0 ${pct}%,#e0e0e0 100%)`;
@@ -624,18 +629,13 @@ export async function initializeSettingsManagement() {
         });
     }
 
-    // ── Dark Mode Settings ─────────────────────────────────────────────────────
-
+    // ── Dark Mode ──────────────────────────────────────────────────────────────
     const darkModeToggle = document.getElementById('dark-mode-toggle');
 
     if (darkModeToggle) {
-        // Initialize dark mode toggle with current state
         darkModeToggle.checked = state.darkModeEnabled;
-
-        // Just toggle the visual appearance, don't save immediately
         darkModeToggle.addEventListener('change', (e) => {
             state.darkModeEnabled = e.target.checked;
-
             if (e.target.checked) {
                 document.body.classList.add('dark-mode');
             } else {
@@ -644,7 +644,17 @@ export async function initializeSettingsManagement() {
         });
     }
 
+    // ── Language selector ──────────────────────────────────────────────────────
+    const langSelect = document.getElementById('language-select');
+    if (langSelect) {
+        langSelect.value = state.language || 'pl';
+        langSelect.addEventListener('change', (e) => {
+            state.language = e.target.value;
+            applyTranslations();
+        });
+    }
 
+    // ── Telegram ───────────────────────────────────────────────────────────────
 
     const telegramToggle = document.getElementById('telegram-toggle');
     const telegramSettings = document.getElementById('telegram-settings');
@@ -662,25 +672,20 @@ export async function initializeSettingsManagement() {
         try {
             const prefs = await fetch('api.php?action=load-preferences').then(r => r.json());
 
-            // Load telegram chats from new structure
             const chats = prefs.telegramChats || [];
             const selectedId = prefs.telegramSelectedChatId || '';
 
-            // Update select dropdown
-            telegramChatSelect.innerHTML = '<option value="">-- Brak skonfigurowanych odbiorców --</option>';
+            telegramChatSelect.innerHTML = `<option value="">${t('optionNoRecipients')}</option>`;
             chats.forEach(chat => {
                 const option = document.createElement('option');
                 option.value = chat.id;
                 option.textContent = `${chat.name} (${chat.id})`;
-                if (chat.id === selectedId) {
-                    option.selected = true;
-                }
+                if (chat.id === selectedId) option.selected = true;
                 telegramChatSelect.appendChild(option);
             });
 
-            // Render chats list
             if (chats.length === 0) {
-                telegramChatsList.innerHTML = '<p style="color: #999; text-align: center; margin: 0;">Brak skonfigurowanych odbiorców</p>';
+                telegramChatsList.innerHTML = `<p style="color: #999; text-align: center; margin: 0;">${t('emptyRecipients')}</p>`;
             } else {
                 telegramChatsList.innerHTML = '';
                 chats.forEach(chat => {
@@ -694,9 +699,9 @@ export async function initializeSettingsManagement() {
                         <div class="word-item-actions">
                             <input type="text" class="edit-chat-name" data-chat-id="${chat.id}" value="${chat.name}"
                                    style="display: none; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
-                            <button class="edit-chat-btn" data-chat-id="${chat.id}" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">✏️ Edytuj</button>
-                            <button class="save-chat-btn" data-chat-id="${chat.id}" style="display: none; background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">💾 Zapisz</button>
-                            <button class="delete-chat-btn" data-chat-id="${chat.id}" style="background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">🗑️ Usuń</button>
+                            <button class="edit-chat-btn" data-chat-id="${chat.id}" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">✏️</button>
+                            <button class="save-chat-btn" data-chat-id="${chat.id}" style="display: none; background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">💾</button>
+                            <button class="delete-chat-btn" data-chat-id="${chat.id}" style="background: #ff6b6b; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 4px;">🗑️</button>
                         </div>
                     `;
                     telegramChatsList.appendChild(chatItem);
@@ -713,9 +718,7 @@ export async function initializeSettingsManagement() {
     }
 
     function updateTelegramSettingsVisibility() {
-        if (telegramSettings) {
-            telegramSettings.style.display = telegramToggle.checked ? 'block' : 'none';
-        }
+        if (telegramSettings) telegramSettings.style.display = telegramToggle.checked ? 'block' : 'none';
     }
 
     function syncTelegramUI() {
@@ -724,14 +727,12 @@ export async function initializeSettingsManagement() {
     }
 
     function attachTelegramEventListeners() {
-        // Edit button handlers
         document.querySelectorAll('.edit-chat-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const chatId = e.target.dataset.chatId;
                 const nameInput = document.querySelector(`.edit-chat-name[data-chat-id="${chatId}"]`);
                 const editBtn = document.querySelector(`.edit-chat-btn[data-chat-id="${chatId}"]`);
                 const saveBtn = document.querySelector(`.save-chat-btn[data-chat-id="${chatId}"]`);
-
                 nameInput.style.display = 'block';
                 editBtn.style.display = 'none';
                 saveBtn.style.display = 'block';
@@ -739,18 +740,15 @@ export async function initializeSettingsManagement() {
             });
         });
 
-        // Save button handlers
         document.querySelectorAll('.save-chat-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const chatId = e.target.dataset.chatId;
                 const nameInput = document.querySelector(`.edit-chat-name[data-chat-id="${chatId}"]`);
                 const newName = nameInput.value.trim();
-
                 if (!newName) {
-                    showToast('❌ Nazwa nie może być pusta', 'error');
+                    showToast(t('errorNameEmpty'), 'error');
                     return;
                 }
-
                 try {
                     const r = await fetch('api.php?action=update-telegram-chat', {
                         method: 'POST',
@@ -759,24 +757,27 @@ export async function initializeSettingsManagement() {
                     });
                     const result = await r.json();
                     if (result.success) {
-                        showToast('✅ Odbiorca zaktualizowany', 'success');
+                        showToast(t('telegramRecipientUpdated'), 'success');
                         await loadTelegramChats();
                     } else {
-                        showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                        showToast(t('errorTelegramChat', { item: result.error || result.message }), 'error');
                     }
                 } catch (err) {
-                    showToast('❌ Błąd przy aktualizacji odbiorcy', 'error');
+                    showToast(t('errorRecipientUpdate'), 'error');
                 }
             });
         });
 
-        // Delete button handlers
         document.querySelectorAll('.delete-chat-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const chatId = e.target.dataset.chatId;
-                const ok = await showConfirmDialog('🗑️ Usuń odbiorcę', 'Czy na pewno chcesz usunąć tego odbiorcę?', 'Usuń', 'Anuluj');
+                const ok = await showConfirmDialog(
+                    t('confirmDeleteRecipientTitle'),
+                    t('confirmDeleteRecipientMsg'),
+                    t('confirmDeleteOk'),
+                    t('confirmDeleteCancel'),
+                );
                 if (!ok) return;
-
                 try {
                     const r = await fetch('api.php?action=remove-telegram-chat', {
                         method: 'POST',
@@ -785,13 +786,13 @@ export async function initializeSettingsManagement() {
                     });
                     const result = await r.json();
                     if (result.success) {
-                        showToast('✅ Odbiorca usunięty', 'success');
+                        showToast(t('telegramRecipientDeleted'), 'success');
                         await loadTelegramChats();
                     } else {
-                        showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                        showToast(t('errorTelegramChat', { item: result.error || result.message }), 'error');
                     }
                 } catch (err) {
-                    showToast('❌ Błąd przy usuwaniu odbiorcy', 'error');
+                    showToast(t('errorRecipientDelete'), 'error');
                 }
             });
         });
@@ -806,55 +807,43 @@ export async function initializeSettingsManagement() {
         return r.json();
     }
 
-    // Load initial data
     loadTelegramChats();
 
-    // Toggle handler
     telegramToggle.addEventListener('change', async (e) => {
         try {
             const selectedChatId = telegramChatSelect.value || '';
             const result = await saveTelegramConfig(e.target.checked, selectedChatId);
             if (result.success) {
-                showToast(e.target.checked ? '✅ Telegram włączony' : '✅ Telegram wyłączony', 'success');
+                showToast(e.target.checked ? t('telegramEnabled') : t('telegramDisabled'), 'success');
                 updateTelegramSettingsVisibility();
                 syncTelegramUI();
             } else {
-                showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                showToast(t('errorTelegramChat', { item: result.error || result.message }), 'error');
             }
         } catch {
-            showToast('❌ Błąd przy zapisywaniu Telegram', 'error');
+            showToast(t('errorTelegramSave'), 'error');
         }
     });
 
-    // Chat select dropdown handler
     telegramChatSelect.addEventListener('change', async (e) => {
         try {
             const result = await saveTelegramConfig(telegramToggle.checked, e.target.value);
             if (result.success) {
-                showToast('✅ Odbiorca wybrany', 'success');
+                showToast(t('telegramRecipientSelected'), 'success');
             } else {
-                showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                showToast(t('errorTelegramChat', { item: result.error || result.message }), 'error');
             }
         } catch {
-            showToast('❌ Błąd przy wyborze odbiorcy', 'error');
+            showToast(t('errorTelegramSave'), 'error');
         }
     });
 
-    // Add new chat handler
     if (telegramAddChatBtn) {
         telegramAddChatBtn.addEventListener('click', async () => {
             const name = telegramNewName.value.trim();
             const chatId = telegramNewChatId.value.trim();
-
-            if (!name) {
-                showToast('❌ Podaj nazwę odbiorcy', 'error');
-                return;
-            }
-            if (!chatId) {
-                showToast('❌ Podaj Chat ID', 'error');
-                return;
-            }
-
+            if (!name) { showToast(t('errorEnterRecipientName'), 'error'); return; }
+            if (!chatId) { showToast(t('errorEnterChatId'), 'error'); return; }
             try {
                 const r = await fetch('api.php?action=add-telegram-chat', {
                     method: 'POST',
@@ -863,29 +852,25 @@ export async function initializeSettingsManagement() {
                 });
                 const result = await r.json();
                 if (result.success) {
-                    showToast('✅ Odbiorca dodany', 'success');
+                    showToast(t('telegramRecipientAdded'), 'success');
                     telegramNewName.value = '';
                     telegramNewChatId.value = '';
                     await loadTelegramChats();
                 } else {
-                    showToast('❌ Błąd: ' + (result.error || result.message), 'error');
+                    showToast(t('errorTelegramChat', { item: result.error || result.message }), 'error');
                 }
             } catch (err) {
-                showToast('❌ Błąd przy dodawaniu odbiorcy', 'error');
+                showToast(t('errorRecipientAdd'), 'error');
             }
         });
     }
 
-    // Test button handler
     if (telegramTestBtn) {
         telegramTestBtn.addEventListener('click', async () => {
             const chatId = telegramChatSelect.value || '';
-            if (!chatId) {
-                showToast('❌ Wybierz odbiorcę', 'error');
-                return;
-            }
+            if (!chatId) { showToast(t('errorSelectRecipient'), 'error'); return; }
             telegramTestBtn.disabled = true;
-            telegramTestBtn.textContent = 'Testowanie...';
+            telegramTestBtn.textContent = t('btnTesting');
             try {
                 const r = await fetch('backend.php', {
                     method: 'POST',
@@ -894,20 +879,19 @@ export async function initializeSettingsManagement() {
                 });
                 const res = await r.json();
                 if (res.success) {
-                    showToast('✅ Telegram połączenie OK', 'success');
-                    if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#00be00;">✓ Połączenie aktywne</span>';
+                    showToast(t('telegramConnectionOk'), 'success');
+                    if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#00be00;">${t('telegramConnectionActive')}</span>`;
                 } else {
-                    showToast('❌ Błąd: ' + (res.error || res.message), 'error');
-                    if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#ff6464;">✗ Błąd: ${res.error || res.message}</span>`;
+                    showToast(t('errorTelegramChat', { item: res.error || res.message }), 'error');
+                    if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#ff6464;">${t('errorTelegramTestConn', { item: res.error || res.message })}</span>`;
                 }
             } catch (err) {
-                showToast('❌ Błąd testowania: ' + err.message, 'error');
-                if (telegramStatus) telegramStatus.innerHTML = '<span style="color:#ff6464;">✗ Błąd testowania</span>';
+                showToast(t('errorTelegramTest', { item: err.message }), 'error');
+                if (telegramStatus) telegramStatus.innerHTML = `<span style="color:#ff6464;">${t('errorTelegramTestGeneral')}</span>`;
             } finally {
                 telegramTestBtn.disabled = false;
-                telegramTestBtn.textContent = 'Testuj połączenie';
+                telegramTestBtn.textContent = t('btnTestConnection');
             }
         });
     }
 }
-

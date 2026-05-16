@@ -1206,6 +1206,7 @@ body {
     overflow-y: auto;
 }
 
+.settings-section-language,
 .settings-section-alarm,
 .settings-section-dwell,
 .settings-section-darkmode,
@@ -1215,6 +1216,24 @@ body {
     padding: 20px;
     border-radius: 6px;
     margin-bottom: 20px;
+}
+
+.settings-section-language {
+    border-left-color: #667eea;
+}
+
+.settings-section-language h3 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+.settings-section-language > .form-group {
+    padding: 0;
+    margin-bottom: 15px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 .settings-section-alarm {
@@ -1273,6 +1292,7 @@ body {
 }
 
 /* Settings section containers */
+#settings-tab > .settings-section-language,
 #settings-tab > .settings-section-alarm,
 #settings-tab > .settings-section-dwell,
 #settings-tab > .settings-section-telegram {
@@ -1280,6 +1300,7 @@ body {
     transition: all 0.2s ease;
 }
 
+#settings-tab > .settings-section-language:hover,
 #settings-tab > .settings-section-alarm:hover,
 #settings-tab > .settings-section-dwell:hover,
 #settings-tab > .settings-section-telegram:hover {
@@ -1287,6 +1308,7 @@ body {
 }
 
 /* Nested form-groups inside sections */
+.settings-section-language > .form-group,
 .settings-section-alarm > .form-group,
 .settings-section-dwell > .form-group,
 .settings-section-telegram > .form-group {
@@ -1632,6 +1654,7 @@ body.dark-mode {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
+.dark-mode #settings-tab > .settings-section-language,
 .dark-mode #settings-tab > .settings-section-alarm,
 .dark-mode #settings-tab > .settings-section-dwell,
 .dark-mode #settings-tab > .settings-section-darkmode,
@@ -1641,6 +1664,7 @@ body.dark-mode {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+.dark-mode #settings-tab > .settings-section-language h3,
 .dark-mode #settings-tab > .settings-section-alarm h3,
 .dark-mode #settings-tab > .settings-section-dwell h3,
 .dark-mode #settings-tab > .settings-section-darkmode h3,
@@ -1648,6 +1672,7 @@ body.dark-mode {
     color: #e0e0e0;
 }
 
+.dark-mode #settings-tab > .settings-section-language:hover,
 .dark-mode #settings-tab > .settings-section-alarm:hover,
 .dark-mode #settings-tab > .settings-section-dwell:hover,
 .dark-mode #settings-tab > .settings-section-darkmode:hover,
@@ -1655,6 +1680,7 @@ body.dark-mode {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
+.dark-mode .settings-section-language .form-group label,
 .dark-mode .settings-section-alarm .form-group label,
 .dark-mode .settings-section-dwell .form-group label,
 .dark-mode .settings-section-darkmode .form-group label,
@@ -1662,6 +1688,7 @@ body.dark-mode {
     color: #e0e0e0;
 }
 
+.dark-mode .settings-section-language .form-group small,
 .dark-mode .settings-section-alarm .form-group small,
 .dark-mode .settings-section-dwell .form-group small,
 .dark-mode .settings-section-darkmode .form-group small,
@@ -1669,6 +1696,8 @@ body.dark-mode {
     color: #b0b0b0;
 }
 
+.dark-mode .settings-section-language .form-group input,
+.dark-mode .settings-section-language .form-group select,
 .dark-mode .settings-section-alarm .form-group input,
 .dark-mode .settings-section-alarm .form-group select,
 .dark-mode .settings-section-dwell .form-group input,
@@ -1682,6 +1711,8 @@ body.dark-mode {
     border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
+.dark-mode .settings-section-language .form-group input:focus,
+.dark-mode .settings-section-language .form-group select:focus,
 .dark-mode .settings-section-alarm .form-group input:focus,
 .dark-mode .settings-section-alarm .form-group select:focus,
 .dark-mode .settings-section-dwell .form-group input:focus,
@@ -1743,6 +1774,7 @@ body.dark-mode {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
+.dark-mode .settings-section-language h4,
 .dark-mode .settings-section-alarm h4,
 .dark-mode .settings-section-dwell h4,
 .dark-mode .settings-section-darkmode h4,

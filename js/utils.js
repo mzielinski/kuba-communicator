@@ -1,6 +1,7 @@
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
+import { t } from './i18n.js';
 
 /** Generate a URL-safe ID from arbitrary text */
 export function generateIdFromText(text) {
@@ -30,7 +31,9 @@ export function showToast(message, type = 'info') {
  * Show a custom confirm dialog.
  * @returns {Promise<boolean>} resolves true if confirmed
  */
-export function showConfirmDialog(title, message, confirmText = 'Potwierdź', cancelText = 'Anuluj') {
+export function showConfirmDialog(title, message, confirmText, cancelText) {
+    confirmText = confirmText ?? t('confirmDefault');
+    cancelText  = cancelText  ?? t('cancelDefault');
     return new Promise((resolve) => {
         const container = document.createElement('div');
         container.id = 'confirm-dialog-container';
@@ -64,9 +67,9 @@ export function updateStatus(message) {
 export async function copyToClipboard(text) {
     try {
         await navigator.clipboard.writeText(text);
-        showToast('Skopiowano: ' + text, 'success');
+        showToast(t('copied', { item: text }), 'success');
     } catch (err) {
         console.error('Failed to copy:', err);
-        showToast('Nie udało się skopiować', 'error');
+        showToast(t('copyFailed'), 'error');
     }
 }

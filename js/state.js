@@ -13,4 +13,5 @@ export const state = {
     selectedWordsCategory: null,
     darkModeEnabled: false,
     alarmDuration: 6,
+    language: 'pl',          // 'pl' | 'en'
 };

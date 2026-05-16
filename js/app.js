@@ -3,21 +3,26 @@
 // ============================================
 import { state } from './state.js';
 import { showToast } from './utils.js';
-import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference } from './api.js';
+import { t, applyTranslations } from './i18n.js';
+import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference } from './api.js';
 import { checkSession, initializeLogoutButton } from './auth.js';
 import { renderCategoryGrid } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
 import { initializeSettingsManagement } from './settingsManagement.js';
 
 async function initializeApp() {
-    console.log('Initializing KUBA App\u2026');
+    console.log('Initializing KUBA App…');
 
     const isLoggedIn = await checkSession();
     if (!isLoggedIn) return;
 
+    // Load language first so UI is translated before rendering
+    state.language = await loadLanguagePreference();
+    applyTranslations();
+
     const wordList = await loadWordList();
     if (!wordList) {
-        showToast('Nie udało się załadować słów. Sprawdź plik words.json', 'error');
+        showToast(t('errorLoadingWords'), 'error');
         return;
     }
 
@@ -27,12 +32,11 @@ async function initializeApp() {
     state.darkModeEnabled = await loadDarkModePreference();
     state.alarmDuration = await loadAlarmDurationPreference();
 
-    // Apply dark mode if enabled
     if (state.darkModeEnabled) {
         document.body.classList.add('dark-mode');
     }
 
-    console.log('Categories:', Object.keys(state.categories).length, '| Dwell:', state.dwellTimeMs + 'ms | Dwell enabled:', state.dwellEnabled, '| Dark mode:', state.darkModeEnabled, '| Alarm duration:', state.alarmDuration + 's');
+    console.log('Categories:', Object.keys(state.categories).length, '| Dwell:', state.dwellTimeMs + 'ms | Dwell enabled:', state.dwellEnabled, '| Dark mode:', state.darkModeEnabled, '| Alarm duration:', state.alarmDuration + 's', '| Language:', state.language);
 
     renderCategoryGrid();
     await initializeAudioDevices();
@@ -40,11 +44,11 @@ async function initializeApp() {
     initializeLogoutButton();
 
     const voices = window.speechSynthesis.getVoices();
-    const pl     = voices.find(v => v.lang.includes('pl'));
-    console.log(pl ? `Polish voice: ${pl.name}` : 'Polish voice not found, using default');
+    const voice  = voices.find(v => v.lang.startsWith(state.language === 'en' ? 'en' : 'pl'));
+    console.log(voice ? `Voice found: ${voice.name} (${voice.lang})` : 'No matching voice found, using default');
 
-    showToast('Aplikacja gotowa!', 'success');
-    console.log('\u2705 KUBA App initialized');
+    showToast(t('appReady'), 'success');
+    console.log('✅ KUBA App initialized');
 }
 
 // ── Startup ───────────────────────────────────────────────────────────────────

@@ -3,6 +3,7 @@
 // ============================================
 import {showToast, updateStatus} from './utils.js';
 import {loadAlarmDevicePreference, saveAlarmDevicePreference, loadAlarmTypePreference, saveAlarmTypePreference, loadAlarmDurationPreference} from './api.js';
+import {t} from './i18n.js';
 
 /**
  * Available alarm sound profiles.
@@ -117,7 +118,7 @@ export async function playAlarm() {
     const alarmAudio = document.getElementById('alarm-audio');
     const deviceSelect = document.getElementById('alarm-output-select');
 
-    showToast('🚨 ALARM - Osoba potrzebuje wsparcia!', 'warning');
+    showToast(t('alarmToast'), 'warning');
     updateStatus('ALARM!');
 
     // Load selected alarm type and duration preferences
@@ -129,8 +130,8 @@ export async function playAlarm() {
         blob = await generateAlarmAudioBlob(alarmType, alarmDuration);
     } catch (err) {
         console.error('Failed to generate alarm audio:', err);
-        showToast('Błąd generowania alarmu', 'error');
-        updateStatus('Błąd');
+        showToast(t('alarmGenerateError'), 'error');
+        updateStatus(t('statusError'));
         return;
     }
 
@@ -143,7 +144,7 @@ export async function playAlarm() {
         try {
             await alarmAudio.setSinkId(device);
             const name = deviceSelect.options[deviceSelect.selectedIndex].text;
-            showToast(`Alarm na: ${name}`, 'success');
+            showToast(t('alarmOn', { item: name }), 'success');
         } catch (err) {
             console.warn('Could not set alarm device:', err);
         }
@@ -153,8 +154,8 @@ export async function playAlarm() {
         await alarmAudio.play();
     } catch (err) {
         console.error('Failed to play alarm:', err);
-        showToast('Błąd odtwarzania alarmu', 'error');
-        updateStatus('Błąd');
+        showToast(t('alarmPlayError'), 'error');
+        updateStatus(t('statusError'));
         URL.revokeObjectURL(url);
         return;
     }
@@ -164,8 +165,8 @@ export async function playAlarm() {
         setTimeout(resolve, (alarmDuration + 1) * 1000);
     });
 
-    updateStatus('Gotowe');
-    showToast('Alarm wyłączony', 'info');
+    updateStatus(t('statusReady'));
+    showToast(t('alarmStopped'), 'info');
     URL.revokeObjectURL(url);
 }
 
@@ -178,7 +179,7 @@ async function testAlarmSound(profileKey = 'high') {
         blob = await generateAlarmAudioBlob(profileKey, 2); // 2-second test
     } catch (err) {
         console.error('Failed to generate test alarm:', err);
-        showToast('Błąd generowania dźwięku testowego', 'error');
+        showToast(t('alarmTestGenerateError'), 'error');
         return;
     }
 
@@ -190,7 +191,7 @@ async function testAlarmSound(profileKey = 'high') {
         await alarmAudio.play();
     } catch (err) {
         console.error('Failed to play test alarm:', err);
-        showToast('Błąd odtwarzania dźwięku', 'error');
+        showToast(t('alarmTestPlayError'), 'error');
         URL.revokeObjectURL(url);
         return;
     }
@@ -209,7 +210,7 @@ async function testAlarmSound(profileKey = 'high') {
  */
 export async function initializeAudioDevices() {
     if (!navigator.mediaDevices?.enumerateDevices) {
-        showToast('Twoja przeglądarka nie obsługuje wyboru urządzenia audio', 'warning');
+        showToast(t('browserNoAudio'), 'warning');
         return;
     }
     try {
@@ -218,7 +219,7 @@ export async function initializeAudioDevices() {
         console.log('✅ Microphone permission granted');
     } catch (err) {
         console.warn('Microphone permission denied:', err);
-        showToast('💡 Przyznaj dostęp do mikrofonu aby zobaczyć wszystkie urządzenia audio', 'warning');
+        showToast(t('micPermission'), 'warning');
     }
 }
 
@@ -226,7 +227,7 @@ export async function initializeAudioDevices() {
 export async function initializeAlarmDeviceSelector(alarmSelect) {
     if (!navigator.mediaDevices?.enumerateDevices) return;
 
-    alarmSelect.innerHTML = '<option value="">Domyślne</option>';
+    alarmSelect.innerHTML = `<option value="">${t('optionDefaultDevice')}</option>`;
     const devices = await navigator.mediaDevices.enumerateDevices();
     const outputs = devices.filter(d => d.kind === 'audiooutput');
 
@@ -243,58 +244,57 @@ export async function initializeAlarmDeviceSelector(alarmSelect) {
     alarmSelect.addEventListener('change', (e) => {
         const name = e.target.options[e.target.selectedIndex].text;
         if (e.target.value) {
-            showToast(`Alarm będzie na: ${name}`, 'info');
+            showToast(t('alarmWillBe', { item: name }), 'info');
             saveAlarmDevicePreference(e.target.value);
         } else {
-            showToast('Alarm na domyślnym urządzeniu', 'info');
+            showToast(t('alarmDefaultDevice'), 'info');
             saveAlarmDevicePreference('');
         }
     });
 
-    if (outputs.length === 0) showToast('❌ Brak dostępnych urządzeń audio', 'error');
-    else if (outputs.length === 1) showToast('📱 Jedno urządzenie audio dostępne', 'info');
-    else showToast(`✅ ${outputs.length} urządzeń audio dostępnych`, 'success');
+    if (outputs.length === 0) showToast(t('noAudioDevices'), 'error');
+    else if (outputs.length === 1) showToast(t('oneAudioDevice'), 'info');
+    else showToast(t('audioDevicesCount', { count: outputs.length }), 'success');
 }
 
 /** Populate #alarm-type-select with available alarm profiles and wire up persistence */
 export async function initializeAlarmTypeSelector(typeSelect) {
     if (!typeSelect) return;
 
-    // Build options from ALARM_PROFILES
     typeSelect.innerHTML = '';
     Object.entries(ALARM_PROFILES).forEach(([key, profile]) => {
         const opt = document.createElement('option');
         opt.value = key;
-        opt.textContent = profile.label;
+        // Use i18n key derived from profile key (high → alarmProfileHigh, etc.)
+        const i18nKey = 'alarmProfile' + key.charAt(0).toUpperCase() + key.slice(1);
+        opt.textContent = t(i18nKey) !== i18nKey ? t(i18nKey) : profile.label;
         typeSelect.appendChild(opt);
     });
 
-    // Load saved preference
     const saved = await loadAlarmTypePreference();
     if (saved && ALARM_PROFILES[saved]) typeSelect.value = saved;
 
     typeSelect.addEventListener('change', async (e) => {
         const key = e.target.value;
         await saveAlarmTypePreference(key);
-        const label = ALARM_PROFILES[key]?.label || key;
-        showToast(`🔔 Rodzaj alarmu: ${label}`, 'info');
+        const label = e.target.options[e.target.selectedIndex].text;
+        showToast(t('alarmTypeSaved', { item: label }), 'info');
     });
 
-    // Wire up test button
     const testBtn = document.getElementById('test-alarm-sound-btn');
     if (testBtn) {
         testBtn.addEventListener('click', async () => {
             const selectedType = typeSelect.value || 'high';
             testBtn.disabled = true;
-            testBtn.textContent = '🔄 Testowanie...';
+            testBtn.textContent = t('alarmTesting');
             try {
                 await testAlarmSound(selectedType);
             } catch (err) {
                 console.error('Test failed:', err);
-                showToast('Błąd podczas testowania alarmu', 'error');
+                showToast(t('alarmTestError'), 'error');
             } finally {
                 testBtn.disabled = false;
-                testBtn.textContent = '🔊 Testuj';
+                testBtn.textContent = t('btnTestAlarm');
             }
         });
     }

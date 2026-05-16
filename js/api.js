@@ -2,6 +2,7 @@
 // API — all HTTP / fetch calls to the backend
 // ============================================
 import { showToast } from './utils.js';
+import { t } from './i18n.js';
 
 /** Shared helper – fetch and parse preferences JSON */
 async function loadPreferences() {
@@ -25,7 +26,7 @@ export async function loadWordList() {
         return data;
     } catch (err) {
         console.error('Failed to load word list:', err);
-        showToast('Błąd ładowania słów', 'error');
+        showToast(t('errorLoadWords'), 'error');
         return { categories: {} };
     }
 }
@@ -40,14 +41,14 @@ export async function saveToJSON(categories) {
         });
         const result = await r.json();
         if (!r.ok) {
-            showToast('Nie udało się zapisać zmian: ' + (result.error || r.status), 'error');
+            showToast(t('errorSaveWords', { item: result.error || r.status }), 'error');
             return false;
         }
         console.log('✅ Saved:', result);
         return true;
     } catch (err) {
         console.error('Save error:', err);
-        showToast('Błąd przy zapisywaniu zmian: ' + err.message, 'error');
+        showToast(t('errorSaveWordsGeneral', { item: err.message }), 'error');
         return false;
     }
 }
@@ -175,7 +176,7 @@ export async function sendToTelegram(message) {
         const chatId = prefs.telegramSelectedChatId || '';
 
         if (!chatId) {
-            showToast('⚠️ Chat ID nie skonfigurowany', 'warning');
+            showToast(t('telegramChatIdNotConfigured'), 'warning');
             return false;
         }
         const r = await fetch('backend.php', {
@@ -184,14 +185,32 @@ export async function sendToTelegram(message) {
             body: JSON.stringify({ action: 'send-telegram-message', message, chatId }),
         });
         const result = await r.json();
-        if (result.success) { showToast('✓ Wysłane na Telegram', 'success'); return true; }
-        showToast('⚠️ Telegram: ' + result.message, 'warning');
+        if (result.success) { showToast(t('telegramSent'), 'success'); return true; }
+        showToast(t('telegramWarning', { item: result.message }), 'warning');
         return false;
     } catch (err) {
         console.error('Error sending to Telegram:', err);
-        showToast('⚠️ Nie mogę wysłać na Telegram, ale komunikacja działa', 'warning');
+        showToast(t('telegramCannotSend'), 'warning');
         return false;
     }
 }
 
+// ── Language ──────────────────────────────────────────────────────────────────
 
+export async function loadLanguagePreference() {
+    try { return (await loadPreferences()).language || 'pl'; }
+    catch { return 'pl'; }
+}
+
+export async function saveLanguagePreference(language) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ language }),
+        });
+        const result = await r.json();
+        if (result.success) { console.log(`✅ Language saved: ${language}`); return true; }
+        return false;
+    } catch { return false; }
+}

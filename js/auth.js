@@ -2,6 +2,7 @@
 // AUTHENTICATION
 // ============================================
 import { showToast, showConfirmDialog } from './utils.js';
+import { t } from './i18n.js';
 
 /**
  * Verify the user's session; redirect to login.html if unauthenticated.
@@ -39,12 +40,12 @@ export async function handleLogout() {
             body: JSON.stringify({}),
         });
         if (r.ok) {
-            showToast('Wylogowano pomyślnie', 'success');
+            showToast(t('loggedOut'), 'success');
             setTimeout(() => { window.location.href = 'login.html'; }, 500);
         }
     } catch (err) {
         console.error('Logout error:', err);
-        showToast('Błąd podczas wylogowania', 'error');
+        showToast(t('logoutError'), 'error');
     }
 }
 
@@ -54,10 +55,10 @@ export function initializeLogoutButton() {
     if (!btn) return;
     btn.addEventListener('click', async () => {
         const ok = await showConfirmDialog(
-            '⏻ Wyloguj się',
-            'Czy naprawdę chcesz się wylogować?',
-            'Wyloguj',
-            'Anuluj',
+            t('confirmLogoutTitle'),
+            t('confirmLogoutMsg'),
+            t('confirmLogoutOk'),
+            t('cancelDefault'),
         );
         if (ok) handleLogout();
     });

@@ -3,6 +3,7 @@
 // ============================================
 import { state } from './state.js';
 import { stripEmojiFromText } from './utils.js';
+import { t } from './i18n.js';
 import { initializeDwellTime } from './dwell.js';
 import { handleWordClick } from './wordActions.js';
 import { speakWord } from './speech.js';
@@ -51,7 +52,7 @@ export function renderCategoryGrid() {
     const sorted = Object.entries(state.categories).sort((a, b) => a[1].order - b[1].order);
 
     if (sorted.length === 0) {
-        grid.innerHTML = '<div style="color:#999;font-size:18px;">Brak kategorii</div>';
+        grid.innerHTML = `<div style="color:#999;font-size:18px;">${t('noCategories')}</div>`;
         return;
     }
 
@@ -119,7 +120,7 @@ export function renderExpandedCategoryView(catName) {
     // Back button – first item in the grid
     const backBtn = document.createElement('button');
     backBtn.className = 'word-button expanded-word-button back-button-expanded';
-    backBtn.textContent = '\u{1F519} Powrót';
+    backBtn.textContent = t('backButton');
     backBtn.type = 'button';
     backBtn.style.background = '#28a745';
     backBtn.style.boxShadow  = '0 4px 10px rgba(40,167,69,0.4)';

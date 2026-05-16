@@ -10,12 +10,12 @@
 <div class="container">
     <!-- Header -->
     <header class="header">
-        <h1>Urządzenie Komunikacyjne</h1>
+        <h1 data-i18n="appHeading">Urządzenie Komunikacyjne</h1>
         <div class="status-bar">
-            <span id="status">Gotowe</span>
+            <span id="status" data-i18n="statusReady">Gotowe</span>
             <span id="user-display"></span>
-            <button id="manage-words-btn" class="manage-btn" title="Zarządzaj słowami">🛠️⚙️</button>
-            <button id="logout-btn" class="manage-btn logout-btn" title="Wyloguj się">⏻</button>
+            <button id="manage-words-btn" class="manage-btn" data-i18n-title="manageWordsBtnTitle" title="Zarządzaj słowami">🛠️⚙️</button>
+            <button id="logout-btn" class="manage-btn logout-btn" data-i18n-title="logoutBtnTitle" title="Wyloguj się">⏻</button>
         </div>
     </header>
 
@@ -34,37 +34,35 @@
     <div id="word-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Zarządzaj słowami</h2>
+                <h2 data-i18n="modalTitle">Zarządzaj słowami</h2>
                 <button class="modal-close" id="modal-close">&times;</button>
             </div>
 
             <div class="modal-body">
                 <div class="modal-tabs">
-                    <button class="tab-btn active" data-tab="categories-tab">Zarządzaj kategoriami</button>
-                    <button class="tab-btn" data-tab="words-tab">Zarządzaj Słowami</button>
-                    <button class="tab-btn" data-tab="settings-tab">Ustawienia</button>
+                    <button class="tab-btn active" data-tab="categories-tab" data-i18n="tabCategories">Zarządzaj kategoriami</button>
+                    <button class="tab-btn" data-tab="words-tab" data-i18n="tabWords">Zarządzaj Słowami</button>
+                    <button class="tab-btn" data-tab="settings-tab" data-i18n="tabSettings">Ustawienia</button>
                 </div>
 
                 <!-- Manage Categories Tab -->
                 <div id="categories-tab" class="tab-content active">
-                    <!-- Category Management Section -->
                     <div class="form-group">
-                        <label>Zarządzaj kategoriami:</label>
+                        <label data-i18n="labelManageCategories">Zarządzaj kategoriami:</label>
                         <div class="categories-management-wrapper">
                             <div id="categories-management-list">
-                                <!-- Categories will be populated by JavaScript -->
-                                <p class="empty-placeholder">Brak kategorii</p>
+                                <p class="empty-placeholder" data-i18n="emptyCategories">Brak kategorii</p>
                             </div>
                         </div>
 
                         <div class="add-category-form">
-                            <h4>➕ Dodaj nową kategorię</h4>
+                            <h4 data-i18n="headingAddCategory">➕ Dodaj nową kategorię</h4>
                             <div class="form-row">
-                                <input type="text" id="new-category-name" placeholder="Nazwa nowej kategorii..." class="inline-text-input">
-                                <button id="add-category-btn" class="btn-primary">➕ Dodaj</button>
+                                <input type="text" id="new-category-name" data-i18n-placeholder="placeholderCategoryName" placeholder="Nazwa nowej kategorii..." class="inline-text-input">
+                                <button id="add-category-btn" class="btn-primary" data-i18n="btnAdd">➕ Dodaj</button>
                             </div>
                         </div>
-                        <small class="add-category-help">
+                        <small class="add-category-help" data-i18n="hintClickCategory">
                             Kliknij na kategorię aby edytować lub usunąć
                         </small>
                     </div>
@@ -72,26 +70,22 @@
 
                 <!-- Manage Words Tab -->
                 <div id="words-tab" class="tab-content">
-
-                    <!-- Category selector -->
                     <div class="form-group">
-                        <label for="words-category-select">Wybierz kategorię:</label>
+                        <label for="words-category-select" data-i18n="labelSelectCategory">Wybierz kategorię:</label>
                         <select id="words-category-select">
-                            <option value="">-- Wybierz kategorię --</option>
+                            <option value="" data-i18n="optionSelectCategory">-- Wybierz kategorię --</option>
                         </select>
                     </div>
 
-                    <!-- Words list for selected category -->
                     <div id="words-list-container" class="words-list-container">
-                        <p class="empty-placeholder">Wybierz kategorię aby zobaczyć słowa</p>
+                        <p class="empty-placeholder" data-i18n="emptySelectCategory">Wybierz kategorię aby zobaczyć słowa</p>
                     </div>
 
-                    <!-- Add word – simple form, shown when category is selected -->
                     <div id="add-word-form-simple" class="add-word-form">
-                        <h4>➕ Dodaj nowe słowo</h4>
+                        <h4 data-i18n="headingAddWord">➕ Dodaj nowe słowo</h4>
                         <div class="form-row">
-                            <input type="text" id="word-text-input" placeholder="Tekst słowa..." class="inline-text-input">
-                            <button id="add-word-btn" class="btn-primary">➕ Dodaj</button>
+                            <input type="text" id="word-text-input" data-i18n-placeholder="placeholderWordText" placeholder="Tekst słowa..." class="inline-text-input">
+                            <button id="add-word-btn" class="btn-primary" data-i18n="btnAdd">➕ Dodaj</button>
                         </div>
                     </div>
 
@@ -116,40 +110,53 @@
 
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
+
+                    <!-- Language Settings -->
+                    <div class="settings-section-language">
+                        <h3 data-i18n="headingLanguage">🌐 Język</h3>
+                        <div class="form-group">
+                            <label for="language-select" data-i18n="labelLanguage">Wybierz język:</label>
+                            <select id="language-select">
+                                <option value="pl" data-i18n="optionPolish">Polski</option>
+                                <option value="en" data-i18n="optionEnglish">English</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Alarm Settings (Orange section) -->
                     <div class="settings-section-alarm">
-                        <h3>🔔 Ustawienia alarmu</h3>
+                        <h3 data-i18n="headingAlarmSettings">🔔 Ustawienia alarmu</h3>
 
                         <div class="form-group">
-                            <label for="alarm-type-select">Rodzaj dźwięku alarmu:</label>
+                            <label for="alarm-type-select" data-i18n="labelAlarmType">Rodzaj dźwięku alarmu:</label>
                             <div class="settings-input-row">
                                 <select id="alarm-type-select">
                                     <!-- Populated by JavaScript from ALARM_PROFILES -->
                                 </select>
-                                <button id="test-alarm-sound-btn" class="btn-secondary">🔊 Testuj</button>
+                                <button id="test-alarm-sound-btn" class="btn-secondary" data-i18n="btnTestAlarm">🔊 Testuj</button>
                             </div>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintAlarmType">
                                 Wybierz rodzaj dźwięku dostosowany do potrzeb słuchowych użytkownika.
                             </small>
                         </div>
 
                         <div class="form-group">
-                            <label for="alarm-output-select">Urządzenie dla alarmu:</label>
+                            <label for="alarm-output-select" data-i18n="labelAlarmDevice">Urządzenie dla alarmu:</label>
                             <select id="alarm-output-select">
-                                <option value="">Domyślne</option>
+                                <option value="" data-i18n="optionDefaultDevice">Domyślne</option>
                             </select>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintAlarmDevice">
                                 Alarm zawsze będzie grał na wybranym urządzeniu, niezależnie od ustawień systemowych.
                             </small>
                         </div>
 
                         <div class="form-group">
-                            <label for="alarm-duration-slider">Długość alarmu:</label>
+                            <label for="alarm-duration-slider" data-i18n="labelAlarmDuration">Długość alarmu:</label>
                             <div class="slider-row">
                                 <input type="range" id="alarm-duration-slider" min="1" max="10" step="1" value="6">
                                 <span id="alarm-duration-display" class="value-display">6s</span>
                             </div>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintAlarmDuration">
                                 Ustaw czas trwania alarmu od 1 do 10 sekund.
                             </small>
                         </div>
@@ -157,25 +164,25 @@
 
                     <!-- Dwell Time Settings (Blue section) -->
                     <div class="settings-section-dwell">
-                        <h3>👁️ Patrzenie na przycisk (Dwell Time)</h3>
+                        <h3 data-i18n="headingDwell">👁️ Patrzenie na przycisk (Dwell Time)</h3>
 
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" id="dwell-enabled-toggle">
-                                <span>Włącz patrzenie na przycisk (Dwell Time)</span>
+                                <span data-i18n="labelDwellEnabled">Włącz patrzenie na przycisk (Dwell Time)</span>
                             </label>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintDwellEnabled">
                                 Gdy włączysz, przycisk będzie automatycznie aktywowany po patrzeniu na niego przez wskazany czas.
                             </small>
                         </div>
 
                         <div class="form-group" id="dwell-time-settings">
-                            <label for="dwell-time-slider">Czas patrzenia na przycisk (Dwell Time):</label>
+                            <label for="dwell-time-slider" data-i18n="labelDwellTime">Czas patrzenia na przycisk (Dwell Time):</label>
                             <div class="slider-row">
                                 <input type="range" id="dwell-time-slider" min="500" max="5000" step="100" value="2000">
                                 <span id="dwell-time-display" class="value-display">2.0s</span>
                             </div>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintDwellTime">
                                 Przycisk zostanie automatycznie aktywowany po patrzeniu na niego przez wskazany czas. Gdy odsuniesz kursor licznik zresetuje się.
                             </small>
                         </div>
@@ -183,14 +190,14 @@
 
                     <!-- Dark Mode Settings (Purple section) -->
                     <div class="settings-section-darkmode">
-                        <h3>🌙 Tryb ciemny</h3>
+                        <h3 data-i18n="headingDarkMode">🌙 Tryb ciemny</h3>
 
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" id="dark-mode-toggle">
-                                <span>Włącz tryb ciemny</span>
+                                <span data-i18n="labelDarkMode">Włącz tryb ciemny</span>
                             </label>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintDarkMode">
                                 Zmień tło na ciemne dla wygody w słabym oświetleniu.
                             </small>
                         </div>
@@ -201,45 +208,41 @@
                         <div class="form-group">
                             <label>
                                 <input type="checkbox" id="telegram-toggle">
-                                <span>Włącz wysyłanie wiadomości na Telegram</span>
+                                <span data-i18n="labelTelegramEnabled">Włącz wysyłanie wiadomości na Telegram</span>
                             </label>
-                            <small class="form-hint">
+                            <small class="form-hint" data-i18n="hintTelegramEnabled">
                                 Gdy włączysz, wiadomości będą wysyłane na wybrany kanał Telegram.
                             </small>
                         </div>
 
-                        <!-- Telegram settings section (hidden by default) -->
                         <div class="form-group" id="telegram-settings">
-                            <!-- Telegram chats list -->
                             <div class="form-section">
-                                <label for="telegram-chat-select">Wybierz odbiorcę:</label>
+                                <label for="telegram-chat-select" data-i18n="labelTelegramRecipient">Wybierz odbiorcę:</label>
                                 <select id="telegram-chat-select">
-                                    <option value="">-- Brak skonfigurowanych odbiorców --</option>
+                                    <option value="" data-i18n="optionNoRecipients">-- Brak skonfigurowanych odbiorców --</option>
                                 </select>
                             </div>
 
-                            <!-- Add new chat section -->
                             <div class="telegram-add-section">
-                                <h4>➕ Dodaj nowego odbiorcę</h4>
+                                <h4 data-i18n="headingAddRecipient">➕ Dodaj nowego odbiorcę</h4>
                                 <div class="form-row">
-                                    <input type="text" id="telegram-new-name" placeholder="Nazwa (np. John)" class="inline-text-input">
+                                    <input type="text" id="telegram-new-name" data-i18n-placeholder="placeholderTelegramName" placeholder="Nazwa (np. John)" class="inline-text-input">
                                     <input type="text" id="telegram-new-chat-id" placeholder="Chat ID" class="inline-text-input">
-                                    <button id="telegram-add-chat-btn" class="btn-primary">➕ Dodaj</button>
+                                    <button id="telegram-add-chat-btn" class="btn-primary" data-i18n="btnAdd">➕ Dodaj</button>
                                 </div>
-                                <small class="form-hint">
+                                <small class="form-hint" data-i18n="hintTelegramChatId">
                                     Znajdziesz swój Chat ID wpisując @userinfobot w Telegramie
                                 </small>
                             </div>
 
-                            <!-- Chats management list -->
                             <div class="form-section">
                                 <div id="telegram-chats-list" class="telegram-chats-list">
-                                    <p class="empty-placeholder">Brak skonfigurowanych odbiorców</p>
+                                    <p class="empty-placeholder" data-i18n="emptyRecipients">Brak skonfigurowanych odbiorców</p>
                                 </div>
                             </div>
 
                             <div class="form-action">
-                                <button id="telegram-test-btn" class="btn-secondary">
+                                <button id="telegram-test-btn" class="btn-secondary" data-i18n="btnTestConnection">
                                     Testuj połączenie
                                 </button>
                                 <div id="telegram-status"></div>
@@ -250,8 +253,8 @@
             </div>
 
             <div class="modal-footer">
-                <button id="save-all-changes-btn" class="btn-primary">💾 Zapisz zmiany</button>
-                <button id="modal-cancel" class="btn-secondary">❌ Anuluj (odrzuć zmiany)</button>
+                <button id="save-all-changes-btn" class="btn-primary" data-i18n="btnSaveChanges">💾 Zapisz zmiany</button>
+                <button id="modal-cancel" class="btn-secondary" data-i18n="btnCancelChanges">❌ Anuluj (odrzuć zmiany)</button>
             </div>
         </div>
     </div>
