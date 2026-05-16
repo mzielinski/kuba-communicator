@@ -603,10 +603,15 @@ body {
     padding: 5px 10px;
     border-radius: 4px;
     transition: background 0.2s ease;
+    color: #333;
 }
 
 .manage-btn:hover {
     background: rgba(102, 126, 234, 0.1);
+}
+
+.logout-btn {
+    color: #333;
 }
 
 .alarm-btn {
@@ -628,8 +633,217 @@ body {
 }
 
 /* ============================================
-    MODAL STYLES
+    INLINE INPUT STYLES TO CLASSES
     ============================================ */
+
+.inline-text-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+    color: #333;
+}
+
+.inline-text-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.add-word-form {
+    display: none;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.add-word-form.active {
+    display: block;
+}
+
+.add-word-form h4 {
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.add-category-form {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.add-category-form h4 {
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.add-category-input {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 150px;
+}
+
+.add-category-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    color: #333;
+}
+
+.add-category-input input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.add-category-help {
+    display: block;
+    color: #999;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.telegram-add-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.telegram-add-section h4 {
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.confirm-dialog-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    min-width: 380px;
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.dialog-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    min-width: 400px;
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.dialog-container h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.dialog-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.dialog-container input,
+.dialog-container select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.dialog-container input[type="color"] {
+    height: 40px;
+    cursor: pointer;
+}
+
+.dialog-group {
+    margin: 15px 0;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.confirm-dialog-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    min-width: 380px;
+    max-width: 90%;
+    box-sizing: border-box;
+}
+
+.confirm-dialog-container h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.confirm-dialog-container p {
+    margin: 15px 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.confirm-dialog-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.confirm-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1999;
+}
+
+.dialog-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1999;
+}
 
 .modal {
     display: none;
@@ -837,8 +1051,86 @@ body {
 }
 
 /* ============================================
-   SETTINGS SECTIONS - VISUAL SEPARATION
-   ============================================ */
+    CONTAINER STYLES
+    ============================================ */
+
+.words-list-container {
+    margin-top: 10px;
+    min-height: 60px;
+    max-height: 350px;
+    overflow-y: auto;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.telegram-chats-list {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.categories-management-wrapper {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.settings-section-alarm,
+.settings-section-dwell,
+.settings-section-darkmode,
+.settings-section-telegram {
+    border-left: 4px solid;
+    background: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.settings-section-alarm {
+    border-left-color: #ff9800;
+}
+
+.settings-section-dwell {
+    border-left-color: #2196f3;
+}
+
+.settings-section-darkmode {
+    border-left-color: #9c27b0;
+}
+
+.settings-section-telegram {
+    border-left-color: #4caf50;
+}
+
+.settings-section-alarm h3 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+.settings-section-dwell h3 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+.settings-section-darkmode h3 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+.settings-section-telegram h3 {
+    margin: 0 0 15px;
+    color: #333;
+    font-size: 16px;
+}
 
 #settings-tab > .form-group {
     padding: 16px;
@@ -1218,7 +1510,16 @@ body.dark-mode {
 .dark-mode #settings-tab > .settings-section-dwell,
 .dark-mode #settings-tab > .settings-section-darkmode,
 .dark-mode #settings-tab > .settings-section-telegram {
+    background: rgba(30, 30, 30, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode #settings-tab > .settings-section-alarm h3,
+.dark-mode #settings-tab > .settings-section-dwell h3,
+.dark-mode #settings-tab > .settings-section-darkmode h3,
+.dark-mode #settings-tab > .settings-section-telegram h3 {
+    color: #e0e0e0 !important;
 }
 
 .dark-mode #settings-tab > .settings-section-alarm:hover,
@@ -1226,6 +1527,45 @@ body.dark-mode {
 .dark-mode #settings-tab > .settings-section-darkmode:hover,
 .dark-mode #settings-tab > .settings-section-telegram:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.dark-mode .settings-section-alarm .form-group label,
+.dark-mode .settings-section-dwell .form-group label,
+.dark-mode .settings-section-darkmode .form-group label,
+.dark-mode .settings-section-telegram .form-group label {
+    color: #e0e0e0 !important;
+}
+
+.dark-mode .settings-section-alarm .form-group small,
+.dark-mode .settings-section-dwell .form-group small,
+.dark-mode .settings-section-darkmode .form-group small,
+.dark-mode .settings-section-telegram .form-group small {
+    color: #b0b0b0 !important;
+}
+
+.dark-mode .settings-section-alarm .form-group input,
+.dark-mode .settings-section-alarm .form-group select,
+.dark-mode .settings-section-dwell .form-group input,
+.dark-mode .settings-section-dwell .form-group select,
+.dark-mode .settings-section-darkmode .form-group input,
+.dark-mode .settings-section-darkmode .form-group select,
+.dark-mode .settings-section-telegram .form-group input,
+.dark-mode .settings-section-telegram .form-group select {
+    background: rgba(20, 20, 20, 0.8) !important;
+    color: #e0e0e0 !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .settings-section-alarm .form-group input:focus,
+.dark-mode .settings-section-alarm .form-group select:focus,
+.dark-mode .settings-section-dwell .form-group input:focus,
+.dark-mode .settings-section-dwell .form-group select:focus,
+.dark-mode .settings-section-darkmode .form-group input:focus,
+.dark-mode .settings-section-darkmode .form-group select:focus,
+.dark-mode .settings-section-telegram .form-group input:focus,
+.dark-mode .settings-section-telegram .form-group select:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
 }
 
 .dark-mode .btn-primary {
@@ -1249,8 +1589,16 @@ body.dark-mode {
     border-top: 2px solid rgba(255, 255, 255, 0.1);
 }
 
+.dark-mode .manage-btn {
+    color: #e0e0e0;
+}
+
 .dark-mode .manage-btn:hover {
     background: rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode .logout-btn {
+    color: #e0e0e0;
 }
 
 .dark-mode .alarm-btn:hover {
@@ -1267,6 +1615,123 @@ body.dark-mode {
 
 .dark-mode input[type="range"]::-moz-range-thumb {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+.dark-mode .settings-section-alarm > div[style*="border-top"],
+.dark-mode .settings-section-dwell > div[style*="border-top"],
+.dark-mode .settings-section-darkmode > div[style*="border-top"],
+.dark-mode .settings-section-telegram > div[style*="border-top"] {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .settings-section-alarm h4,
+.dark-mode .settings-section-dwell h4,
+.dark-mode .settings-section-darkmode h4,
+.dark-mode .settings-section-telegram h4 {
+    color: #e0e0e0 !important;
+}
+
+.dark-mode .words-list-container {
+    background: rgba(30, 30, 30, 0.7);
+    color: #e0e0e0;
+}
+
+.dark-mode .telegram-chats-list {
+    background: rgba(30, 30, 30, 0.7);
+    color: #e0e0e0;
+}
+
+.dark-mode .categories-management-wrapper {
+    background: rgba(30, 30, 30, 0.7);
+    color: #e0e0e0;
+}
+
+.dark-mode .confirm-dialog-container {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .confirm-dialog-container h3 {
+    color: #e0e0e0;
+}
+
+.dark-mode .confirm-dialog-container p {
+    color: #b0b0b0;
+}
+
+.dark-mode .dialog-container {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .dialog-container h3 {
+    color: #e0e0e0;
+}
+
+.dark-mode .dialog-container label {
+    color: #e0e0e0;
+}
+
+.dark-mode .dialog-container input,
+.dark-mode .dialog-container select {
+    background: rgba(30, 30, 30, 0.8);
+    color: #e0e0e0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .dialog-container input:focus,
+.dark-mode .dialog-container select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode .inline-text-input {
+    background: rgba(30, 30, 30, 0.8);
+    color: #e0e0e0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .inline-text-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode .add-word-form {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .add-word-form h4 {
+    color: #e0e0e0;
+}
+
+.dark-mode .add-category-form {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .add-category-input input {
+    background: rgba(30, 30, 30, 0.8);
+    color: #e0e0e0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .add-category-input input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.dark-mode .add-category-help {
+    color: #b0b0b0;
+}
+
+.dark-mode .telegram-add-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .telegram-add-section h4 {
+    color: #e0e0e0;
 }
 
 .dark-mode .toast {

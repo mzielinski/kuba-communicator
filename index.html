@@ -15,7 +15,7 @@
             <span id="status">Gotowe</span>
             <span id="user-display" style="margin-right: 15px; font-size: 14px; color: #666;"></span>
             <button id="manage-words-btn" class="manage-btn" title="Zarządzaj słowami">🛠️⚙️</button>
-            <button id="logout-btn" class="manage-btn" title="Wyloguj się" style="margin-left: 8px;">⏻</button>
+            <button id="logout-btn" class="manage-btn logout-btn" title="Wyloguj się" style="margin-left: 8px;">⏻</button>
         </div>
     </header>
 
@@ -50,24 +50,21 @@
                     <!-- Category Management Section -->
                     <div class="form-group">
                         <label>Zarządzaj kategoriami:</label>
-                        <div style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin: 10px 0; max-height: 250px; overflow-y: auto;">
+                        <div class="categories-management-wrapper">
                             <div id="categories-management-list" style="min-height: 60px;">
                                 <!-- Categories will be populated by JavaScript -->
                                 <p style="color: #999; text-align: center; padding: 20px 0;">Brak kategorii</p>
                             </div>
                         </div>
 
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <label for="new-category-name"
-                                   style="display: flex; align-items: center; flex: 1; min-width: 150px;">
-                                <input type="text" id="new-category-name" placeholder="Nazwa nowej kategorii"
-                                       style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
-                            </label>
-                            <button id="add-category-btn" class="btn-primary"
-                                    style="padding: 8px 16px; font-size: 13px;">➕ Dodaj kategorię
-                            </button>
+                        <div class="add-category-form">
+                            <h4>➕ Dodaj nową kategorię</h4>
+                            <div class="form-row">
+                                <input type="text" id="new-category-name" placeholder="Nazwa nowej kategorii..." class="inline-text-input">
+                                <button id="add-category-btn" class="btn-primary" style="padding: 8px 16px; font-size: 13px; white-space: nowrap; flex-shrink: 0;">➕ Dodaj</button>
+                            </div>
                         </div>
-                        <small style="display: block; color: #999; margin-top: 8px;">
+                        <small class="add-category-help">
                             Kliknij na kategorię aby edytować lub usunąć
                         </small>
                     </div>
@@ -85,15 +82,15 @@
                     </div>
 
                     <!-- Words list for selected category -->
-                    <div id="words-list-container" style="margin-top: 10px; min-height: 60px; max-height: 350px; overflow-y: auto; background: #f5f5f5; border-radius: 8px; padding: 10px;">
+                    <div id="words-list-container" class="words-list-container">
                         <p style="color: #999; text-align: center; padding: 20px 0; margin: 0;">Wybierz kategorię aby zobaczyć słowa</p>
                     </div>
 
                     <!-- Add word – simple form, shown when category is selected -->
-                    <div id="add-word-form-simple" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
-                        <h4 style="margin: 0 0 10px; color: #333;">➕ Dodaj nowe słowo</h4>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="word-text-input" placeholder="Tekst słowa..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <div id="add-word-form-simple" class="add-word-form">
+                        <h4>➕ Dodaj nowe słowo</h4>
+                        <div class="form-row">
+                            <input type="text" id="word-text-input" placeholder="Tekst słowa..." class="inline-text-input">
                             <button id="add-word-btn" class="btn-primary" style="padding: 8px 16px; white-space: nowrap;">➕ Dodaj</button>
                         </div>
                     </div>
@@ -120,8 +117,8 @@
                 <!-- Settings Tab -->
                 <div id="settings-tab" class="tab-content">
                     <!-- Alarm Settings (Orange section) -->
-                    <div class="settings-section-alarm" style="border-left: 4px solid #ff9800; background: #fff; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px; color: #333; font-size: 16px;">🔔 Ustawienia alarmu</h3>
+                    <div class="settings-section-alarm">
+                        <h3>🔔 Ustawienia alarmu</h3>
 
                         <div class="form-group">
                             <label for="alarm-type-select">Rodzaj dźwięku alarmu:</label>
@@ -160,8 +157,8 @@
                     </div>
 
                     <!-- Dwell Time Settings (Blue section) -->
-                    <div class="settings-section-dwell" style="border-left: 4px solid #2196f3; background: #fff; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px; color: #333; font-size: 16px;">👁️ Patrzenie na przycisk (Dwell Time)</h3>
+                    <div class="settings-section-dwell">
+                        <h3>👁️ Patrzenie na przycisk (Dwell Time)</h3>
 
                         <div class="form-group">
                              <label style="display: flex; align-items: center; gap: 8px;">
@@ -187,8 +184,8 @@
                     </div>
 
                     <!-- Dark Mode Settings (Purple section) -->
-                    <div class="settings-section-darkmode" style="border-left: 4px solid #9c27b0; background: #fff; padding: 20px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3 style="margin: 0 0 15px; color: #333; font-size: 16px;">🌙 Tryb ciemny</h3>
+                    <div class="settings-section-darkmode">
+                        <h3>🌙 Tryb ciemny</h3>
 
                         <div class="form-group">
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -202,7 +199,7 @@
                     </div>
 
                     <!-- Telegram Integration -->
-                    <div class="settings-section-telegram" style="border-left: 4px solid #4caf50; background: #fff; padding: 20px; border-radius: 6px;">
+                    <div class="settings-section-telegram">
                        <div class="form-group">
                           <label style="display: flex; align-items: center; gap: 8px;">
                               <input type="checkbox" id="telegram-toggle">
@@ -224,13 +221,11 @@
                           </div>
 
                           <!-- Add new chat section -->
-                          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
-                              <h4 style="margin: 0 0 10px; color: #333;">➕ Dodaj nowego odbiorcę</h4>
-                              <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                  <input type="text" id="telegram-new-name" placeholder="Nazwa (np. John)"
-                                         style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
-                                  <input type="text" id="telegram-new-chat-id" placeholder="Chat ID"
-                                         style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                          <div class="telegram-add-section">
+                              <h4>➕ Dodaj nowego odbiorcę</h4>
+                              <div class="form-row" style="margin-bottom: 10px;">
+                                  <input type="text" id="telegram-new-name" placeholder="Nazwa (np. John)" class="inline-text-input">
+                                  <input type="text" id="telegram-new-chat-id" placeholder="Chat ID" class="inline-text-input">
                                   <button id="telegram-add-chat-btn" class="btn-primary" style="padding: 8px 16px; white-space: nowrap;">➕ Dodaj</button>
                               </div>
                               <small style="color: #999; display: block;">
@@ -240,7 +235,7 @@
 
                           <!-- Chats management list -->
                           <div style="margin-top: 15px;">
-                              <div id="telegram-chats-list" style="background: #f5f5f5; border-radius: 8px; padding: 15px; max-height: 250px; overflow-y: auto;">
+                              <div id="telegram-chats-list" class="telegram-chats-list">
                                   <p style="color: #999; text-align: center; margin: 0;">Brak skonfigurowanych odbiorców</p>
                               </div>
                           </div>

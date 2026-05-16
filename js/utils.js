@@ -35,15 +35,15 @@ export function showConfirmDialog(title, message, confirmText = 'Potwierdź', ca
         const container = document.createElement('div');
         container.id = 'confirm-dialog-container';
         container.innerHTML = `
-            <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:2000;min-width:380px;max-width:90%;box-sizing:border-box;">
-                <h3 style="margin-top:0;color:#333;font-size:18px;">${title}</h3>
-                <p style="margin:15px 0;color:#666;line-height:1.5;">${message}</p>
-                <div style="display:flex;gap:10px;margin-top:25px;">
+            <div class="confirm-dialog-container">
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <div class="confirm-dialog-buttons">
                     <button id="confirm-btn" class="btn-primary" style="flex:1;padding:10px;">${confirmText}</button>
                     <button id="cancel-btn" class="btn-secondary" style="flex:1;padding:10px;">${cancelText}</button>
                 </div>
             </div>
-            <div id="confirm-backdrop" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:1999;"></div>
+            <div id="confirm-backdrop" class="confirm-backdrop"></div>
         `;
         document.body.appendChild(container);
         const close = (result) => { container.remove(); resolve(result); };

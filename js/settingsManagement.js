@@ -4,7 +4,7 @@
 import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -115,7 +115,7 @@ export async function initializeSettingsManagement() {
         populateWordsCatSelect();
         renderWordsList();
         renderCategoriesManagement();
-        loadTelegramSettingsIntoUI();
+        loadTelegramChats();
     });
 
     const closeModal = () => {
@@ -283,26 +283,26 @@ export async function initializeSettingsManagement() {
         const container = document.createElement('div');
         container.id = 'edit-word-dialog-container';
         container.innerHTML = `
-            <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:2000;min-width:400px;max-width:90%;box-sizing:border-box;">
-                <h3 style="margin-top:0;color:#333;">\u270F\uFE0F Edytuj słowo</h3>
-                <div style="margin:15px 0;">
-                    <label style="display:block;margin-bottom:5px;font-weight:600;color:#333;">Tekst słowa:</label>
-                    <input type="text" id="popup-word-text" value="${word.text.replace(/"/g, '&quot;')}" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+            <div class="dialog-container">
+                <h3>✏️ Edytuj słowo</h3>
+                <div class="dialog-group">
+                    <label>Tekst słowa:</label>
+                    <input type="text" id="popup-word-text" value="${word.text.replace(/"/g, '&quot;')}">
                 </div>
-                <div style="margin:15px 0;">
-                    <label style="display:block;margin-bottom:5px;font-weight:600;color:#333;">Kolor:</label>
-                    <input type="color" id="popup-word-color" value="${word.color || '#667eea'}" style="width:100%;height:40px;border:1px solid #ddd;border-radius:4px;cursor:pointer;box-sizing:border-box;">
+                <div class="dialog-group">
+                    <label>Kolor:</label>
+                    <input type="color" id="popup-word-color" value="${word.color || '#667eea'}">
                 </div>
-                <div style="margin:15px 0;">
-                    <label style="display:block;margin-bottom:5px;font-weight:600;color:#333;">Rozmiar fontu (px):</label>
-                    <input type="number" id="popup-word-size" value="${word.size ? parseInt(word.size) : ''}" placeholder="domyślny (30px)" min="8" max="200" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+                <div class="dialog-group">
+                    <label>Rozmiar fontu (px):</label>
+                    <input type="number" id="popup-word-size" value="${word.size ? parseInt(word.size) : ''}" placeholder="domyślny (30px)" min="8" max="200">
                 </div>
-                <div style="display:flex;gap:10px;margin-top:25px;">
+                <div class="dialog-buttons">
                     <button id="popup-save-word" class="btn-primary" style="flex:1;padding:10px;">Zapisz</button>
                     <button id="popup-cancel-word" class="btn-secondary" style="flex:1;padding:10px;">Anuluj</button>
                 </div>
             </div>
-            <div id="edit-word-backdrop" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:1999;"></div>
+            <div id="edit-word-backdrop" class="dialog-backdrop"></div>
         `;
         document.body.appendChild(container);
 
@@ -491,32 +491,32 @@ export async function initializeSettingsManagement() {
         const container = document.createElement('div');
         container.id = 'edit-category-dialog-container';
         container.innerHTML = `
-            <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:30px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:2000;min-width:400px;max-width:90%;">
-                <h3 style="margin-top:0;color:#333;">Edytuj kategorię: ${catName}</h3>
-                <div style="margin:15px 0;">
-                    <label style="display:block;margin-bottom:5px;font-weight:600;color:#333;">Nazwa kategorii:</label>
-                    <input type="text" id="edit-cat-name" value="${catName}" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+            <div class="dialog-container">
+                <h3>Edytuj kategorię: ${catName}</h3>
+                <div class="dialog-group">
+                    <label>Nazwa kategorii:</label>
+                    <input type="text" id="edit-cat-name" value="${catName}">
                 </div>
-                <div style="margin:15px 0;">
-                    <label style="display:block;margin-bottom:5px;font-weight:600;color:#333;">Rozmiar wyświetlania:</label>
-                    <select id="edit-cat-size" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+                <div class="dialog-group">
+                    <label>Rozmiar wyświetlania:</label>
+                    <select id="edit-cat-size">
                         <option value="small" ${catData.size === 'small' ? 'selected' : ''}>Mały (small)</option>
                         <option value="medium" ${catData.size === 'medium' ? 'selected' : ''}>Średni (medium)</option>
                         <option value="large" ${catData.size === 'large' ? 'selected' : ''}>Duży (large)</option>
                     </select>
                 </div>
-                <div style="margin:15px 0;">
+                <div class="dialog-group">
                     <label style="display:flex;align-items:center;gap:8px;">
                         <input type="checkbox" id="edit-cat-expand" ${catData.expand ? 'checked' : ''}>
-                        <span style="color:#333;">Rozwijalna kategoria (otwiera osobny widok)</span>
+                        <span>Rozwijalna kategoria (otwiera osobny widok)</span>
                     </label>
                 </div>
-                <div style="display:flex;gap:10px;margin-top:25px;">
+                <div class="dialog-buttons">
                     <button id="save-edit-cat-btn" class="btn-primary" style="flex:1;padding:10px;">Zapisz</button>
                     <button id="cancel-edit-cat-btn" class="btn-secondary" style="flex:1;padding:10px;">Anuluj</button>
                 </div>
             </div>
-            <div id="edit-cat-backdrop" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:1999;"></div>
+            <div id="edit-cat-backdrop" class="dialog-backdrop"></div>
         `;
         document.body.appendChild(container);
 
@@ -774,7 +774,8 @@ export async function initializeSettingsManagement() {
         document.querySelectorAll('.delete-chat-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const chatId = e.target.dataset.chatId;
-                if (!confirm('Czy na pewno chcesz usunąć tego odbiorcę?')) return;
+                const ok = await showConfirmDialog('🗑️ Usuń odbiorcę', 'Czy na pewno chcesz usunąć tego odbiorcę?', 'Usuń', 'Anuluj');
+                if (!ok) return;
 
                 try {
                     const r = await fetch('api.php?action=remove-telegram-chat', {
