@@ -10,6 +10,7 @@ import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alar
 
 /** Initialize the entire settings-management modal */
 export async function initializeSettingsManagement() {
+
     // Element refs
     const modal = document.getElementById('word-modal');
     const manageBtn = document.getElementById('manage-words-btn');

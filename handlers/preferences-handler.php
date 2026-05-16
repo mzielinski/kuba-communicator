@@ -19,7 +19,8 @@ class PreferencesHandler {
             'darkModeEnabled' => false,
             'telegramEnabled' => false,
             'telegramChats' => [],
-            'telegramSelectedChatId' => ''
+            'telegramSelectedChatId' => '',
+            'language' => 'pl'
         ];
     }
 
@@ -70,21 +71,24 @@ class PreferencesHandler {
             $preferences['dwellTimeMs'] = $input['dwellTimeMs'];
         }
 
-        if (isset($input['dwellEnabled'])) {
-            $preferences['dwellEnabled'] = (bool)$input['dwellEnabled'];
-        }
+         if (isset($input['dwellEnabled'])) {
+             $preferences['dwellEnabled'] = (bool)$input['dwellEnabled'];
+         }
 
-        if (isset($input['darkModeEnabled'])) {
-            $preferences['darkModeEnabled'] = (bool)$input['darkModeEnabled'];
-        }
+         if (isset($input['darkModeEnabled'])) {
+             $preferences['darkModeEnabled'] = (bool)$input['darkModeEnabled'];
+         }
 
+         if (isset($input['language'])) {
+             $preferences['language'] = in_array($input['language'], ['en', 'pl']) ? $input['language'] : 'pl';
+         }
 
-        if (!empty($preferences)) {
-            self::mergeAndSavePreferences($userPreferencesFile, $preferences);
-        } else {
-            http_response_code(200);
-            echo json_encode(['success' => true, 'message' => 'Preferences saved successfully']);
-        }
+         if (!empty($preferences)) {
+             self::mergeAndSavePreferences($userPreferencesFile, $preferences);
+         } else {
+             http_response_code(200);
+             echo json_encode(['success' => true, 'message' => 'Preferences saved successfully']);
+         }
     }
 
     /**
@@ -323,12 +327,16 @@ class PreferencesHandler {
         // Merge with new preferences
         $mergedPreferences = array_merge($existingPrefs, $newPreferences);
 
-        if (file_put_contents($preferencesFile, json_encode($mergedPreferences, JSON_PRETTY_PRINT)) !== false) {
+        // Write to file
+        $jsonContent = json_encode($mergedPreferences, JSON_PRETTY_PRINT);
+        $written = file_put_contents($preferencesFile, $jsonContent);
+
+        if ($written !== false) {
             http_response_code(200);
             echo json_encode(['success' => true, 'message' => $successMessage . ' saved successfully']);
         } else {
             http_response_code(500);
-            echo json_encode(['error' => 'Failed to save ' . strtolower($successMessage)]);
+            echo json_encode(['error' => 'Failed to save ' . strtolower($successMessage), 'file_path' => $preferencesFile, 'file_writable' => is_writable(dirname($preferencesFile))]);
         }
     }
 }

@@ -5,7 +5,7 @@
 export const state = {
     categories: {},
     isSpeaking: false,
-    editingWord: null,       // { category, index }
+    editingWord: null,
     dwellTimeMs: 2000,
     dwellEnabled: true,
     dwellTimers: {},
@@ -13,5 +13,5 @@ export const state = {
     selectedWordsCategory: null,
     darkModeEnabled: false,
     alarmDuration: 6,
-    language: 'pl',          // 'pl' | 'en'
+    language: 'pl'
 };

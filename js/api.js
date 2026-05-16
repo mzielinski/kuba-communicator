@@ -1,7 +1,6 @@
 // ============================================
 // API — all HTTP / fetch calls to the backend
 // ============================================
-import { showToast } from './utils.js';
 import { t } from './i18n.js';
 
 /** Shared helper – fetch and parse preferences JSON */
@@ -170,7 +169,7 @@ export async function loadTelegramConfig() {
     } catch { return { enabled: false }; }
 }
 
-export async function sendToTelegram(message) {
+export async function sendToTelegram(message, categoryName = null) {
     try {
         const prefs  = await loadPreferences();
         const chatId = prefs.telegramSelectedChatId || '';
@@ -179,10 +178,17 @@ export async function sendToTelegram(message) {
             showToast(t('telegramChatIdNotConfigured'), 'warning');
             return false;
         }
+
+        // Format message with category if provided
+        let finalMessage = message;
+        if (categoryName) {
+            finalMessage = `${categoryName}: ${message}`;
+        }
+
         const r = await fetch('backend.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'send-telegram-message', message, chatId }),
+            body: JSON.stringify({ action: 'send-telegram-message', message: finalMessage, chatId }),
         });
         const result = await r.json();
         if (result.success) { showToast(t('telegramSent'), 'success'); return true; }
@@ -212,5 +218,8 @@ export async function saveLanguagePreference(language) {
         const result = await r.json();
         if (result.success) { console.log(`✅ Language saved: ${language}`); return true; }
         return false;
-    } catch { return false; }
+    } catch (err) {
+        console.error('Language save error:', err);
+        return false;
+    }
 }

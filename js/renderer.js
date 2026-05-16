@@ -15,7 +15,7 @@ function applyWordSize(button, word, defaultSize = '30px') {
 }
 
 /** Create a fully wired word button */
-function createWordButton(word, extraClass = '', defaultSize = '30px') {
+function createWordButton(word, extraClass = '', defaultSize = '30px', categoryName = null) {
     const btn = document.createElement('button');
     btn.className = 'word-button' + (extraClass ? ' ' + extraClass : '');
     btn.setAttribute('data-word-id', word.id);
@@ -28,9 +28,9 @@ function createWordButton(word, extraClass = '', defaultSize = '30px') {
     }
     applyWordSize(btn, word, defaultSize);
 
-    btn.addEventListener('click',   () => handleWordClick(word));
+    btn.addEventListener('click',   () => handleWordClick(word, categoryName));
     btn.addEventListener('keydown', (e) => {
-        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleWordClick(word); }
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleWordClick(word, categoryName); }
     });
     initializeDwellTime(btn);
     return btn;
@@ -86,7 +86,7 @@ export function renderCategoryGrid() {
 
             const wordsWrap = document.createElement('div');
             wordsWrap.className = 'category-words';
-            catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word)));
+            catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word, '', '30px', catName)));
             tile.appendChild(wordsWrap);
         }
 
@@ -132,7 +132,7 @@ export function renderExpandedCategoryView(catName) {
     initializeDwellTime(backBtn);
     wordsWrap.appendChild(backBtn);
 
-    catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word, 'expanded-word-button', '20px')));
+    catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word, 'expanded-word-button', '20px', catName)));
 
     container.appendChild(wordsWrap);
     grid.appendChild(container);

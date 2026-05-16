@@ -13,13 +13,13 @@ import { loadTelegramConfig, sendToTelegram } from './api.js';
  *  3. Forward to Telegram (if configured)
  *  4. Visual feedback on the button
  */
-export async function handleWordClick(word) {
+export async function handleWordClick(word, categoryName = null) {
     if (word.id === 'alarm') {
         await playAlarm();
         return;
     }
 
-    console.log('Word clicked:', word.id, word.text);
+    console.log('Word clicked:', word.id, word.text, 'Category:', categoryName);
 
     const plain = stripEmojiFromText(word.text);
     if (plain) speakWord(plain);
@@ -28,7 +28,7 @@ export async function handleWordClick(word) {
 
     try {
         const telegram = await loadTelegramConfig();
-        if (telegram.enabled) sendToTelegram(word.text).catch(e => console.warn('Telegram error:', e));
+        if (telegram.enabled) sendToTelegram(word.text, categoryName).catch(e => console.warn('Telegram error:', e));
     } catch (err) {
         console.warn('Telegram config error:', err);
     }
