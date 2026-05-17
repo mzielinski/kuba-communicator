@@ -1,11 +1,13 @@
 // ============================================
 // API — all HTTP / fetch calls to the backend
 // ============================================
-import { t } from './i18n.js';
+import {t} from './i18n.js';
 
 /** Shared helper – fetch and parse preferences JSON */
 async function loadPreferences() {
-    const r = await fetch('api.php?action=load-preferences');
+    const r = await fetch('api.php?action=load-preferences', {
+        credentials: 'include'
+    });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
 }
@@ -15,9 +17,11 @@ async function loadPreferences() {
 /** Load word list for the authenticated user */
 export async function loadWordList() {
     try {
-        const r = await fetch('api.php?action=load-words');
+        const r = await fetch('api.php?action=load-words', {
+            credentials: 'include'
+        });
         if (!r.ok) {
-            if (r.status === 401) return { categories: {} };
+            if (r.status === 401) return {categories: {}};
             throw new Error(`HTTP ${r.status}`);
         }
         const data = await r.json();
@@ -26,7 +30,7 @@ export async function loadWordList() {
     } catch (err) {
         console.error('Failed to load word list:', err);
         showToast(t('errorLoadWords'), 'error');
-        return { categories: {} };
+        return {categories: {}};
     }
 }
 
@@ -35,19 +39,19 @@ export async function saveToJSON(categories) {
     try {
         const r = await fetch('api.php?action=save', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ categories }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({categories})
         });
         const result = await r.json();
         if (!r.ok) {
-            showToast(t('errorSaveWords', { item: result.error || r.status }), 'error');
+            showToast(t('errorSaveWords', {item: result.error || r.status}), 'error');
             return false;
         }
         console.log('✅ Saved:', result);
         return true;
     } catch (err) {
         console.error('Save error:', err);
-        showToast(t('errorSaveWordsGeneral', { item: err.message }), 'error');
+        showToast(t('errorSaveWordsGeneral', {item: err.message}), 'error');
         return false;
     }
 }
@@ -57,13 +61,13 @@ export async function loadGlobalWords() {
     try {
         const r = await fetch('api.php?action=load-global-words');
         if (!r.ok) {
-            if (r.status === 401) return { words: [] };
+            if (r.status === 401) return {words: []};
             throw new Error(`HTTP ${r.status}`);
         }
         return await r.json();
     } catch (err) {
         console.error('Failed to load global words:', err);
-        return { words: [] };
+        return {words: []};
     }
 }
 
@@ -72,8 +76,8 @@ export async function saveGlobalWords(words) {
     try {
         const r = await fetch('api.php?action=save-global-words', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ words }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({words})
         });
         const result = await r.json();
         if (!r.ok) {
@@ -91,108 +95,147 @@ export async function saveGlobalWords(words) {
 // ── Preferences ───────────────────────────────────────────────────────────────
 
 export async function loadDwellTimePreference() {
-    try { return (await loadPreferences()).dwellTimeMs || 2000; }
-    catch { return 2000; }
+    try {
+        return (await loadPreferences()).dwellTimeMs || 2000;
+    } catch {
+        return 2000;
+    }
 }
 
 export async function loadDwellEnabledPreference() {
-    try { return (await loadPreferences()).dwellEnabled !== false; }
-    catch { return true; }
+    try {
+        return (await loadPreferences()).dwellEnabled !== false;
+    } catch {
+        return true;
+    }
 }
 
 export async function saveDwellTimePreference(dwellTimeMs) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dwellTimeMs }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({dwellTimeMs})
         });
         const result = await r.json();
-        if (result.success) { console.log(`✅ Dwell time saved: ${dwellTimeMs}ms`); return true; }
+        if (result.success) {
+            console.log(`✅ Dwell time saved: ${dwellTimeMs}ms`);
+            return true;
+        }
         return false;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 export async function saveDwellEnabledPreference(enabled) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dwellEnabled: enabled }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({dwellEnabled: enabled})
         });
         const result = await r.json();
-        if (result.success) { console.log(`✅ Dwell enabled: ${enabled}`); return true; }
+        if (result.success) {
+            console.log(`✅ Dwell enabled: ${enabled}`);
+            return true;
+        }
         return false;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 export async function loadAlarmDevicePreference() {
-    try { return (await loadPreferences()).selectedAlarmDeviceId || ''; }
-    catch { return ''; }
+    try {
+        return (await loadPreferences()).selectedAlarmDeviceId || '';
+    } catch {
+        return '';
+    }
 }
 
 export async function saveAlarmDevicePreference(deviceId) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ selectedAlarmDeviceId: deviceId }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({selectedAlarmDeviceId: deviceId})
         });
         const result = await r.json();
         return result.success === true;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 export async function loadAlarmTypePreference() {
-    try { return (await loadPreferences()).alarmType || 'high'; }
-    catch { return 'high'; }
+    try {
+        return (await loadPreferences()).alarmType || 'high';
+    } catch {
+        return 'high';
+    }
 }
 
 export async function saveAlarmTypePreference(alarmType) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ alarmType }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({alarmType})
         });
         const result = await r.json();
         return result.success === true;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 export async function loadAlarmDurationPreference() {
-    try { return (await loadPreferences()).alarmDuration || 6; }
-    catch { return 6; }
+    try {
+        return (await loadPreferences()).alarmDuration || 6;
+    } catch {
+        return 6;
+    }
 }
 
 export async function saveAlarmDurationPreference(alarmDuration) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ alarmDuration }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({alarmDuration})
         });
         const result = await r.json();
         return result.success === true;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 export async function loadDarkModePreference() {
-    try { return (await loadPreferences()).darkModeEnabled === true; }
-    catch { return false; }
+    try {
+        return (await loadPreferences()).darkModeEnabled === true;
+    } catch {
+        return false;
+    }
 }
 
 export async function saveDarkModePreference(darkModeEnabled) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ darkModeEnabled }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({darkModeEnabled})
         });
         const result = await r.json();
-        if (result.success) { console.log(`✅ Dark mode: ${darkModeEnabled}`); return true; }
+        if (result.success) {
+            console.log(`✅ Dark mode: ${darkModeEnabled}`);
+            return true;
+        }
         return false;
-    } catch { return false; }
+    } catch {
+        return false;
+    }
 }
 
 
@@ -201,13 +244,15 @@ export async function saveDarkModePreference(darkModeEnabled) {
 export async function loadTelegramConfig() {
     try {
         const prefs = await loadPreferences();
-        return { enabled: prefs.telegramEnabled || false };
-    } catch { return { enabled: false }; }
+        return {enabled: prefs.telegramEnabled || false};
+    } catch {
+        return {enabled: false};
+    }
 }
 
 export async function sendToTelegram(message, categoryName = null) {
     try {
-        const prefs  = await loadPreferences();
+        const prefs = await loadPreferences();
         const chatId = prefs.telegramSelectedChatId || '';
 
         if (!chatId) {
@@ -221,14 +266,17 @@ export async function sendToTelegram(message, categoryName = null) {
             finalMessage = `${categoryName}: ${message}`;
         }
 
-        const r = await fetch('backend.php', {
+        const r = await fetch('api.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'send-telegram-message', message: finalMessage, chatId }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'send-telegram-message', message: finalMessage, chatId})
         });
         const result = await r.json();
-        if (result.success) { showToast(t('telegramSent'), 'success'); return true; }
-        showToast(t('telegramWarning', { item: result.message }), 'warning');
+        if (result.success) {
+            showToast(t('telegramSent'), 'success');
+            return true;
+        }
+        showToast(t('telegramWarning', {item: result.message}), 'warning');
         return false;
     } catch (err) {
         console.error('Error sending to Telegram:', err);
@@ -240,19 +288,25 @@ export async function sendToTelegram(message, categoryName = null) {
 // ── Language ──────────────────────────────────────────────────────────────────
 
 export async function loadLanguagePreference() {
-    try { return (await loadPreferences()).language || 'pl'; }
-    catch { return 'pl'; }
+    try {
+        return (await loadPreferences()).language || 'pl';
+    } catch {
+        return 'pl';
+    }
 }
 
 export async function saveLanguagePreference(language) {
     try {
         const r = await fetch('api.php?action=save-preferences', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ language }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({language})
         });
         const result = await r.json();
-        if (result.success) { console.log(`✅ Language saved: ${language}`); return true; }
+        if (result.success) {
+            console.log(`✅ Language saved: ${language}`);
+            return true;
+        }
         return false;
     } catch (err) {
         console.error('Language save error:', err);

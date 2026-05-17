@@ -10,7 +10,7 @@ class WordsHandler {
      * Handle save words request
      */
     public static function handleSaveWords($input) {
-        requireAuth();
+        requireAuth(true);
 
         if (!isset($input['categories'])) {
             http_response_code(400);
@@ -95,7 +95,7 @@ class WordsHandler {
      * Handle save global words request
      */
     public static function handleSaveGlobalWords($input) {
-        requireAuth();
+        requireAuth(true);
 
         if (!isset($input['words'])) {
             http_response_code(400);

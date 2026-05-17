@@ -15,5 +15,8 @@ export const state = {
     darkModeEnabled: false,
     alarmDuration: 6,
     language: 'pl',
-    recentlyClickedMessages: [] // Array of {text, category, timestamp}
+    recentlyClickedMessages: [], // Array of {text, category, timestamp}
+    // User / session
+    userEmail: '',
+    userRole: 'USER', // ADMIN | USER | DEMO
 };

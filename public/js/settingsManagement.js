@@ -841,7 +841,7 @@ export async function initializeSettingsManagement() {
 
     async function loadTelegramChats() {
         try {
-            const prefs = await fetch('api.php?action=load-preferences').then(r => r.json());
+            const prefs = await fetch('api.php?action=load-preferences', { credentials: 'include' }).then(r => r.json());
 
             const chats = prefs.telegramChats || [];
             const selectedId = prefs.telegramSelectedChatId || '';
@@ -922,7 +922,7 @@ export async function initializeSettingsManagement() {
                 }
                 try {
                     const r = await fetch('api.php?action=update-telegram-chat', {
-                        method: 'POST',
+                        method: 'POST', credentials: 'include',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({chatId, name: newName})
                     });
@@ -951,7 +951,7 @@ export async function initializeSettingsManagement() {
                 if (!ok) return;
                 try {
                     const r = await fetch('api.php?action=remove-telegram-chat', {
-                        method: 'POST',
+                        method: 'POST', credentials: 'include',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({chatId})
                     });
@@ -971,7 +971,7 @@ export async function initializeSettingsManagement() {
 
     async function saveTelegramConfig(enabled, selectedChatId) {
         const r = await fetch('api.php?action=save-telegram-config', {
-            method: 'POST',
+            method: 'POST', credentials: 'include',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({telegramEnabled: enabled, telegramSelectedChatId: selectedChatId})
         });
@@ -1017,7 +1017,7 @@ export async function initializeSettingsManagement() {
             if (!chatId) { showToast(t('errorEnterChatId'), 'error'); return; }
             try {
                 const r = await fetch('api.php?action=add-telegram-chat', {
-                    method: 'POST',
+                    method: 'POST', credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({name, chatId})
                 });
@@ -1043,8 +1043,8 @@ export async function initializeSettingsManagement() {
             telegramTestBtn.disabled = true;
             telegramTestBtn.textContent = t('btnTesting');
             try {
-                const r = await fetch('backend.php', {
-                    method: 'POST',
+                const r = await fetch('api.php', {
+                    method: 'POST', credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({action: 'test-telegram-connection', chatId})
                 });

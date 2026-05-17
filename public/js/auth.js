@@ -1,16 +1,20 @@
 // ============================================
 // AUTHENTICATION
 // ============================================
+import { state } from './state.js';
 import { showToast, showConfirmDialog } from './utils.js';
 import { t } from './i18n.js';
 
 /**
  * Verify the user's session; redirect to login.html if unauthenticated.
+ * Populates state.userEmail, state.userDisplayName, state.userRole.
  * @returns {Promise<boolean>}
  */
 export async function checkSession() {
     try {
-        const r      = await fetch('login.php?action=check-session');
+        const r      = await fetch('login.php?action=check-session', {
+            credentials: 'include',
+        });
         const result = await r.json();
 
         if (!result.loggedIn) {
@@ -18,9 +22,12 @@ export async function checkSession() {
             return false;
         }
 
-        if (result.user?.username) {
-            const el = document.getElementById('user-display');
-            if (el) el.textContent = `\u{1F464} ${result.user.username}`;
+        if (result.user) {
+            state.userEmail = result.user.email ?? '';
+            state.userRole  = result.user.role  ?? 'USER';
+
+            const el = document.getElementById('user-display-btn');
+            if (el) el.textContent = `👤 ${state.userEmail}`;
         }
 
         return true;
@@ -38,6 +45,7 @@ export async function handleLogout() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({}),
+            credentials: 'include',
         });
         if (r.ok) {
             showToast(t('loggedOut'), 'success');

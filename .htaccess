@@ -1,0 +1,25 @@
+# KUBA App - Apache Rewrite Rules
+# Routes all requests through the PHP router (index.php)
+# which serves static files from /public/ and API from /src/
+
+Options -Indexes
+
+RewriteEngine On
+
+# Allow direct access to email confirmation endpoint
+RewriteRule ^src/auth/confirm-email\.php - [L]
+
+# Block direct access to sensitive directories
+RewriteRule ^(src|data)(/|$) - [F,L]
+
+# Don't rewrite actual existing files (e.g. index.php)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Don't rewrite actual existing directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route everything else through the PHP router
+RewriteRule ^ index.php [L,QSA]
+

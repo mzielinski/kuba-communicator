@@ -1,7 +1,6 @@
 <?php
 // ============================================
-// KUBA - WhatsApp Backend Integration
-// PHP Backend for sending messages via WhatsApp Business API
+// KUBA - Telegram Backend Integration
 // ============================================
 
 // CORS headers
@@ -31,7 +30,7 @@ session_start();
 // ============================================
 // DEBUG LOGGING
 // ============================================
-$DEBUG_LOG = __DIR__ . '/debug.log';
+$DEBUG_LOG = __DIR__ . '/../../debug.log';
 
 function writeDebugLog($message) {
     global $DEBUG_LOG;
@@ -45,10 +44,8 @@ if (file_exists($DEBUG_LOG) && filesize($DEBUG_LOG) > 1024 * 1024) {
     unlink($DEBUG_LOG);
 }
 
-writeDebugLog("=== Backend.php loaded ===");
-
 // Load .env file for local development (if it exists)
-$envPath = __DIR__ . '/data/.env';
+$envPath = __DIR__ . '/../../data/.env';
 $envLoaded = false;
 
 writeDebugLog("Checking for .env file at: {$envPath}");
@@ -191,7 +188,7 @@ try {
             }
 
             // Diagnostic information
-            $envPath = __DIR__ . '/data/.env';
+            $envPath = __DIR__ . '/../../data/.env';
             $diagnostics = [
                 'env_path' => $envPath,
                 'env_file_exists' => file_exists($envPath),
@@ -268,7 +265,7 @@ try {
  */
 function saveMessageLocally($message, $recipientPhone = null) {
     try {
-        $logFile = __DIR__ . '/messages_log.txt';
+        $logFile = __DIR__ . '/../../messages_log.txt';
         $timestamp = date('Y-m-d H:i:s');
         $logEntry = "[{$timestamp}] To: {$recipientPhone} | Message: {$message}\n";
 
@@ -383,3 +380,4 @@ function sendTelegramMessage($message, $chatId) {
 }
 
 ?>
+

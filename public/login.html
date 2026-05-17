@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuba – Communication Device</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+        }
+
+        .login-header { text-align: center; margin-bottom: 28px; }
+        .login-header h1 { color: #333; font-size: 28px; margin-bottom: 6px; }
+        .login-header p  { color: #888; font-size: 14px; }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            color: #444;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color .25s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,.12);
+        }
+
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; }
+        .checkbox-group input { width: auto; margin-top: 2px; }
+        .checkbox-hint { color: #888; font-size: 12px; margin-top: 4px; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+            margin-top: 8px;
+        }
+        .btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,.3); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: .2s;
+        }
+        .btn-secondary:hover { background: #667eea; color: white; }
+
+        .btn-demo {
+            width: 100%;
+            padding: 9px;
+            background: transparent;
+            color: #888;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: .2s;
+        }
+        .btn-demo:hover { border-color: #667eea; color: #667eea; }
+
+        .divider {
+            text-align: center;
+            color: #bbb;
+            font-size: 12px;
+            margin: 16px 0;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .divider::before { left: 0; }
+        .divider::after  { right: 0; }
+
+        .message {
+            font-size: 13px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 6px;
+            display: none;
+            line-height: 1.5;
+        }
+        .message.error   { color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; }
+        .message.success { color: #155724; background: #d4edda; border: 1px solid #c3e6cb; }
+        .message.info    { color: #0c5460; background: #d1ecf1; border: 1px solid #bee5eb; }
+        .message.show    { display: block; }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .lang-switch {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 6px;
+        }
+        .lang-btn {
+            padding: 4px 10px;
+            border: 1px solid rgba(255,255,255,.5);
+            background: rgba(255,255,255,.15);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .lang-btn.active { background: rgba(255,255,255,.4); }
+    </style>
+</head>
+<body>
+    <div class="lang-switch">
+        <button class="lang-btn" id="lang-pl">PL</button>
+        <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🧑 Kuba</h1>
+            <p id="header-sub"></p>
+        </div>
+
+        <!-- LOGIN VIEW -->
+        <div id="view-login" class="view active">
+            <form id="login-form">
+                <div class="form-group">
+                    <label id="lbl-email" for="email"></label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-password" for="password"></label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" id="login-btn" class="btn-primary"></button>
+                <div id="login-msg" class="message"></div>
+            </form>
+            <div class="divider" id="divider-or"></div>
+            <button class="btn-secondary" id="btn-create" onclick="showView('register')"></button>
+            <button class="btn-demo" id="btn-demo" onclick="demoLogin()"></button>
+        </div>
+
+        <!-- REGISTER VIEW -->
+        <div id="view-register" class="view">
+            <form id="register-form">
+                <div class="form-group">
+                    <label id="lbl-reg-email" for="reg-email"></label>
+                    <input type="email" id="reg-email" name="email" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-reg-pass" for="reg-password"></label>
+                    <input type="password" id="reg-password" name="password" autocomplete="new-password" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label id="lbl-reg-pass2" for="reg-password2"></label>
+                    <input type="password" id="reg-password2" name="password2" autocomplete="new-password" required>
+                </div>
+                <div class="form-group">
+                    <label id="lbl-reg-lang" for="reg-language"></label>
+                    <select id="reg-language" name="language">
+                        <option value="pl">🇵🇱 Polski</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="reg-predefined" name="predefined_words" value="1">
+                        <div>
+                            <label id="lbl-predefined" for="reg-predefined" style="margin:0"></label>
+                            <div class="checkbox-hint" id="hint-predefined"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" id="register-btn" class="btn-primary"></button>
+                <div id="register-msg" class="message"></div>
+            </form>
+            <div class="divider"></div>
+            <button class="btn-secondary" id="btn-back" onclick="showView('login')"></button>
+        </div>
+    </div>
+
+    <script type="module">
+    import { translations } from './js/translations.js';
+
+    // ── Language ──────────────────────────────────────────────────────────────
+    let lang = localStorage.getItem('kuba_lang') ||
+               ((navigator.language || 'pl').toLowerCase().startsWith('pl') ? 'pl' : 'en');
+
+    function t(key) {
+        const dict = translations[lang] || translations['pl'];
+        return dict[key] ?? translations['pl'][key] ?? key;
+    }
+
+    function applyLang() {
+        document.documentElement.lang = lang;
+        document.getElementById('header-sub').textContent        = t('loginPageSubtitle');
+        document.getElementById('lbl-email').textContent         = t('loginEmail');
+        document.getElementById('lbl-password').textContent      = t('loginPassword');
+        document.getElementById('login-btn').textContent         = t('loginSubmitBtn');
+        document.getElementById('divider-or').textContent        = t('loginOr');
+        document.getElementById('btn-create').textContent        = t('loginCreateAccount');
+        document.getElementById('btn-demo').textContent          = t('loginDemoAccess');
+        document.getElementById('lbl-reg-email').textContent     = t('registerEmail');
+        document.getElementById('lbl-reg-pass').textContent      = t('registerPassword');
+        document.getElementById('lbl-reg-pass2').textContent     = t('registerConfirmPassword');
+        document.getElementById('lbl-reg-lang').textContent      = t('registerLanguage');
+        document.getElementById('lbl-predefined').textContent    = t('registerPredefinedWords');
+        document.getElementById('hint-predefined').textContent   = t('registerPredefinedHint');
+        document.getElementById('register-btn').textContent      = t('registerSubmitBtn');
+        document.getElementById('btn-back').textContent          = t('registerBackToLogin');
+        document.getElementById('reg-language').value = lang;
+        document.getElementById('lang-pl').classList.toggle('active', lang === 'pl');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    }
+
+    window.switchLang = function(l) {
+        lang = l;
+        localStorage.setItem('kuba_lang', l);
+        applyLang();
+    };
+
+    // ── View switching ────────────────────────────────────────────────────────
+    window.showView = function(name) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + name).classList.add('active');
+        clearMessages();
+    };
+
+    function clearMessages() {
+        document.querySelectorAll('.message').forEach(m => { m.className = 'message'; m.textContent = ''; });
+    }
+
+    function showMsg(id, text, type) {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = 'message ' + type + ' show';
+    }
+
+    // ── Login ─────────────────────────────────────────────────────────────────
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessages();
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        if (!email || !password) { showMsg('login-msg', t('loginErrRequired'), 'error'); return; }
+
+        const btn = document.getElementById('login-btn');
+        btn.disabled = true;
+        btn.textContent = t('loginLoggingIn');
+
+        try {
+            const r    = await fetch('login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, lang }),
+                credentials: 'include',
+            });
+            const data = await r.json();
+            if (r.ok && data.success) {
+                showMsg('login-msg', t('loginSuccess'), 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 800);
+            } else {
+                showMsg('login-msg', data.message || '❌', 'error');
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        } catch { showMsg('login-msg', '❌ Network error', 'error'); }
+        finally {
+            btn.disabled = false;
+            btn.textContent = t('loginSubmitBtn');
+        }
+    });
+
+    // ── Registration ──────────────────────────────────────────────────────────
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessages();
+        const email     = document.getElementById('reg-email').value.trim();
+        const password  = document.getElementById('reg-password').value;
+        const password2 = document.getElementById('reg-password2').value;
+        const language  = document.getElementById('reg-language').value;
+        const predefined = document.getElementById('reg-predefined').checked;
+
+        if (!email || !password || !password2) { showMsg('register-msg', t('loginErrRequired'), 'error'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMsg('register-msg', t('loginErrEmail'), 'error'); return; }
+        if (password.length < 8) { showMsg('register-msg', t('loginErrPassShort'), 'error'); return; }
+        if (password !== password2) { showMsg('register-msg', t('loginErrPassMismatch'), 'error'); return; }
+
+        const btn = document.getElementById('register-btn');
+        btn.disabled = true;
+        btn.textContent = t('loginRegistering');
+
+        try {
+            const r    = await fetch('user.php?action=register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, passwordConfirm: password2, language, predefined_words: predefined, lang }),
+                credentials: 'include',
+            });
+            const data = await r.json();
+            if ((r.status === 200 || r.status === 201) && data.success) {
+                document.getElementById('register-form').reset();
+                showMsg('register-msg', '✅ ' + data.message, 'success');
+                setTimeout(() => showMsg('register-msg', t('loginRegisteredInfo'), 'info'), 1500);
+            } else {
+                showMsg('register-msg', data.message || '❌', 'error');
+            }
+        } catch { showMsg('register-msg', '❌ Network error', 'error'); }
+        finally {
+            btn.disabled = false;
+            btn.textContent = t('registerSubmitBtn');
+        }
+    });
+
+    // ── Demo login ────────────────────────────────────────────────────────────
+    window.demoLogin = function() { window.location.href = 'login.php?action=demo-login'; };
+
+    // ── Lang buttons ──────────────────────────────────────────────────────────
+    document.getElementById('lang-pl').addEventListener('click', () => window.switchLang('pl'));
+    document.getElementById('lang-en').addEventListener('click', () => window.switchLang('en'));
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    applyLang();
+    document.getElementById('email').focus();
+    </script>
+</body>
+</html>

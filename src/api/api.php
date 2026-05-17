@@ -5,7 +5,6 @@
 // Main Router - Delegates to specialized handlers
 // ============================================
 
-// Start session for authentication
 session_start();
 
 header('Content-Type: application/json');
@@ -13,18 +12,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// ============================================
-// Load Dependencies
-// ============================================
-
-require_once __DIR__ . '/includes/auth.php';
-require_once __DIR__ . '/handlers/words-handler.php';
-require_once __DIR__ . '/handlers/preferences-handler.php';
-require_once __DIR__ . '/handlers/file-handler.php';
-
-// ============================================
-// Route Requests
-// ============================================
+require_once __DIR__ . '/../core/auth.php';
+require_once __DIR__ . '/words-handler.php';
+require_once __DIR__ . '/preferences-handler.php';
+require_once __DIR__ . '/file-handler.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
@@ -81,5 +72,4 @@ if ($method === 'POST') {
     echo json_encode(['error' => 'Invalid request']);
 }
 ?>
-
 

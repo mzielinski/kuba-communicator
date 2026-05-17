@@ -10,13 +10,13 @@ echo "📁 Project Directory:"
 pwd
 echo ""
 
-echo "📋 Checking files..."
-if [ -f "index.html" ]; then echo "✅ index.html"; else echo "❌ index.html missing"; fi
-if [ -f "styles.css" ]; then echo "✅ styles.css"; else echo "❌ styles.css missing"; fi
-if [ -f "js/app.js" ]; then echo "✅ js/app.js"; else echo "❌ js/app.js missing"; fi
-if [ -f "backend.php" ]; then echo "✅ backend.php"; else echo "❌ backend.php missing"; fi
-if [ -f "api.php" ]; then echo "✅ api.php"; else echo "❌ api.php missing"; fi
-if [ -d "handlers/" ]; then echo "✅ handlers/"; else echo "❌ handlers/ missing"; fi
+echo "📋 Checking new structure..."
+if [ -f "public/index.html" ]; then echo "✅ public/index.html"; else echo "❌ public/index.html missing"; fi
+if [ -f "public/styles.css" ]; then echo "✅ public/styles.css"; else echo "❌ public/styles.css missing"; fi
+if [ -f "public/js/app.js" ]; then echo "✅ public/js/app.js"; else echo "❌ public/js/app.js missing"; fi
+if [ -f "src/api/api.php" ]; then echo "✅ src/api/api.php"; else echo "❌ src/api/api.php missing"; fi
+if [ -f "src/api/users.php" ]; then echo "✅ src/api/users.php"; else echo "❌ src/api/users.php missing"; fi
+if [ -d "src/api" ]; then echo "✅ src/"; else echo "❌ src/ missing"; fi
 if [ -d "data/" ]; then echo "✅ data/"; else echo "❌ data/ missing"; fi
 
 echo ""
@@ -24,8 +24,9 @@ echo "🌐 Starting PHP Development Server..."
 echo "📍 URL: http://localhost:8000"
 echo "📍 URL: http://127.0.0.1:8000"
 echo ""
-echo "⚠️  This server executes PHP files (login.php, api.php, etc.)"
-echo "✅ Sessions and POST requests will work correctly"
+echo "✅ Frontend served from: /public/"
+echo "✅ API routes from: /src/api/ and /src/auth/"
+echo "✅ All PHP files execute properly"
 echo ""
 echo "Press CTRL+C to stop server"
 echo ""
@@ -41,7 +42,10 @@ else
     echo ""
 fi
 
-# Use PHP's built-in development server instead of Python
-# This allows PHP files to be executed properly
-php -S localhost:8000
+# Use PHP's built-in development server with router
+# Router handles:
+# - Static files from public/ (HTML, CSS, JS)
+# - API routes to src/api/ and src/auth/
+# - SPA-style routing (index.html fallback)
+php -S localhost:8000 index.php
 

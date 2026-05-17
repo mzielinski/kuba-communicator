@@ -13,7 +13,8 @@ backed by a lightweight PHP server.
 - [Project Structure](#project-structure)
 - [Requirements](#requirements)
 - [Installation & Setup](#installation--setup)
-- [User Accounts](#user-accounts)
+- [User Accounts & Registration](#user-accounts--registration)
+- [Roles & Statuses](#roles--statuses)
 - [Data Files](#data-files)
 - [Configuration](#configuration)
 - [API Reference](#api-reference)
@@ -25,7 +26,7 @@ backed by a lightweight PHP server.
 
 When a user clicks (or dwells over) a word button the application simultaneously:
 
-1. **Speaks** the word aloud via the browser's Web Speech API (Polish locale).
+1. **Speaks** the word aloud via the browser's Web Speech API.
 2. **Copies** the word to the clipboard.
 3. **Sends** the word to a configured Telegram recipient (if enabled).
 
@@ -38,101 +39,63 @@ A special **alarm button** plays a 6-second beeping alert to call for assistance
 ### 🗣️ Text-to-Speech
 
 - Words are spoken aloud using the browser's built-in `SpeechSynthesis` API.
-- Language is set to `pl-PL` (Polish); falls back to the browser default when a Polish voice is unavailable.
+- Language is set to `pl-PL` (Polish) or `en-GB` (English); falls back to the browser default.
 - Emoji characters are automatically stripped before speech.
 
 ### 📂 Categories & Words
 
 - Words are grouped into **categories** displayed as tiles on the main grid.
-- Categories can be **normal** (words shown directly inside the tile) or **expandable** (a single button that opens a
-  full-screen word grid).
-- Category order, display size (`small` / `medium` / `large`), and expand mode are all configurable.
+- Categories can be **normal** or **expandable** (opens a full-screen word grid).
+- Category order, display size, and expand mode are all configurable.
 - Each word can have a custom **colour** and **font size**.
 
 ### ✏️ Word & Category Management
 
 Accessed via the ⚙️ button in the header. The management modal has four tabs:
 
-| Tab                   | What you can do                                                                                              |
-|-----------------------|--------------------------------------------------------------------------------------------------------------|
-| **Manage Categories** | Add, rename, resize, reorder, toggle expand mode, or delete categories                                       |
-| **Manage Words**      | Add, edit (text, colour, font size), reorder, or delete words within a category                              |
-| **Global Words**      | Add words that appear across multiple categories with configurable scope (all categories or expandable only) |
-| **Settings**          | Configure language, alarm (sound type, device, duration), dwell time, dark mode, and Telegram integration    |
+| Tab                   | What you can do                                                                 |
+|-----------------------|---------------------------------------------------------------------------------|
+| **Manage Categories** | Add, rename, resize, reorder, toggle expand mode, or delete categories          |
+| **Manage Words**      | Add, edit (text, colour, font size), reorder, or delete words within a category |
+| **Global Words**      | Add words that appear across multiple categories with configurable scope        |
+| **Settings**          | Configure language, alarm, dwell time, dark mode, and Telegram integration      |
 
-Changes are applied to the live grid immediately; they are only **persisted** when you click **💾 Save changes**.
+### 👤 User Accounts & Self-Registration
+
+- Users can **register** on the login page with a valid email and password.
+- A **confirmation email** is sent; after clicking the link the admin is notified.
+- The **admin approves** new accounts (via email link or admin panel).
+- Pending users see clear status messages when attempting to log in.
+
+### 👥 Admin User Management Panel
+
+- The **username button** (👤) in the header opens the user management panel.
+- **Admins** see all users: email, role, status, creation date, last update.
+- Admins can **Approve** accounts (WAITING_FOR_APPROVAL → ACTIVE).
+- Admins can **Delete** any user account.
+- Regular users see only their own account and can delete it (self-service).
+
+### 👁️ Demo Mode
+
+- A **"Try demo (no account)"** link on the login page auto-logs in a read-only demo session.
+- Demo users can explore the full UI but **cannot save** any changes.
+- A yellow banner is shown in demo mode with a link to create an account.
 
 ### 🚨 Alarm
 
-- A dedicated alarm button (word id `alarm`) generates and plays a synthesised beeping sound.
-- **Configurable sound profiles:**
-    - **High tone** (900 / 750 Hz) — sharp, attention-grabbing pitch
-    - **Mid tone** (500 / 400 Hz) — medium pitch
-    - **Low tone** (220 / 160 Hz) — low, gentle pitch
-    - **Siren** (150 → 800 Hz sweep) — sweeping frequency
-- **Configurable duration:** 1–10 seconds (default: 6 seconds)
-- The alarm is routed to a configurable audio output device (see Settings)
-- All alarm settings are saved per user in preferences
+- Configurable sound profiles (high, mid, low, siren), duration and audio output device.
 
-### 🖱️ Dwell Time (Gaze / Pointer Input)
+### 🖱️ Dwell Time
 
-- When enabled, hovering over a button for a configurable duration (0.5 s – 5 s) **automatically activates** it — no
-  click required.
-- A visual overlay fills up as the dwell timer counts down.
-- The dwell time and enabled state are saved per user in preferences.
-- Useful for eye-tracking hardware or switch-access devices.
-
-### 🌍 Global Words
-
-Global words are words that automatically appear in multiple (or all) categories:
-
-- **Scope options:**
-    - **All categories** — word appears in every category (normal and expandable)
-    - **Expand-only** — word appears only in expanded category views
-- Each global word has a unique ID and custom color/size
-- Useful for common phrases like "Yes", "No", or "Help" that should be accessible everywhere
+- Hover-to-click for eye-tracking or switch-access hardware.
 
 ### 📱 Telegram Integration
 
-- Optionally forward every selected word/phrase to a Telegram chat.
-- **Message format:** `[Category]: [Word/Phrase]` — includes the category to provide context.
-- Multiple named recipients can be stored; one is selected as the active target.
-- A test button lets you verify the connection from the Settings tab.
-- Uses a Telegram Bot configured via an environment variable (see [Configuration](#configuration)).
+- Forward every word to a Telegram chat; multiple named recipients supported.
 
-### 🔊 Audio Device Selection
+### 🌙 Dark Mode & 🌐 Language
 
-- Lists all available audio output devices (requires microphone permission to expose device labels).
-- The chosen device is saved as a user preference and used for alarm playback.
-
-### 🌙 Dark Mode
-
-- Toggle dark mode in the Settings tab for comfortable use in low-light environments.
-- The dark mode preference is saved per user.
-- High contrast colours ensure readability in dark backgrounds.
-
-### 🌐 Language Support
-
-- Select between **Polish** and **English** in the Settings tab.
-- All UI text, labels, hints, and toast notifications are translated.
-- Language preference is saved per user.
-- The app automatically uses the browser's Web Speech API for the selected language.
-
-### 📜 Recently Clicked Messages
-
-- A scrollable timeline above the main grid shows the **last 10 clicked words/phrases**.
-- Each message displays:
-    - The word text
-    - The category it came from
-    - The timestamp of the click
-- Click any recent message to **replay** it (speak, copy, and optionally send to Telegram).
-- Useful for reviewing the communication history during a session.
-
-### 🔐 Authentication
-
-- Session-based login with bcrypt-hashed passwords.
-- Each user has an isolated data directory (`data/<username>/`).
-- A utility script (`hash-passwords.php`) generates bcrypt hashes for new passwords.
+- Toggle dark mode; select Polish or English — saved per user.
 
 ---
 
@@ -140,63 +103,88 @@ Global words are words that automatically appear in multiple (or all) categories
 
 ```
 kuba-komunikacja/
-├── index.html               # Main application shell
-├── login.html               # Login page
-├── styles.css               # All CSS styles
+├── index.php                # Main PHP router — serves public/ files and routes API calls
+├── .htaccess                # Blocks direct access to src/ and data/; routes all requests to index.php
+├── dev-server.sh            # Quick-start helper for local PHP dev server
 │
-├── login.php                # Auth endpoints (login / logout / check-session)
-├── api.php                  # REST API router (words, preferences, Telegram config)
-├── backend.php              # Telegram message-sending backend
-├── hash-passwords.php       # Utility: generate bcrypt password hashes
+├── public/                  # All front-end assets (served to the browser)
+│   ├── index.html           # Main application shell
+│   ├── login.html           # Login + registration page
+│   ├── styles.css           # All CSS styles
+│   └── js/
+│       ├── app.js               # Bootstrap / entry point
+│       ├── state.js             # Shared mutable state (categories, preferences, role…)
+│       ├── api.js               # All fetch calls to the PHP backend
+│       ├── auth.js              # Session check & logout button
+│       ├── userManagement.js    # User management modal (admin panel + self-service)
+│       ├── renderer.js          # Render category grid & expanded view
+│       ├── wordActions.js       # Word-click pipeline (speak → copy → Telegram)
+│       ├── speech.js            # Web Speech API wrapper
+│       ├── alarm.js             # Alarm sound generation (multiple profiles)
+│       ├── dwell.js             # Dwell-time (hover-to-click) behaviour
+│       ├── i18n.js              # Internationalization (Polish / English)
+│       ├── translations.js      # Translation strings (pl / en)
+│       ├── settingsManagement.js # Settings modal
+│       └── utils.js             # Shared utilities (toast, clipboard, confirm dialog…)
 │
-├── handlers/
-│   ├── words-handler.php        # Load / save words.json
-│   ├── preferences-handler.php  # Load / save preferences.json, Telegram config
-│   └── file-handler.php         # Generic file-get helper
+├── src/                     # PHP backend (not directly accessible — routed via index.php)
+│   ├── api/
+│   │   ├── words-handler.php        # Load / save words.json
+│   │   ├── preferences-handler.php  # Load / save preferences.json, Telegram config
+│   │   ├── file-handler.php         # Generic file-get helper
+│   │   ├── users.php                # User management API (register, approve, delete, list)
+│   │   └── notifications-telegram.php  # Telegram message-sending backend
+│   ├── auth/
+│   │   ├── login.php                # Auth endpoints (login / logout / check-session / demo-login)
+│   │   └── confirm-email.php        # Email confirmation & admin approval handler (HTML page)
+│   └── core/
+│       ├── auth.php                 # Session / authentication helpers (role-aware)
+│       ├── credentials.php          # Thread-safe credentials.json CRUD (flock)
+│       ├── i18n.php                 # Server-side translations helper
+│       └── mailer.php               # Email sending helper (reads .env)
 │
-├── includes/
-│   └── auth.php             # Session / authentication helpers
-│
-├── js/
-│   ├── app.js               # Bootstrap / entry point
-│   ├── state.js             # Shared mutable state (categories, preferences, recentMessages)
-│   ├── api.js               # All fetch calls to the PHP backend
-│   ├── auth.js              # Session check & logout button
-│   ├── renderer.js          # Render category grid & expanded view, recent messages timeline
-│   ├── wordActions.js       # Word-click pipeline (speak → copy → Telegram → track in history)
-│   ├── speech.js            # Web Speech API wrapper
-│   ├── alarm.js             # Alarm sound generation (multiple profiles), device selection
-│   ├── dwell.js             # Dwell-time (hover-to-click) behaviour
-│   ├── i18n.js              # Internationalization (Polish / English)
-│   ├── settingsManagement.js # Settings modal — categories, words, global words, preferences
-│   └── utils.js             # Shared utilities (toast, clipboard, ID generation…)
-│
-├── data/
-│   ├── credentials.json     # User accounts (bcrypt-hashed passwords)
-│   ├── .env                 # Secret environment variables (not committed)
-│   ├── admin/
-│   │   ├── words.json           # Admin's word list
-│   │   └── preferences.json     # Admin's preferences
-│   ├── demo/
-│   │   ├── words.json
-│   │   └── preferences.json
-│   └── <username>/          # Created automatically on first login
-│       ├── words.json
-│       └── preferences.json
-│
-└── dev-server.sh            # Quick-start helper for local PHP dev server
+└── data/                    # Runtime data (not directly accessible)
+    ├── credentials.json         # User accounts (bcrypt passwords, roles, statuses)
+    ├── templates/
+    │   ├── words.json               # Predefined words template (copied on account activation)
+    │   ├── global-words.json        # Predefined global words template
+    │   └── emails/
+    │       ├── admin-notification.html  # Email template: admin approval request
+    │       └── approved-email.html      # Email template: account approved notification
+    ├── admin/
+    │   ├── words.json
+    │   ├── global-words.json
+    │   └── preferences.json
+    ├── demo/
+    │   ├── words.json
+    │   └── preferences.json
+    └── <derived-from-email>/    # Created automatically on account activation
+        ├── words.json
+        ├── global-words.json
+        └── preferences.json
 ```
+
+### URL Routing
+
+All HTTP requests are handled by `index.php` (enforced via `.htaccess`):
+
+| Incoming URL                  | Served from                                               |
+|-------------------------------|-----------------------------------------------------------|
+| `/`                           | `public/index.html`                                       |
+| `/login.html`                 | `public/login.html`                                       |
+| `/js/*.js`                    | `public/js/`                                              |
+| `/login.php`                  | `src/auth/login.php`                                      |
+| `/user.php`                   | `src/api/users.php`                                       |
+| `/api.php`                    | `src/api/` (words, prefs, etc.)                           |
+| `/src/auth/confirm-email.php` | `src/auth/confirm-email.php` (whitelisted in `.htaccess`) |
 
 ---
 
 ## Requirements
 
-- **PHP 7.4+** with the `curl` extension enabled (for Telegram).
-- A modern browser with support for:
-    - Web Speech API (`SpeechSynthesis`)
-    - Web Audio API (`OfflineAudioContext`)
-    - `navigator.mediaDevices` (for audio device enumeration)
-    - ES Modules (`<script type="module">`)
+- **PHP 7.4+** with `curl` extension (for Telegram) and `random_bytes` support.
+- PHP must be able to send email via `mail()` (configure sendmail or SMTP relay in `php.ini`).
+- A modern browser with ES Modules, Web Speech API, and Web Audio API support.
 
 ---
 
@@ -209,46 +197,54 @@ git clone <repo-url> kuba-komunikacja
 cd kuba-komunikacja
 ```
 
-### 2. Create the `data/.env` file
+### 2. Configure `.env` (app config)
 
-This file holds secrets and is **never committed to version control**.
+Create `.env` at the **project root**:
+
+```dotenv
+# Admin email — receives registration approval requests
+ADMIN_EMAIL=admin@yourdomain.com
+
+# Public URL of the application — used in email confirmation links
+APP_URL=https://your-app-url.com
+
+# Email sender settings
+SMTP_FROM=noreply@yourdomain.com
+SMTP_FROM_NAME=Kuba Communication Device
+```
+
+### 3. Configure `data/.env` (Telegram config)
 
 ```dotenv
 TELEGRAM_BOT_TOKEN=<your-telegram-bot-token>
 ```
 
-### 3. Configure users
+### 4. Update existing user emails in `credentials.json`
 
-Edit `data/credentials.json`. Passwords must be bcrypt-hashed. Use the helper script to generate hashes:
-
-```bash
-php hash-passwords.php
-```
-
-Example `credentials.json`:
+Edit `data/credentials.json` and set real email addresses for the existing accounts:
 
 ```json
 {
   "users": [
     {
-      "username": "admin",
-      "password": "$2y$12$..."
+      "email": "your-real-admin@email.com",
+      "role": "ADMIN",
+      "status": "ACTIVE",
+      "data_dir": "admin"
     }
   ]
 }
 ```
 
-### 4. Initialize user data directories
+> **Note:** The `email` field is the login identifier. The `data_dir` field maps each user to their data directory under
+`data/`.
 
-Create a directory for each user and seed it with an initial `words.json` and `preferences.json`:
+### 5. Set up predefined words template (optional)
 
-```bash
-mkdir -p data/admin
-cp data/demo/words.json data/admin/words.json
-cp data/demo/preferences.json data/admin/preferences.json
-```
+Edit `data/templates/words.json` to define the word categories that new users get when they register with "predefined
+words" enabled.
 
-### 5. Start the development server
+### 6. Start the development server
 
 ```bash
 bash dev-server.sh
@@ -256,212 +252,157 @@ bash dev-server.sh
 
 The app will be available at **http://localhost:8000**.
 
-> The helper script uses PHP's built-in web server. It also loads `data/.env` into the process environment so Telegram
-> works locally.
+---
+
+## User Accounts & Registration
+
+### Self-registration flow
+
+1. User clicks **"Create new account"** on the login page.
+2. Fills in: email, password (min 8 chars), app language, optional predefined words.
+3. Account is created with status `WAITING_FOR_CONFIRMATION`.
+4. User receives a **confirmation email** — must click the link to confirm their email address.
+5. On confirmation, status changes to `WAITING_FOR_APPROVAL` and the **admin receives an email** with a one-click
+   approval link.
+6. Admin clicks the approval link (or approves via the admin panel) → status becomes `ACTIVE`, user's data directory is
+   created (with optional predefined words copied in).
+7. User receives a **"Your account has been approved"** email and can now log in.
+
+### Email templates
+
+Outgoing emails use HTML templates stored in `data/templates/emails/`:
+
+| Template                  | Sent to | Trigger                           |
+|---------------------------|---------|-----------------------------------|
+| `admin-notification.html` | Admin   | User confirms their email address |
+| `approved-email.html`     | User    | Admin approves the account        |
+
+### Admin user management
+
+Access by clicking the **👤 username button** in the top-right header:
+
+- **Admins:** see all users with status, dates, and action buttons (Approve / Delete).
+- **Regular users:** see only their own account with a "Delete account" option.
+
+### Demo account
+
+The demo account (role `DEMO`) is a read-only session accessible via the **"Try demo"** link on the login page. No
+changes can be saved.
 
 ---
 
-## User Accounts
+## Roles & Statuses
 
-| Username | Description                |
-|----------|----------------------------|
-| `admin`  | Full administrative access |
-| `demo`   | Demo/guest account         |
+### Roles (set manually in `credentials.json`)
 
-Each user's word list and preferences are stored independently under `data/<username>/`.
+| Role    | Description                                          |
+|---------|------------------------------------------------------|
+| `ADMIN` | Full access; can approve/delete users                |
+| `USER`  | Normal user; can manage their own words and settings |
+| `DEMO`  | Read-only access; used for the demo session          |
 
-To add a new user:
+### Account Statuses
 
-1. Generate a bcrypt hash with `php hash-passwords.php`.
-2. Add the entry to `data/credentials.json`.
-3. Create `data/<username>/` with `words.json` and `preferences.json`.
+| Status                     | Meaning                                                    |
+|----------------------------|------------------------------------------------------------|
+| `WAITING_FOR_CONFIRMATION` | Registered; awaiting email confirmation from the user      |
+| `WAITING_FOR_APPROVAL`     | Email confirmed; awaiting admin approval                   |
+| `ACTIVE`                   | Fully active; can log in                                   |
+| `DELETED`                  | Soft-deleted; user cannot log in; data files are preserved |
 
 ---
 
 ## Data Files
 
-### `words.json`
-
-Defines all categories and their words.
+### `credentials.json` schema (per user)
 
 ```json
 {
-  "categories": {
-    "Category Name": {
-      "order": 1,
-      "size": "large",
-      "cols": 2,
-      "rows": 2,
-      "expand": false,
-      "words": [
-        {
-          "id": "unique-id",
-          "text": "Word Text",
-          "color": "#667eea",
-          "size": "30px"
-        }
-      ]
-    }
-  }
+  "email": "user@example.com",
+  "password": "$2y$12$...",
+  "role": "USER",
+  "status": "ACTIVE",
+  "language": "pl",
+  "predefined_words": false,
+  "data_dir": "user_at_example_com",
+  "confirmation_token": null,
+  "admin_approval_token": null,
+  "created_at": "2026-05-17T12:00:00+00:00",
+  "updated_at": "2026-05-17T12:00:00+00:00"
 }
 ```
 
-| Field           | Type                                 | Description                                                    |
-|-----------------|--------------------------------------|----------------------------------------------------------------|
-| `order`         | number                               | Display order (ascending)                                      |
-| `size`          | `"small"` \| `"medium"` \| `"large"` | Visual tile size                                               |
-| `cols`          | number                               | Grid columns for this category (affects layout)                |
-| `rows`          | number                               | Grid rows for this category (affects layout)                   |
-| `expand`        | boolean                              | If `true`, clicking the tile opens a full-screen word grid     |
-| `words[].id`    | string                               | Unique identifier; use `"alarm"` to trigger the built-in alarm |
-| `words[].text`  | string                               | Display text (can include emoji)                               |
-| `words[].color` | string                               | CSS colour for the button background                           |
-| `words[].size`  | string                               | CSS font size (e.g. `"30px"`)                                  |
-
-### `global-words.json` (optional per user)
-
-Stores global words that appear across multiple categories.
-
-```json
-{
-  "words": [
-    {
-      "id": "yes-global",
-      "text": "✅ Yes",
-      "color": "#00be00",
-      "size": "25px",
-      "scope": "all"
-    },
-    {
-      "id": "help-global",
-      "text": "🆘 Help",
-      "scope": "expand-only"
-    }
-  ]
-}
-```
-
-| Field   | Type                       | Description                                                                             |
-|---------|----------------------------|-----------------------------------------------------------------------------------------|
-| `id`    | string                     | Unique identifier for the global word                                                   |
-| `text`  | string                     | Display text (can include emoji)                                                        |
-| `color` | string                     | CSS colour for the button background (optional)                                         |
-| `size`  | string                     | CSS font size (optional, defaults to `20px` in expanded, `30px` in categories)          |
-| `scope` | `"all"` \| `"expand-only"` | Where the word appears: `"all"` = every category, `"expand-only"` = expanded views only |
-
-### `preferences.json`
-
-Stores per-user settings.
-
-```json
-{
-  "dwellTimeMs": 2000,
-  "dwellEnabled": false,
-  "selectedAlarmDeviceId": "",
-  "alarmType": "high",
-  "alarmDuration": 6,
-  "darkModeEnabled": false,
-  "language": "en",
-  "telegramEnabled": false,
-  "telegramSelectedChatId": "",
-  "telegramChats": [
-    {
-      "id": "123456789",
-      "name": "Jan"
-    }
-  ]
-}
-```
-
-| Field                   | Type    | Description                                                |
-|-------------------------|---------|------------------------------------------------------------|
-| `dwellTimeMs`           | number  | Hover duration before auto-activation (500–5000 ms)        |
-| `dwellEnabled`          | boolean | Enable/disable dwell time feature                          |
-| `selectedAlarmDeviceId` | string  | Audio device ID for alarm playback; empty = system default |
-| `alarmType`             | string  | Alarm sound profile: `high`, `mid`, `low`, or `siren`      |
-| `alarmDuration`         | number  | Alarm duration in seconds (1–10)                           |
-| `darkModeEnabled`       | boolean | Enable/disable dark mode                                   |
-| `language`              | string  | UI language: `pl` (Polish) or `en` (English)               |
-| `telegramEnabled`       | boolean | Enable/disable Telegram message forwarding                 |
-| `telegramSelectedChatId` | string  | Active recipient's Chat ID                                 |
-| `telegramChats[].id`    | string  | Chat ID of a Telegram recipient                            |
-| `telegramChats[].name`  | string  | Display name for the recipient                             |
+> Concurrent writes to `credentials.json` are protected by `flock()` exclusive locks.
 
 ---
 
 ## Configuration
 
-### Telegram Bot
+### Application (`data/.env`)
 
-1. Create a bot via [@BotFather](https://t.me/BotFather) and copy the token.
-2. Store the token in `data/.env`:
-   ```dotenv
-   TELEGRAM_BOT_TOKEN=123456789:AABBcc...
-   ```
-3. Find a recipient's Chat ID by messaging [@userinfobot](https://t.me/userinfobot).
-4. Add the recipient in the app's **Settings → Telegram** section.
-
-### Alarm Sound
-
-The alarm is a synthesised sound generated entirely in the browser — no audio files required.
-
-**Features:**
-
-- **Multiple sound profiles** — Choose between high, mid, low tones, or a sweeping siren
-- **Configurable duration** — Set alarm length from 1–10 seconds
-- **Device selection** — Route alarm to any available audio output device
-- The chosen profile, duration, and device are saved as user preferences in **Settings → Alarm Settings**
+```dotenv
+TELEGRAM_BOT_TOKEN=123456789:AABBcc...
+ADMIN_EMAIL=admin@yourdomain.com
+APP_URL=http://localhost:8000
+SMTP_FROM=noreply@yourdomain.com
+SMTP_FROM_NAME=Kuba Communication Device
+```
 
 ---
 
 ## API Reference
 
-All endpoints return JSON.
+All API endpoints are accessed via their **public URLs** (routed internally by `index.php`).
 
-### `login.php`
+### `login.php` → `src/auth/login.php`
 
-| Method | `action` param  | Description                            |
-|--------|-----------------|----------------------------------------|
-| `POST` | *(none)*        | Login — body: `{ username, password }` |
-| `POST` | `logout`        | Destroy session                        |
-| `GET`  | `check-session` | Returns `{ loggedIn, user }`           |
+| Method | `action` param  | Description                                        |
+|--------|-----------------|----------------------------------------------------|
+| `POST` | *(none)*        | Login — body: `{ email, password, lang }`          |
+| `POST` | `logout`        | Destroy session                                    |
+| `GET`  | `check-session` | Returns `{ loggedIn, user: { email, role, … } }`   |
+| `GET`  | `demo-login`    | Auto-login as demo user, redirects to `index.html` |
 
-### `api.php`
+### `user.php` → `src/api/users.php`
 
-| Method | `action` param         | Description                                                    |
-|--------|------------------------|----------------------------------------------------------------|
-| `GET`  | `load-words`           | Load current user's `words.json`                               |
-| `GET`  | `load-preferences`     | Load current user's `preferences.json`                         |
-| `GET`  | `load-global-words`    | Load current user's global words                               |
-| `POST` | `save`                 | Save categories and word list — body: `{ categories }`         |
-| `POST` | `save-global-words`    | Save global words — body: `{ words }`                          |
-| `POST` | `save-preferences`     | Save preferences — body: preference fields (dwell, alarm, etc) |
-| `POST` | `save-telegram-config` | Save Telegram enabled state and selected chat                  |
-| `POST` | `add-telegram-chat`    | Add a Telegram recipient — body: `{ name, chatId }`            |
-| `POST` | `remove-telegram-chat` | Remove a recipient — body: `{ chatId }`                        |
-| `POST` | `update-telegram-chat` | Rename a recipient — body: `{ chatId, name }`                  |
+| Method | `action` param     | Auth       | Description                                    |
+|--------|--------------------|------------|------------------------------------------------|
+| `POST` | `register`         | Public     | Register new account; sends confirmation email |
+| `GET`  | `list-users`       | Required   | Admin: all users; User: own record             |
+| `POST` | `approve-user`     | Admin only | Approve a user — body: `{ email }`             |
+| `POST` | `delete-user`      | Required   | Delete user — body: `{ email }` (own or admin) |
+| `GET`  | `get-current-user` | Required   | Returns current user's profile                 |
 
-### `backend.php`
+### `src/auth/confirm-email.php` (direct access, whitelisted in `.htaccess`)
 
-| Method | `action` (JSON body)       | Description                                  |
-|--------|----------------------------|----------------------------------------------|
-| `POST` | `send-telegram-message`    | Send a message — body: `{ message, chatId }` |
-| `POST` | `test-telegram-connection` | Send a test message — body: `{ chatId }`     |
+| Method | `action` param | `token` param | Description                                      |
+|--------|----------------|---------------|--------------------------------------------------|
+| `GET`  | `confirm`      | ✅ required    | Confirm user's email (link sent to user's inbox) |
+| `GET`  | `approve`      | ✅ required    | Approve account (link sent to admin's inbox)     |
+
+### `api.php` → `src/api/` (words, preferences, Telegram)
+
+| Method | `action` param         | Auth (write blocked for DEMO) | Description            |
+|--------|------------------------|-------------------------------|------------------------|
+| `GET`  | `load-words`           | Required                      | Load words.json        |
+| `GET`  | `load-preferences`     | Optional                      | Load preferences.json  |
+| `GET`  | `load-global-words`    | Required                      | Load global-words.json |
+| `POST` | `save`                 | Required + write              | Save categories        |
+| `POST` | `save-global-words`    | Required + write              | Save global words      |
+| `POST` | `save-preferences`     | Required + write              | Save preferences       |
+| `POST` | `save-telegram-config` | Required + write              | Save Telegram settings |
 
 ---
 
 ## Development
 
 ```bash
-# Start the PHP dev server (auto-loads data/.env)
+# Start the PHP dev server
 bash dev-server.sh
 
-# Generate a bcrypt hash for a new password
-php hash-passwords.php
+# The app is available at http://localhost:8000
 ```
 
-The front-end uses **ES Modules** — no build step is required. Simply edit the files under `js/` and refresh the
-browser.
+The front-end uses **ES Modules** — no build step is required. Edit files under `public/js/` and refresh the browser.
 
-Debug logs from `backend.php` are appended to `debug.log` (auto-rotated when it exceeds 1 MB).
-
+PHP source files live under `src/` and are never served directly to the browser — all access goes through `index.php`.

@@ -50,7 +50,7 @@ class PreferencesHandler {
      * Handle save preferences request
      */
     public static function handleSavePreferences($input) {
-        requireAuth();
+        requireAuth(true);
 
         $userPreferencesFile = getUserJsonFile('preferences.json');
         $preferences = [];
@@ -95,7 +95,7 @@ class PreferencesHandler {
      * Handle save Telegram config request
      */
     public static function handleSaveTelegramConfig($input) {
-        requireAuth();
+        requireAuth(true);
 
         $userPreferencesFile = getUserJsonFile('preferences.json');
         $preferences = [];
@@ -127,7 +127,7 @@ class PreferencesHandler {
      * Handle add Telegram chat request
      */
     public static function handleAddTelegramChat($input) {
-        requireAuth();
+        requireAuth(true);
 
         $userPreferencesFile = getUserJsonFile('preferences.json');
 
@@ -197,7 +197,7 @@ class PreferencesHandler {
      * Handle remove Telegram chat request
      */
     public static function handleRemoveTelegramChat($input) {
-        requireAuth();
+        requireAuth(true);
 
         $userPreferencesFile = getUserJsonFile('preferences.json');
 
@@ -258,7 +258,7 @@ class PreferencesHandler {
      * Handle update Telegram chat request
      */
     public static function handleUpdateTelegramChat($input) {
-        requireAuth();
+        requireAuth(true);
 
         $userPreferencesFile = getUserJsonFile('preferences.json');
 
