@@ -88,28 +88,6 @@ if ($action === 'approve') {
 
 renderPage('error', 'pl', 'Nieznana operacja', 'Nieznana operacja.');
 
-// ── Template Loader ───────────────────────────────────────────────────────────
-
-/**
- * Load and render an email template with variable substitution
- */
-function renderEmailTemplate(string $templateName, array $variables): string {
-    $templatePath = __DIR__ . '/../../data/templates/emails/' . $templateName . '.html';
-
-    if (!file_exists($templatePath)) {
-        error_log("[Email Template] Template not found: {$templatePath}");
-        return '';
-    }
-
-    $html = file_get_contents($templatePath);
-
-    foreach ($variables as $key => $value) {
-        $placeholder = '{{' . $key . '}}';
-        $html = str_replace($placeholder, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'), $html);
-    }
-
-    return $html;
-}
 
 // ── HTML Renderer ──────────────────────────────────────────────────────────────
 
@@ -118,7 +96,7 @@ function renderPage(string $type, string $lang, string $heading, string $body): 
                  'error'   => ['bg' => '#ffe0e0', 'border' => '#dc3545', 'icon' => '❌'],
                  'info'    => ['bg' => '#e0f0ff', 'border' => '#667eea', 'icon' => 'ℹ️']];
     $c        = $colors[$type] ?? $colors['info'];
-    $loginUrl = getAppUrl() . '/public/login.html';
+    $loginUrl = getAppUrl() . '/login.html';
     $loginLbl = I18n::t('back_to_login', $lang);
 
     echo "<!DOCTYPE html>
@@ -172,6 +150,7 @@ function activateUserData(array $user): void {
 
 function buildAdminNotificationEmail(array $user, string $approvalLink): string {
     return renderEmailTemplate('admin-notification', [
+        'title'           => 'Kuba – New Account Awaiting Approval',
         'email'           => $user['email'],
         'language'        => $user['language'] ?? 'pl',
         'created_at'      => $user['created_at'] ?? '',
@@ -185,6 +164,7 @@ function sendApprovedEmail(array $user): void {
     $subject  = I18n::t('email_approved_subject', $lang);
 
     $html = renderEmailTemplate('approved-email', [
+        'title'       => $subject,
         'greeting'    => I18n::t('email_approved_greeting', $lang),
         'intro'       => I18n::t('email_approved_intro', $lang),
         'app_link'    => $appLink,

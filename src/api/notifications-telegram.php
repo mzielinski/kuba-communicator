@@ -189,6 +189,7 @@ try {
 
             // Diagnostic information
             $envPath = __DIR__ . '/../../data/.env';
+            $curlInfo = curl_version();
             $diagnostics = [
                 'env_path' => $envPath,
                 'env_file_exists' => file_exists($envPath),
@@ -198,6 +199,9 @@ try {
                 'token_set' => !empty(TELEGRAM_BOT_TOKEN),
                 'token_length' => strlen(TELEGRAM_BOT_TOKEN),
                 'php_version' => phpversion(),
+                'curl_version' => $curlInfo['version'],
+                'curl_ssl_version' => $curlInfo['ssl_version'],
+                'curl_protocols' => $curlInfo['protocols'],
                 'script_dir' => __DIR__,
                 'files_in_dir' => array_filter(scandir(__DIR__), function($f) {
                     return !in_array($f, ['.', '..']);
@@ -326,6 +330,16 @@ function sendTelegramMessage($message, $chatId) {
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+
+        // DNS resolution settings to improve reliability
+        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);  // Prefer IPv4
+        curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 3600);       // Cache DNS for 1 hour
+
+        // Follow redirects and set user agent
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'KUBA-Communication-Device/1.0');
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -355,6 +369,12 @@ function sendTelegramMessage($message, $chatId) {
             $errorMsg = 'HTTP ' . $httpCode;
             if (!empty($curlError)) {
                 $errorMsg .= ': ' . $curlError;
+
+                // Check if it's a DNS error
+                if (strpos($curlError, 'getaddrinfo') !== false || strpos($curlError, 'Could not resolve') !== false) {
+                    $errorMsg = 'DNS resolution failed for api.telegram.org. Your hosting provider may have network restrictions. ' .
+                               'Contact your hosting support to enable outbound HTTPS connections to Telegram API (api.telegram.org:443).';
+                }
             }
 
             // Try to parse error from response

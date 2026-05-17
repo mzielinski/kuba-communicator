@@ -21,7 +21,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
 if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(file_get_contents('php://input'), true) ?? [];
+
+    // Allow action in POST body when not in query string
+    if (!$action && isset($input['action'])) {
+        $action = $input['action'];
+    }
 
     switch ($action) {
         case 'save':
@@ -71,5 +76,7 @@ if ($method === 'POST') {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid request']);
 }
+
 ?>
+
 

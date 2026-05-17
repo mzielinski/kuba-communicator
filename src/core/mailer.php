@@ -48,6 +48,27 @@ function getAppUrl(): string {
 }
 
 /**
+ * Load an HTML email template from data/templates/emails/ and substitute {{placeholders}}.
+ *
+ * @param string $templateName  Filename without .html extension
+ * @param array  $variables     Key → value substitutions for {{key}} placeholders
+ */
+function renderEmailTemplate(string $templateName, array $variables): string {
+    $templatePath = __DIR__ . '/../../data/templates/emails/' . $templateName . '.html';
+
+    if (!file_exists($templatePath)) {
+        error_log("[Email Template] Template not found: {$templatePath}");
+        return '';
+    }
+
+    $html = file_get_contents($templatePath);
+    foreach ($variables as $key => $value) {
+        $html = str_replace('{{' . $key . '}}', $value, $html);
+    }
+    return $html;
+}
+
+/**
  * Send an HTML email via PHP's mail().
  * For production configure sendmail or an SMTP relay in php.ini.
  */

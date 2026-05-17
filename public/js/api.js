@@ -266,7 +266,7 @@ export async function sendToTelegram(message, categoryName = null) {
             finalMessage = `${categoryName}: ${message}`;
         }
 
-        const r = await fetch('api.php', {
+        const r = await fetch('notifications-telegram.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({action: 'send-telegram-message', message: finalMessage, chatId})

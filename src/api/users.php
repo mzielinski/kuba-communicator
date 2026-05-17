@@ -130,7 +130,15 @@ function handleRegister(array $input): void {
     // — Send confirmation email —
     $appUrl      = getAppUrl();
     $confirmLink = "{$appUrl}/src/auth/confirm-email.php?token={$confirmToken}";
-    sendAppEmail($email, I18n::t('email_confirm_subject', $language), buildConfirmationEmail($email, $confirmLink, $language));
+    $confirmHtml = renderEmailTemplate('confirmation-email', [
+        'title'       => I18n::t('email_confirm_subject',   $language),
+        'greeting'    => I18n::t('email_confirm_greeting',  $language),
+        'intro'       => I18n::t('email_confirm_intro',     $language),
+        'confirm_link'=> $confirmLink,
+        'button_text' => I18n::t('email_confirm_btn',       $language),
+        'footer'      => I18n::t('email_confirm_footer',    $language),
+    ]);
+    sendAppEmail($email, I18n::t('email_confirm_subject', $language), $confirmHtml);
 
     http_response_code(201);
     echo json_encode(['success' => true, 'message' => I18n::t('reg_success', $lang)]);
@@ -324,69 +332,18 @@ function activateUserData(array $user): void {
 }
 
 /**
- * Build HTML confirmation email body.
- */
-function buildConfirmationEmail(string $email, string $confirmLink, string $lang): string {
-    $greeting = I18n::t('email_confirm_greeting', $lang);
-    $intro    = I18n::t('email_confirm_intro', $lang);
-    $btn      = I18n::t('email_confirm_btn', $lang);
-    $footer   = I18n::t('email_confirm_footer', $lang);
-    return "
-    <div style='font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px'>
-      <h2 style='color:#667eea'>🧑 Kuba</h2>
-      <p>{$greeting}</p>
-      <p>{$intro}</p>
-      <p style='text-align:center;margin:30px 0'>
-        <a href='{$confirmLink}' style='background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px'>{$btn}</a>
-      </p>
-      <p style='color:#888;font-size:12px'>{$footer}</p>
-    </div>";
-}
-
-/**
- * Build HTML admin approval email.
- */
-function buildAdminApprovalEmail(array $user, string $approvalLink): string {
-    $email    = $user['email'];
-    $lang     = $user['language'] ?? 'pl';
-    $created  = $user['created_at'] ?? '';
-    return "
-    <div style='font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px'>
-      <h2 style='color:#667eea'>🧑 Kuba – Nowe konto / New account</h2>
-      <p>A new user has confirmed their email and is waiting for your approval:</p>
-      <table style='border-collapse:collapse;width:100%;margin:20px 0'>
-        <tr><td style='padding:8px;border:1px solid #ddd;font-weight:bold'>Email</td><td style='padding:8px;border:1px solid #ddd'>{$email}</td></tr>
-        <tr><td style='padding:8px;border:1px solid #ddd;font-weight:bold'>Language</td><td style='padding:8px;border:1px solid #ddd'>{$lang}</td></tr>
-        <tr><td style='padding:8px;border:1px solid #ddd;font-weight:bold'>Registered</td><td style='padding:8px;border:1px solid #ddd'>{$created}</td></tr>
-      </table>
-      <p>The account is currently <strong>WAITING_FOR_APPROVAL</strong>. Click below to activate it (you have 24h before a reminder will be sent):</p>
-      <p style='text-align:center;margin:30px 0'>
-        <a href='{$approvalLink}' style='background:linear-gradient(135deg,#28a745,#20c997);color:#fff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px'>
-          ✅ Approve account
-        </a>
-      </p>
-      <p style='color:#888;font-size:12px'>You can also approve or manage users from the admin panel in the application.</p>
-    </div>";
-}
-
-/**
  * Send account approved notification to user.
  */
 function sendApprovedEmail(array $user): void {
-    $lang     = $user['language'] ?? 'pl';
-    $appLink  = getAppUrl() . '/public/login.html';
-    $subject  = I18n::t('email_approved_subject', $lang);
-    $greeting = I18n::t('email_approved_greeting', $lang);
-    $intro    = I18n::t('email_approved_intro', $lang);
-    $btn      = I18n::t('email_approved_btn', $lang);
-    $html     = "
-    <div style='font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px'>
-      <h2 style='color:#667eea'>🧑 Kuba</h2>
-      <p>{$greeting}</p><p>{$intro}</p>
-      <p style='text-align:center;margin:30px 0'>
-        <a href='{$appLink}' style='background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px'>{$btn}</a>
-      </p>
-    </div>";
+    $lang    = $user['language'] ?? 'pl';
+    $appLink = getAppUrl() . '/login.html';
+    $subject = I18n::t('email_approved_subject', $lang);
+    $html    = renderEmailTemplate('approved-email', [
+        'greeting'    => I18n::t('email_approved_greeting', $lang),
+        'intro'       => I18n::t('email_approved_intro',    $lang),
+        'app_link'    => $appLink,
+        'button_text' => I18n::t('email_approved_btn',      $lang),
+    ]);
     sendAppEmail($user['email'], $subject, $html);
 }
 ?>

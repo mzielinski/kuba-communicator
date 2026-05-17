@@ -1043,7 +1043,7 @@ export async function initializeSettingsManagement() {
             telegramTestBtn.disabled = true;
             telegramTestBtn.textContent = t('btnTesting');
             try {
-                const r = await fetch('api.php', {
+                const r = await fetch('notifications-telegram.php', {
                     method: 'POST', credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({action: 'test-telegram-connection', chatId})

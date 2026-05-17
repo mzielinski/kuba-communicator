@@ -38,9 +38,10 @@ foreach ($staticExtensions as $ext) {
 
 // ── Map frontend endpoints to backend handlers ────────────────────────────────
 $endpointMap = [
-    '/api.php' => '/src/api/api.php',
-    '/login.php' => '/src/auth/login.php',
-    '/user.php' => '/src/api/users.php'
+    '/api.php'                      => '/src/api/api.php',
+    '/login.php'                    => '/src/auth/login.php',
+    '/user.php'                     => '/src/api/users.php',
+    '/notifications-telegram.php'   => '/src/api/notifications-telegram.php',
 ];
 
 foreach ($endpointMap as $publicPath => $srcPath) {
