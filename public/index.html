@@ -13,17 +13,17 @@
         <h1 data-i18n="appHeading">Urządzenie Komunikacyjne</h1>
         <div class="status-bar">
             <span id="status" data-i18n="statusReady">Gotowe</span>
+            <div id="demo-badge" class="demo-badge" style="display:none;">
+                <span class="demo-badge-text" data-i18n="demoReadOnlyLabel">🔒 Read Only</span>
+                <div class="demo-tooltip" data-i18n="demoBadgeTooltip">📝 Create account</div>
+            </div>
             <button id="user-display-btn" class="manage-btn user-display-btn" title="Account">👤</button>
             <button id="manage-words-btn" class="manage-btn" data-i18n-title="manageWordsBtnTitle" title="Zarządzaj słowami">🛠️⚙️</button>
             <button id="logout-btn" class="manage-btn logout-btn" data-i18n-title="logoutBtnTitle" title="Wyloguj się">⏻</button>
         </div>
     </header>
 
-    <!-- Demo Mode Banner -->
-    <div id="demo-banner" style="display:none;background:#fff3cd;border-bottom:2px solid #ffc107;padding:10px 20px;align-items:center;gap:12px;font-size:14px;flex-wrap:wrap;">
-        <span class="demo-banner-text">👁️ Tryb demo — tylko do odczytu. Utwórz konto, aby zapisywać dane.</span>
-        <a href="login.html" style="background:#667eea;color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-weight:600;font-size:13px;">Utwórz konto</a>
-    </div>
+
 
     <!-- Recent Messages Display -->
     <div id="recent-messages-container" class="recent-messages-container">

@@ -23,7 +23,7 @@ async function initializeApp() {
 
     // Show demo mode banner for DEMO users
     if (state.userRole === 'DEMO') {
-        showDemoBanner();
+        showDemoBadge();
     }
 
     const wordList = await loadWordList();
@@ -67,14 +67,13 @@ async function initializeApp() {
     console.log('✅ KUBA App initialized');
 }
 
-function showDemoBanner() {
-    const banner = document.getElementById('demo-banner');
-    if (banner) {
-        banner.style.display = 'flex';
-        const link = banner.querySelector('a');
-        if (link) link.textContent = t('demoBannerLink');
-        const text = banner.querySelector('.demo-banner-text');
-        if (text) text.textContent = t('demoBannerText');
+function showDemoBadge() {
+    const badge = document.getElementById('demo-badge');
+    if (badge) {
+        badge.style.display = 'flex';
+        badge.addEventListener('click', () => {
+            window.location.href = 'login.html';
+        });
     }
 }
 
