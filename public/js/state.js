@@ -12,7 +12,7 @@ export const state = {
     dwellTimers: {},
     expandedCategory: null,
     selectedWordsCategory: null,
-    darkModeEnabled: false,
+    darkModeEnabled: true,
     alarmDuration: 6,
     language: 'pl',
     recentlyClickedMessages: [], // Array of {text, category, timestamp}

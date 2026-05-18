@@ -139,8 +139,8 @@ function activateUserData(array $user): void {
         mkdir($dataDir, 0755, true);
     }
     if (!empty($user['predefined_words'])) {
-        $tplWords  = __DIR__ . '/../../data/templates/words.json';
-        $tplGlobal = __DIR__ . '/../../data/templates/global-words.json';
+        $tplWords  = __DIR__ . '/../../data/templates/words.pl.json';
+        $tplGlobal = __DIR__ . '/../../data/templates/global-words.pl.json';
         $uWords    = $dataDir . '/words.json';
         $uGlobal   = $dataDir . '/global-words.json';
         if (file_exists($tplWords)  && !file_exists($uWords))  copy($tplWords, $uWords);

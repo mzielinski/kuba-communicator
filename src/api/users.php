@@ -315,18 +315,38 @@ function activateUserData(array $user): void {
     if (!is_dir($dataDir)) {
         mkdir($dataDir, 0755, true);
     }
-    if ($user['predefined_words']) {
-        // Copy predefined word templates
-        $templateWordsFile  = __DIR__ . '/../../data/templates/words.json';
-        $templateGlobalFile = __DIR__ . '/../../data/templates/global-words.json';
-        $userWordsFile      = $dataDir . '/words.json';
-        $userGlobalFile     = $dataDir . '/global-words.json';
 
-        if (file_exists($templateWordsFile) && !file_exists($userWordsFile)) {
-            copy($templateWordsFile, $userWordsFile);
+    // Create preferences.json with the user's chosen language
+    $userPreferencesFile = $dataDir . '/preferences.json';
+    if (!file_exists($userPreferencesFile)) {
+        $defaults = [
+            'selectedAlarmDeviceId'  => '',
+            'alarmType'              => 'high',
+            'alarmDuration'          => 6,
+            'dwellTimeMs'            => 2000,
+            'dwellEnabled'           => false,
+            'darkModeEnabled'        => true,
+            'telegramEnabled'        => false,
+            'telegramChats'          => [],
+            'telegramSelectedChatId' => '',
+            'language'               => $user['language'] ?? 'pl',
+        ];
+        file_put_contents($userPreferencesFile, json_encode($defaults, JSON_PRETTY_PRINT));
+    }
+
+    if ($user['predefined_words']) {
+        // Copy predefined word templates (language-specific if available)
+        $lang = $user['language'] ?? 'pl';
+        $langWordsFile  = __DIR__ . '/../../data/templates/words.' . $lang . '.json';
+        $langGlobalFile = __DIR__ . '/../../data/templates/global-words.' . $lang . '.json';
+        $userWordsFile  = $dataDir . '/words.json';
+        $userGlobalFile = $dataDir . '/global-words.json';
+
+        if (file_exists($langWordsFile) && !file_exists($userWordsFile)) {
+            copy($langWordsFile, $userWordsFile);
         }
-        if (file_exists($templateGlobalFile) && !file_exists($userGlobalFile)) {
-            copy($templateGlobalFile, $userGlobalFile);
+        if (file_exists($langGlobalFile) && !file_exists($userGlobalFile)) {
+            copy($langGlobalFile, $userGlobalFile);
         }
     }
 }
