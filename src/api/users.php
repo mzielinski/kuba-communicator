@@ -335,10 +335,10 @@ function activateUserData(array $user): void {
     }
 
     if ($user['predefined_words']) {
-        // Copy predefined word templates (language-specific if available)
+        // Copy predefined word templates from language-specific subdirectory
         $lang = $user['language'] ?? 'pl';
-        $langWordsFile  = __DIR__ . '/../../data/templates/words.' . $lang . '.json';
-        $langGlobalFile = __DIR__ . '/../../data/templates/global-words.' . $lang . '.json';
+        $langWordsFile  = __DIR__ . '/../../data/templates/' . $lang . '/words.json';
+        $langGlobalFile = __DIR__ . '/../../data/templates/' . $lang . '/global-words.json';
         $userWordsFile  = $dataDir . '/words.json';
         $userGlobalFile = $dataDir . '/global-words.json';
 

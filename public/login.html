@@ -366,7 +366,7 @@
     });
 
     // ── Demo login ────────────────────────────────────────────────────────────
-    window.demoLogin = function() { window.location.href = 'login.php?action=demo-login'; };
+    window.demoLogin = function() { window.location.href = 'login.php?action=demo-login&lang=' + lang; };
 
     // ── Lang buttons ──────────────────────────────────────────────────────────
     document.getElementById('lang-pl').addEventListener('click', () => window.switchLang('pl'));

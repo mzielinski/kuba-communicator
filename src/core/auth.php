@@ -49,10 +49,19 @@ function getCurrentRole(): string {
 
 /**
  * Get user data directory path, creating it if necessary.
+ * For DEMO users, returns language-specific template directory.
+ * For regular users, returns their data directory.
  */
 function getUserDataDir(): ?string {
     if (!isUserLoggedIn()) return null;
-    $dataDir = __DIR__ . '/../../data/' . ($_SESSION['data_dir'] ?? '');
+    
+    if (($_SESSION['role'] ?? '') === 'DEMO') {
+        $language = $_SESSION['language'] ?? 'pl';
+        $dataDir = __DIR__ . '/../../data/templates/' . $language;
+    } else {
+        $dataDir = __DIR__ . '/../../data/' . ($_SESSION['data_dir'] ?? '');
+    }
+    
     if (!is_dir($dataDir)) {
         mkdir($dataDir, 0755, true);
     }

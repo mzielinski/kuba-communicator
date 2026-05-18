@@ -21,12 +21,13 @@ $action = $_GET['action'] ?? '';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function createSession(array $user): void {
+function createSession(array $user, string $lang = 'pl'): void {
     session_regenerate_id(true);
     $_SESSION['user_id']    = bin2hex(random_bytes(16));
     $_SESSION['email']      = $user['email'];
     $_SESSION['data_dir']   = $user['data_dir'];
     $_SESSION['role']       = $user['role'];
+    $_SESSION['language']   = $lang;
     $_SESSION['login_time'] = time();
 }
 
@@ -77,7 +78,7 @@ if ($method === 'POST') {
             exit;
         }
 
-        createSession($user);
+        createSession($user, $lang);
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => I18n::t('login_success', $lang), 'user' => getCurrentUser()]);
         exit;
@@ -102,6 +103,7 @@ if ($method === 'GET') {
 
     // ── Demo auto-login ──────────────────────────────────────────────────────
     if ($action === 'demo-login') {
+        $lang = in_array($_GET['lang'] ?? '', ['pl', 'en']) ? $_GET['lang'] : 'pl';
         $data = readCredentials();
         $demo = null;
         foreach (($data['users'] ?? []) as $u) {
@@ -111,7 +113,7 @@ if ($method === 'GET') {
             }
         }
         if ($demo) {
-            createSession($demo);
+            createSession($demo, $lang);
             $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             $basePath = rtrim(dirname($requestPath), '/');
             header('Location: ' . $basePath . '/index.html');

@@ -16,11 +16,11 @@ class PreferencesHandler {
             'alarmDuration' => 6,
             'dwellTimeMs' => 2000,
             'dwellEnabled' => true,
-            'darkModeEnabled' => false,
+            'darkModeEnabled' => true,
             'telegramEnabled' => false,
             'telegramChats' => [],
             'telegramSelectedChatId' => '',
-            'language' => 'pl'
+            'language' => $_SESSION['language'] ?: 'pl'
         ];
     }
 
