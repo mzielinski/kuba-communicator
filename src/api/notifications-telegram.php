@@ -3,11 +3,12 @@
 // KUBA - Telegram Backend Integration
 // ============================================
 
-// CORS headers
-header('Access-Control-Allow-Origin: *');
+require_once __DIR__ . '/../core/session.php';
+
+header('Content-Type: application/json');
+setCorsHeaders();
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -25,7 +26,7 @@ define('REQUIRE_API_KEY', false);
 define('API_KEY', 'your-secret-key-here');
 
 // Start session for authentication
-session_start();
+initializeSession();
 
 // ============================================
 // DEBUG LOGGING
@@ -256,31 +257,6 @@ try {
 }
 
 // ============================================
-// HELPER FUNCTIONS
-// ============================================
-
-
-/**
- * Save message to local log file (fallback if API fails)
- *
- * @param string $message The message to save
- * @param string $recipientPhone The recipient phone
- * @return bool Success status
- */
-function saveMessageLocally($message, $recipientPhone = null) {
-    try {
-        $logFile = __DIR__ . '/../../messages_log.txt';
-        $timestamp = date('Y-m-d H:i:s');
-        $logEntry = "[{$timestamp}] To: {$recipientPhone} | Message: {$message}\n";
-
-        return file_put_contents($logFile, $logEntry, FILE_APPEND) !== false;
-    } catch (Exception $e) {
-        error_log("Error saving message locally: " . $e->getMessage());
-        return false;
-    }
-}
-
-// ============================================
 // TELEGRAM BOT FUNCTIONS
 // ============================================
 
@@ -291,7 +267,7 @@ function saveMessageLocally($message, $recipientPhone = null) {
  * @param string|int $chatId The chat ID (user ID or group ID)
  * @return array Array with 'success' (bool) and 'error' (string) keys
  */
-function sendTelegramMessage($message, $chatId) {
+function sendTelegramMessage($message, $chatId): array {
     try {
         $botToken = TELEGRAM_BOT_TOKEN;
 
@@ -400,4 +376,3 @@ function sendTelegramMessage($message, $chatId) {
 }
 
 ?>
-

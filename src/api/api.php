@@ -5,17 +5,18 @@
 // Main Router - Delegates to specialized handlers
 // ============================================
 
-session_start();
-
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET');
-header('Access-Control-Allow-Headers: Content-Type');
-
+require_once __DIR__ . '/../core/session.php';
 require_once __DIR__ . '/../core/auth.php';
 require_once __DIR__ . '/words-handler.php';
 require_once __DIR__ . '/preferences-handler.php';
 require_once __DIR__ . '/file-handler.php';
+
+header('Content-Type: application/json');
+setCorsHeaders();
+header('Access-Control-Allow-Methods: POST, GET');
+header('Access-Control-Allow-Headers: Content-Type');
+
+initializeSession();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';

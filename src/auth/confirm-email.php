@@ -5,8 +5,7 @@
 // Accessed via browser links from emails
 // ============================================
 
-session_start();
-
+require_once __DIR__ . '/../core/session.php';
 require_once __DIR__ . '/../core/credentials.php';
 require_once __DIR__ . '/../core/auth.php';
 require_once __DIR__ . '/../core/mailer.php';

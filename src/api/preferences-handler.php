@@ -9,7 +9,7 @@ class PreferencesHandler {
     /**
      * Get default preferences
      */
-    public static function getDefaults() {
+    public static function getDefaults(): array {
         return [
             'selectedAlarmDeviceId' => '',
             'alarmType' => 'high',
@@ -341,4 +341,3 @@ class PreferencesHandler {
     }
 }
 ?>
-

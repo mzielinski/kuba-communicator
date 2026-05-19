@@ -5,19 +5,20 @@
 // Handles registration, approval, deletion, listing
 // ============================================
 
+require_once __DIR__ . '/../core/session.php';
+require_once __DIR__ . '/../core/credentials.php';
+require_once __DIR__ . '/../core/auth.php';
+require_once __DIR__ . '/../core/mailer.php';
+require_once __DIR__ . '/../core/i18n.php';
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+setCorsHeaders();
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
-session_start();
-
-require_once __DIR__ . '/../core/credentials.php';
-require_once __DIR__ . '/../core/auth.php';
-require_once __DIR__ . '/../core/mailer.php';
-require_once __DIR__ . '/../core/i18n.php';
+initializeSession();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
