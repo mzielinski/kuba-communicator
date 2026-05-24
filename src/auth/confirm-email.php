@@ -137,9 +137,30 @@ function activateUserData(array $user): void {
     if (!is_dir($dataDir)) {
         mkdir($dataDir, 0755, true);
     }
+
+    // Create preferences.json with the user's chosen language
+    $userPreferencesFile = $dataDir . '/preferences.json';
+    if (!file_exists($userPreferencesFile)) {
+        $defaults = [
+            'selectedAlarmDeviceId'  => '',
+            'alarmType'              => 'high',
+            'alarmDuration'          => 6,
+            'dwellTimeMs'            => 2000,
+            'dwellEnabled'           => false,
+            'darkModeEnabled'        => true,
+            'telegramEnabled'        => false,
+            'telegramChats'          => [],
+            'telegramSelectedChatId' => '',
+            'language'               => $user['language'] ?? 'pl',
+        ];
+        file_put_contents($userPreferencesFile, json_encode($defaults, JSON_PRETTY_PRINT));
+    }
+
     if (!empty($user['predefined_words'])) {
-        $tplWords  = __DIR__ . '/../../data/templates/words.pl.json';
-        $tplGlobal = __DIR__ . '/../../data/templates/global-words.pl.json';
+        // Copy predefined word templates from language-specific subdirectory
+        $lang      = $user['language'] ?? 'pl';
+        $tplWords  = __DIR__ . '/../../data/templates/' . $lang . '/words.json';
+        $tplGlobal = __DIR__ . '/../../data/templates/' . $lang . '/global-words.json';
         $uWords    = $dataDir . '/words.json';
         $uGlobal   = $dataDir . '/global-words.json';
         if (file_exists($tplWords)  && !file_exists($uWords))  copy($tplWords, $uWords);
