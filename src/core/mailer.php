@@ -17,7 +17,7 @@ function loadAppConfig(): array {
         'ADMIN_EMAIL'    => 'admin@localhost',
         'APP_URL'        => 'http://localhost',
         'SMTP_FROM'      => 'noreply@localhost',
-        'SMTP_FROM_NAME' => 'Kuba Communication Device',
+        'SMTP_FROM_NAME' => 'Kuba Communication System',
     ];
 
     // data/.env — shared config file (Telegram + mail)

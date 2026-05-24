@@ -7,7 +7,7 @@
 export const translations = {
     pl: {
         // ── Login page ────────────────────────────────────────────────────────
-        loginPageSubtitle:       'Urządzenie Komunikacyjne',
+        loginPageSubtitle:       'System Komunikacyjny',
         loginEmail:              'Adres email',
         loginPassword:           'Hasło',
         loginSubmitBtn:          'Zaloguj się',
@@ -35,8 +35,8 @@ export const translations = {
         loginRegisteredInfo:     '📬 Sprawdź skrzynkę pocztową i potwierdź adres email. Następnie administrator zatwierdzi Twoje konto (do 24h).',
 
         // ── App ───────────────────────────────────────────────────────────────
-        pageTitle:    'Kuba # Urządzenie Komunikacyjne',
-        appHeading:   'Kuba # Urządzenie Komunikacyjne',
+        pageTitle:    'Kuba # System Komunikacyjny',
+        appHeading:   'Kuba # System Komunikacyjny',
 
         statusReady:   'Gotowe',
         statusSpeaking:'Mówię...',
@@ -284,7 +284,7 @@ export const translations = {
 
     en: {
         // ── Login page ────────────────────────────────────────────────────────
-        loginPageSubtitle:       'Communication Device',
+        loginPageSubtitle:       'Communication System',
         loginEmail:              'Email address',
         loginPassword:           'Password',
         loginSubmitBtn:          'Log in',
@@ -309,8 +309,8 @@ export const translations = {
         loginRegisteredInfo:     '📬 Check your inbox and confirm your email. Then the administrator will approve your account (within 24h).',
 
         // ── App ───────────────────────────────────────────────────────────────
-        pageTitle:    'Kuba # Communication Device',
-        appHeading:   'Kuba # Communication Device',
+        pageTitle:    'Kuba # Communication System',
+        appHeading:   'Kuba # Communication System',
 
         statusReady:    'Ready',
         statusSpeaking: 'Speaking...',

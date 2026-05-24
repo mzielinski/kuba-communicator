@@ -210,7 +210,7 @@ APP_URL=https://your-app-url.com
 
 # Email sender settings
 SMTP_FROM=noreply@yourdomain.com
-SMTP_FROM_NAME=Kuba Communication Device
+SMTP_FROM_NAME=Kuba Communication System
 ```
 
 ### 3. Configure `data/.env` (Telegram config)
@@ -345,7 +345,7 @@ TELEGRAM_BOT_TOKEN=123456789:AABBcc...
 ADMIN_EMAIL=admin@yourdomain.com
 APP_URL=http://localhost:8000
 SMTP_FROM=noreply@yourdomain.com
-SMTP_FROM_NAME=Kuba Communication Device
+SMTP_FROM_NAME=Kuba Communication System
 ```
 
 ---
