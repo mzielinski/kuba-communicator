@@ -90,6 +90,20 @@ export function renderCategoryGrid() {
             const allScopeGlobals = (state.globalWords || []).filter(w => w.scope === 'all');
             allScopeGlobals.forEach(word => wordsWrap.appendChild(createWordButton(word, '', '30px', catName)));
             catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word, '', '30px', catName)));
+
+            // Inject alarm button if configured for this category
+            if (state.alarmButtonEnabled && state.alarmButtonCategory === catName) {
+                const alarmWord = { id: 'alarm', text: '🔔 Alarm' };
+                const alarmBtn = createWordButton(alarmWord, 'special-alarm-btn', '28px', catName);
+                wordsWrap.appendChild(alarmBtn);
+            }
+            // Inject keyboard button if configured for this category
+            if (state.keyboardEnabled && state.keyboardCategory === catName) {
+                const kbWord = { id: 'virtual-keyboard', text: '⌨️ Klawiatura' };
+                const kbBtn = createWordButton(kbWord, 'special-keyboard-btn', '28px', catName);
+                wordsWrap.appendChild(kbBtn);
+            }
+
             tile.appendChild(wordsWrap);
         }
 
@@ -139,6 +153,17 @@ export function renderExpandedCategoryView(catName) {
     (state.globalWords || []).forEach(word => wordsWrap.appendChild(createWordButton(word, 'expanded-word-button', '20px', catName)));
 
     catData.words.forEach(word => wordsWrap.appendChild(createWordButton(word, 'expanded-word-button', '20px', catName)));
+
+    // Inject alarm button if configured for this category
+    if (state.alarmButtonEnabled && state.alarmButtonCategory === catName) {
+        const alarmWord = { id: 'alarm', text: '🔔 Alarm' };
+        wordsWrap.appendChild(createWordButton(alarmWord, 'expanded-word-button special-alarm-btn', '20px', catName));
+    }
+    // Inject keyboard button if configured for this category
+    if (state.keyboardEnabled && state.keyboardCategory === catName) {
+        const kbWord = { id: 'virtual-keyboard', text: '⌨️ Klawiatura' };
+        wordsWrap.appendChild(createWordButton(kbWord, 'expanded-word-button special-keyboard-btn', '20px', catName));
+    }
 
     container.appendChild(wordsWrap);
     grid.appendChild(container);

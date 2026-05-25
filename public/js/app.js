@@ -4,7 +4,7 @@
 import { state } from './state.js';
 import { showToast } from './utils.js';
 import { t, applyTranslations } from './i18n.js';
-import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference, loadGlobalWords } from './api.js';
+import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference, loadGlobalWords, loadAlarmButtonPreferences, loadKeyboardPreferences } from './api.js';
 import { checkSession, initializeLogoutButton } from './auth.js';
 import { renderCategoryGrid, renderRecentMessages } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
@@ -39,6 +39,14 @@ async function initializeApp() {
     state.dwellEnabled = await loadDwellEnabledPreference();
     state.darkModeEnabled = await loadDarkModePreference();
     state.alarmDuration = await loadAlarmDurationPreference();
+
+    const alarmBtnPrefs = await loadAlarmButtonPreferences();
+    state.alarmButtonEnabled  = alarmBtnPrefs.enabled;
+    state.alarmButtonCategory = alarmBtnPrefs.category;
+
+    const kbPrefs = await loadKeyboardPreferences();
+    state.keyboardEnabled  = kbPrefs.enabled;
+    state.keyboardCategory = kbPrefs.category;
 
     if (state.darkModeEnabled) {
         document.body.classList.add('dark-mode');

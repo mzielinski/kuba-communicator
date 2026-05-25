@@ -20,7 +20,11 @@ class PreferencesHandler {
             'telegramEnabled' => false,
             'telegramChats' => [],
             'telegramSelectedChatId' => '',
-            'language' => $_SESSION['language'] ?: 'pl'
+            'language' => $_SESSION['language'] ?: 'pl',
+            'alarmButtonEnabled' => false,
+            'alarmButtonCategory' => '',
+            'keyboardEnabled' => false,
+            'keyboardCategory' => '',
         ];
     }
 
@@ -81,6 +85,22 @@ class PreferencesHandler {
 
          if (isset($input['language'])) {
              $preferences['language'] = in_array($input['language'], ['en', 'pl']) ? $input['language'] : 'pl';
+         }
+
+         if (isset($input['alarmButtonEnabled'])) {
+             $preferences['alarmButtonEnabled'] = (bool)$input['alarmButtonEnabled'];
+         }
+
+         if (isset($input['alarmButtonCategory'])) {
+             $preferences['alarmButtonCategory'] = trim($input['alarmButtonCategory']);
+         }
+
+         if (isset($input['keyboardEnabled'])) {
+             $preferences['keyboardEnabled'] = (bool)$input['keyboardEnabled'];
+         }
+
+         if (isset($input['keyboardCategory'])) {
+             $preferences['keyboardCategory'] = trim($input['keyboardCategory']);
          }
 
          if (!empty($preferences)) {

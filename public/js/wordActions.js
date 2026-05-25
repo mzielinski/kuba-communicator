@@ -17,12 +17,18 @@ import { renderRecentMessages } from './renderer.js';
  *  5. Track in recent messages
  */
 export async function handleWordClick(word, categoryName = null) {
+    console.log('Word clicked:', word.id, word.text, 'Category:', categoryName);
+
     if (word.id === 'alarm') {
         await playAlarm();
         return;
     }
 
-    console.log('Word clicked:', word.id, word.text, 'Category:', categoryName);
+    if (word.id === 'virtual-keyboard') {
+        const { openVirtualKeyboard } = await import('./keyboard.js');
+        openVirtualKeyboard();
+        return;
+    }
 
     const plain = stripEmojiFromText(word.text);
     if (plain) speakWord(plain);

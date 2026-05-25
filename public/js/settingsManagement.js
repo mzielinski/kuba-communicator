@@ -5,7 +5,7 @@ import {state} from './state.js';
 import {showToast, showConfirmDialog, generateIdFromText} from './utils.js';
 import {renderCategoryGrid} from './renderer.js';
 import {t, applyTranslations} from './i18n.js';
-import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference, saveLanguagePreference, loadGlobalWords, saveGlobalWords} from './api.js';
+import {loadWordList, saveToJSON, saveDwellTimePreference, saveDwellEnabledPreference, loadDwellTimePreference, loadDwellEnabledPreference, loadAlarmDurationPreference, saveAlarmDurationPreference, saveDarkModePreference, loadDarkModePreference, saveLanguagePreference, loadGlobalWords, saveGlobalWords, loadAlarmButtonPreferences, saveAlarmButtonPreferences, loadKeyboardPreferences, saveKeyboardPreferences} from './api.js';
 import {initializeAlarmDeviceSelector, initializeAlarmTypeSelector} from './alarm.js';
 
 /** Initialize the entire settings-management modal */
@@ -149,6 +149,14 @@ export async function initializeSettingsManagement() {
         const savedAlarmDuration = await loadAlarmDurationPreference();
         state.alarmDuration = savedAlarmDuration;
 
+        const savedAlarmBtn = await loadAlarmButtonPreferences();
+        state.alarmButtonEnabled  = savedAlarmBtn.enabled;
+        state.alarmButtonCategory = savedAlarmBtn.category;
+
+        const savedKb = await loadKeyboardPreferences();
+        state.keyboardEnabled  = savedKb.enabled;
+        state.keyboardCategory = savedKb.category;
+
         dwellToggle.checked = state.dwellEnabled;
         dwellSlider.value = state.dwellTimeMs;
         dwellDisplay.textContent = (state.dwellTimeMs / 1000).toFixed(1) + 's';
@@ -161,6 +169,11 @@ export async function initializeSettingsManagement() {
             const pct2 = (alarmDurationSlider.value - alarmDurationSlider.min) / (alarmDurationSlider.max - alarmDurationSlider.min) * 100;
             alarmDurationSlider.style.background = `linear-gradient(to right,#ff9800 0%,#ff9800 ${pct2}%,#e0e0e0 ${pct2}%,#e0e0e0 100%)`;
         }
+
+        if (alarmBtnToggle) { alarmBtnToggle.checked = state.alarmButtonEnabled; updateAlarmBtnVisibility(); }
+        if (alarmBtnCatSelect) { populateSpecialCategorySelect(alarmBtnCatSelect); alarmBtnCatSelect.value = state.alarmButtonCategory; }
+        if (keyboardToggle) { keyboardToggle.checked = state.keyboardEnabled; updateKeyboardVisibility(); }
+        if (keyboardCatSelect) { populateSpecialCategorySelect(keyboardCatSelect); keyboardCatSelect.value = state.keyboardCategory; }
 
         darkModeToggle.checked = state.darkModeEnabled;
         if (state.darkModeEnabled) {
@@ -190,6 +203,8 @@ export async function initializeSettingsManagement() {
             await saveAlarmDurationPreference(state.alarmDuration || 6);
             await saveDarkModePreference(state.darkModeEnabled);
             await saveLanguagePreference(state.language);
+            await saveAlarmButtonPreferences(state.alarmButtonEnabled, state.alarmButtonCategory);
+            await saveKeyboardPreferences(state.keyboardEnabled, state.keyboardCategory);
             applyTranslations();
             renderCategoryGrid();
             showToast(t('allChangesSaved'), 'success');
@@ -739,6 +754,19 @@ export async function initializeSettingsManagement() {
     if (catTabBtn) catTabBtn.addEventListener('click', renderCategoriesManagement);
     renderCategoriesManagement();
 
+    // ── Settings nav ──────────────────────────────────────────────────────────
+
+    const settingsNavBtns = document.querySelectorAll('.settings-nav-btn');
+    const settingsPanels  = document.querySelectorAll('.settings-panel');
+
+    settingsNavBtns.forEach(btn => btn.addEventListener('click', () => {
+        const panelId = btn.getAttribute('data-settings-panel');
+        settingsNavBtns.forEach(b => b.classList.remove('active'));
+        settingsPanels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(panelId)?.classList.add('active');
+    }));
+
     // ── Settings tab ──────────────────────────────────────────────────────────
 
     const dwellToggle = document.getElementById('dwell-enabled-toggle');
@@ -796,9 +824,93 @@ export async function initializeSettingsManagement() {
         alarmDurationSlider.addEventListener('input', (e) => {
             const duration = parseInt(e.target.value);
             alarmDurationDisplay.textContent = duration + 's';
+            state.alarmDuration = duration;
             updateAlarmGrad();
         });
     }
+
+    // ── Alarm button in category ───────────────────────────────────────────────
+
+    const alarmBtnToggle    = document.getElementById('alarm-btn-enabled-toggle');
+    const alarmBtnCatSelect = document.getElementById('alarm-btn-category-select');
+    const alarmAllSettings  = document.getElementById('alarm-all-settings');
+
+    function populateSpecialCategorySelect(selectEl) {
+        const prev = selectEl.value;
+        selectEl.innerHTML = `<option value="">${t('optionSelectCategory')}</option>`;
+        sortedCategories().forEach(([name]) => {
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            selectEl.appendChild(opt);
+        });
+        if (prev && state.categories[prev]) selectEl.value = prev;
+    }
+
+    function updateAlarmBtnVisibility() {
+        if (alarmAllSettings) {
+            alarmAllSettings.style.display = (alarmBtnToggle && alarmBtnToggle.checked) ? 'block' : 'none';
+        }
+    }
+
+    if (alarmBtnToggle) {
+        alarmBtnToggle.checked = state.alarmButtonEnabled;
+        updateAlarmBtnVisibility();
+        alarmBtnToggle.addEventListener('change', (e) => {
+            state.alarmButtonEnabled = e.target.checked;
+            updateAlarmBtnVisibility();
+            renderCategoryGrid();
+        });
+    }
+
+    if (alarmBtnCatSelect) {
+        populateSpecialCategorySelect(alarmBtnCatSelect);
+        if (state.alarmButtonCategory) alarmBtnCatSelect.value = state.alarmButtonCategory;
+        alarmBtnCatSelect.addEventListener('change', (e) => {
+            state.alarmButtonCategory = e.target.value;
+            renderCategoryGrid();
+        });
+    }
+
+    // ── Keyboard button in category ────────────────────────────────────────────
+
+    const keyboardToggle    = document.getElementById('keyboard-enabled-toggle');
+    const keyboardCatSelect = document.getElementById('keyboard-category-select');
+    const keyboardCatSettings = document.getElementById('keyboard-cat-settings');
+
+    function updateKeyboardVisibility() {
+        if (keyboardCatSettings) {
+            keyboardCatSettings.style.display = (keyboardToggle && keyboardToggle.checked) ? 'block' : 'none';
+        }
+    }
+
+    if (keyboardToggle) {
+        keyboardToggle.checked = state.keyboardEnabled;
+        updateKeyboardVisibility();
+        keyboardToggle.addEventListener('change', (e) => {
+            state.keyboardEnabled = e.target.checked;
+            updateKeyboardVisibility();
+            renderCategoryGrid();
+        });
+    }
+
+    if (keyboardCatSelect) {
+        populateSpecialCategorySelect(keyboardCatSelect);
+        if (state.keyboardCategory) keyboardCatSelect.value = state.keyboardCategory;
+        keyboardCatSelect.addEventListener('change', (e) => {
+            state.keyboardCategory = e.target.value;
+            renderCategoryGrid();
+        });
+    }
+
+    // Refresh special category selects when modal is opened
+    const origManageBtnListener = () => {
+        populateSpecialCategorySelect(alarmBtnCatSelect);
+        if (state.alarmButtonCategory) alarmBtnCatSelect.value = state.alarmButtonCategory;
+        populateSpecialCategorySelect(keyboardCatSelect);
+        if (state.keyboardCategory) keyboardCatSelect.value = state.keyboardCategory;
+    };
+    manageBtn.addEventListener('click', origManageBtnListener);
 
     // ── Dark Mode ──────────────────────────────────────────────────────────────
     const darkModeToggle = document.getElementById('dark-mode-toggle');

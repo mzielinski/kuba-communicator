@@ -285,6 +285,62 @@ export async function sendToTelegram(message, categoryName = null) {
     }
 }
 
+// ── Alarm button in category ──────────────────────────────────────────────────
+
+export async function loadAlarmButtonPreferences() {
+    try {
+        const prefs = await loadPreferences();
+        return {
+            enabled: prefs.alarmButtonEnabled === true,
+            category: prefs.alarmButtonCategory || ''
+        };
+    } catch {
+        return { enabled: false, category: '' };
+    }
+}
+
+export async function saveAlarmButtonPreferences(enabled, category) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({alarmButtonEnabled: enabled, alarmButtonCategory: category})
+        });
+        const result = await r.json();
+        return result.success === true;
+    } catch {
+        return false;
+    }
+}
+
+// ── Keyboard button in category ───────────────────────────────────────────────
+
+export async function loadKeyboardPreferences() {
+    try {
+        const prefs = await loadPreferences();
+        return {
+            enabled: prefs.keyboardEnabled === true,
+            category: prefs.keyboardCategory || ''
+        };
+    } catch {
+        return { enabled: false, category: '' };
+    }
+}
+
+export async function saveKeyboardPreferences(enabled, category) {
+    try {
+        const r = await fetch('api.php?action=save-preferences', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({keyboardEnabled: enabled, keyboardCategory: category})
+        });
+        const result = await r.json();
+        return result.success === true;
+    } catch {
+        return false;
+    }
+}
+
 // ── Language ──────────────────────────────────────────────────────────────────
 
 export async function loadLanguagePreference() {

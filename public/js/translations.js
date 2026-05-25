@@ -141,6 +141,34 @@ export const translations = {
         optionPolish:    'Polski',
         optionEnglish:   'English',
 
+        // ── Settings navigation ───────────────────────────────────────────────
+        settingsNavLanguage: '🌐 Język',
+        settingsNavAlarm:    '🔔 Alarm',
+        settingsNavKeyboard: '⌨️ Klawiatura',
+        settingsNavDwell:    '👁️ Dwell',
+        settingsNavDarkMode: '🌙 Tryb ciemny',
+        settingsNavTelegram: '📱 Telegram',
+
+        // ── Alarm button in category ──────────────────────────────────────────
+        headingAlarmButton:         '🔔 Przycisk alarmu w kategorii',
+        labelAlarmButtonEnabled:    'Pokaż przycisk alarmu w kategorii',
+        hintAlarmButtonEnabled:     'Gdy włączysz, specjalny przycisk alarmu pojawi się w wybranej kategorii.',
+        labelAlarmButtonCategory:   'Kategoria dla przycisku alarmu:',
+        hintAlarmButtonCategory:    'Wybierz kategorię, w której ma być wyświetlany przycisk alarmu.',
+
+        // ── Virtual keyboard ──────────────────────────────────────────────────
+        headingKeyboard:         '⌨️ Wirtualna klawiatura',
+        labelKeyboardEnabled:    'Pokaż przycisk klawiatury w kategorii',
+        hintKeyboardEnabled:     'Gdy włączysz, specjalny przycisk klawiatury pojawi się w wybranej kategorii.',
+        labelKeyboardCategory:   'Kategoria dla klawiatury:',
+        hintKeyboardCategory:    'Wybierz kategorię, w której ma być wyświetlany przycisk klawiatury.',
+
+        virtualKeyboardTitle: 'Klawiatura',
+        virtualKeyboardSpace: 'Spacja',
+        virtualKeyboardClear: 'Wyczyść',
+        virtualKeyboardSpeak: 'Mów',
+        virtualKeyboardDelWord: 'Słowo',
+
         btnSaveChanges:   '💾 Zapisz zmiany',
         btnCancelChanges: '❌ Anuluj (odrzuć zmiany)',
 
@@ -412,6 +440,34 @@ export const translations = {
         labelLanguage:   'Select language:',
         optionPolish:    'Polski',
         optionEnglish:   'English',
+
+        // ── Settings navigation ───────────────────────────────────────────────
+        settingsNavLanguage: '🌐 Language',
+        settingsNavAlarm:    '🔔 Alarm',
+        settingsNavKeyboard: '⌨️ Keyboard',
+        settingsNavDwell:    '👁️ Dwell',
+        settingsNavDarkMode: '🌙 Dark mode',
+        settingsNavTelegram: '📱 Telegram',
+
+        // ── Alarm button in category ──────────────────────────────────────────
+        headingAlarmButton:         '🔔 Alarm button in category',
+        labelAlarmButtonEnabled:    'Show alarm button in a category',
+        hintAlarmButtonEnabled:     'When enabled, a special alarm button will appear in the selected category.',
+        labelAlarmButtonCategory:   'Category for alarm button:',
+        hintAlarmButtonCategory:    'Select the category where the alarm button should be displayed.',
+
+        // ── Virtual keyboard ──────────────────────────────────────────────────
+        headingKeyboard:         '⌨️ Virtual keyboard',
+        labelKeyboardEnabled:    'Show keyboard button in a category',
+        hintKeyboardEnabled:     'When enabled, a special keyboard button will appear in the selected category.',
+        labelKeyboardCategory:   'Category for keyboard:',
+        hintKeyboardCategory:    'Select the category where the keyboard button should be displayed.',
+
+        virtualKeyboardTitle: 'Keyboard',
+        virtualKeyboardSpace: 'Space',
+        virtualKeyboardClear: 'Clear',
+        virtualKeyboardSpeak: 'Speak',
+        virtualKeyboardDelWord: 'Word',
 
         btnSaveChanges:   '💾 Save changes',
         btnCancelChanges: '❌ Cancel (discard changes)',

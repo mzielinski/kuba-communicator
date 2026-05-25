@@ -15,7 +15,13 @@ export const state = {
     darkModeEnabled: true,
     alarmDuration: 6,
     language: 'pl',
-    recentlyClickedMessages: [], // Array of {text, category, timestamp}
+    recentlyClickedMessages: [],
+    // Alarm button in category
+    alarmButtonEnabled: false,
+    alarmButtonCategory: '',
+    // Virtual keyboard button in category
+    keyboardEnabled: false,
+    keyboardCategory: '',
     // User / session
     userEmail: '',
     userRole: 'USER', // ADMIN | USER | DEMO
