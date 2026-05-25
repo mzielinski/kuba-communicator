@@ -581,7 +581,7 @@ body {
     border-radius: 6px;
     font-size: 16px;
     font-weight: 500;
-    z-index: 1000;
+    z-index: 99999;
     transition: transform 0.3s ease;
     max-width: 400px;
     text-align: center;
@@ -2617,6 +2617,7 @@ body.dark-mode {
 .vk-backspace-btn{ background: #c87a0a; flex: 0.8; }
 .vk-delword-btn  { background: #8b4500; flex: 1.4; }
 .vk-clear-btn    { background: #b22222; flex: 0.7; }
+.vk-copy-btn     { background: #176b8a; flex: 1.2; }
 .vk-speak-btn    { background: #1a8a3c; flex: 2; }
 
 .vk-caps-btn:hover      { background: #9b37e0; }
@@ -2626,6 +2627,7 @@ body.dark-mode {
 .vk-backspace-btn:hover { background: #e08910; }
 .vk-delword-btn:hover   { background: #a85500; }
 .vk-clear-btn:hover     { background: #dc2626; }
+.vk-copy-btn:hover      { background: #1a8aad; }
 .vk-speak-btn:hover     { background: #22a34a; }
 
 /* Active state for toggle buttons (CAPS / PL) */

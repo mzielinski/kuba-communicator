@@ -5,6 +5,7 @@ import { speakWord } from './speech.js';
 import { state } from './state.js';
 import { t } from './i18n.js';
 import { initializeDwellTime } from './dwell.js';
+import { copyToClipboard } from './utils.js';
 
 let keyboardOverlay = null;
 
@@ -52,6 +53,7 @@ export function openVirtualKeyboard() {
         const speakBarBtn = document.createElement('button');
         speakBarBtn.className = 'vk-action-btn vk-speak-btn';
         speakBarBtn.type = 'button';
+        speakBarBtn.style.maxWidth = '240px';
         speakBarBtn.innerHTML = '🔊 ' + (t('virtualKeyboardSpeak') || 'Mów');
         speakBarBtn.addEventListener('click', () => {
             const text = currentText.trim();
@@ -59,6 +61,18 @@ export function openVirtualKeyboard() {
         });
         initializeDwellTime(speakBarBtn);
         displayBar.appendChild(speakBarBtn);
+
+        const copyBarBtn = document.createElement('button');
+        copyBarBtn.className = 'vk-action-btn vk-copy-btn';
+        copyBarBtn.type = 'button';
+        copyBarBtn.style.maxWidth = '240px';
+        copyBarBtn.innerHTML = '📋 ' + (t('virtualKeyboardCopy') || 'Kopiuj');
+        copyBarBtn.addEventListener('click', () => {
+            const text = currentText.trim();
+            if (text) copyToClipboard(text);
+        });
+        initializeDwellTime(copyBarBtn);
+        displayBar.appendChild(copyBarBtn);
 
         const displayText = document.createElement('div');
         displayText.className = 'vk-display-text';

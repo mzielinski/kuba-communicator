@@ -168,6 +168,7 @@ export const translations = {
         virtualKeyboardClear: 'Wyczyść',
         virtualKeyboardSpeak: 'Mów',
         virtualKeyboardDelWord: 'Słowo',
+        virtualKeyboardCopy: 'Kopiuj',
 
         btnSaveChanges:   '💾 Zapisz zmiany',
         btnCancelChanges: '❌ Anuluj (odrzuć zmiany)',
@@ -468,6 +469,7 @@ export const translations = {
         virtualKeyboardClear: 'Clear',
         virtualKeyboardSpeak: 'Speak',
         virtualKeyboardDelWord: 'Word',
+        virtualKeyboardCopy: 'Copy',
 
         btnSaveChanges:   '💾 Save changes',
         btnCancelChanges: '❌ Cancel (discard changes)',
