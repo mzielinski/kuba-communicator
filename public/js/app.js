@@ -1,6 +1,7 @@
 // ============================================
 // APP — bootstrap / entry point
 // ============================================
+
 import { state } from './state.js';
 import { showToast } from './utils.js';
 import { t, applyTranslations } from './i18n.js';
@@ -10,6 +11,9 @@ import { renderCategoryGrid, renderRecentMessages } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
 import { initializeSettingsManagement } from './settingsManagement.js';
 import { initializeUserManagement } from './userManagement.js';
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', (e) => e.preventDefault());
 
 async function initializeApp() {
     console.log('Initializing KUBA App…');

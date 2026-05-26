@@ -63,13 +63,36 @@ export function updateStatus(message) {
     if (el) el.textContent = message;
 }
 
+/** Fallback copy using a temporary textarea (for Edge / non-secure contexts) */
+function fallbackCopyToClipboard(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+}
+
 /** Copy text to clipboard and show feedback */
 export async function copyToClipboard(text) {
     try {
-        await navigator.clipboard.writeText(text);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            if (!fallbackCopyToClipboard(text)) throw new Error('execCommand copy failed');
+        }
         showToast(t('copied', { item: text }), 'success');
     } catch (err) {
-        console.error('Failed to copy:', err);
-        showToast(t('copyFailed'), 'error');
+        // Clipboard API failed (e.g. Edge focus/permission issue) — try fallback
+        try {
+            if (!fallbackCopyToClipboard(text)) throw new Error('execCommand copy failed');
+            showToast(t('copied', { item: text }), 'success');
+        } catch (fallbackErr) {
+            console.error('Failed to copy:', fallbackErr);
+            showToast(t('copyFailed'), 'error');
+        }
     }
 }
