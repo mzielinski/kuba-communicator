@@ -2602,7 +2602,7 @@ body.dark-mode {
 
 .vk-action-btn {
     flex: 1;
-    height: clamp(48px, 7vh, 72px);
+    height: 144px;
     max-width: 250px;
     border: none;
     border-radius: 8px;
