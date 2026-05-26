@@ -1766,7 +1766,8 @@ input[type="range"]::-moz-range-thumb {
     }
 }
 
-.word-button.dwell-active {
+.word-button.dwell-active,
+.category-expand-button.dwell-active {
     animation: dwell-blink 0.3s ease-in-out infinite;
 }
 
@@ -2476,7 +2477,7 @@ body.dark-mode {
 }
 
 /* ============================================
-   VIRTUAL KEYBOARD — full-screen
+   VIRTUAL KEYBOARD — full-screen  (LIGHT default)
    ============================================ */
 
 /* The overlay IS the keyboard — fills entire viewport */
@@ -2485,7 +2486,7 @@ body.dark-mode {
     inset: 0;
     display: flex;
     flex-direction: column;
-    background: #1a1a2e;
+    background: #f0f2ff;
     z-index: 9999;
     padding: 0;
     overflow: hidden;
@@ -2497,7 +2498,7 @@ body.dark-mode {
     align-items: center;
     gap: 10px;
     padding: 10px 14px;
-    background: #12121f;
+    background: #e4e8ff;
     border-bottom: 3px solid #667eea;
     flex-shrink: 0;
     min-height: 64px;
@@ -2507,15 +2508,15 @@ body.dark-mode {
     flex: 1;
     font-size: clamp(20px, 3.5vw, 36px);
     font-weight: 700;
-    color: #e8e8ff;
+    color: #1a1a3e;
     letter-spacing: 2px;
     white-space: pre-wrap;
     word-break: break-all;
     min-height: 1.2em;
     padding: 4px 8px;
-    background: #0d0d1a;
+    background: #ffffff;
     border-radius: 6px;
-    border: 2px solid #667eea44;
+    border: 2px solid rgba(102, 126, 234, 0.4);
 }
 
 .vk-close-btn {
@@ -2530,6 +2531,8 @@ body.dark-mode {
     font-weight: 700;
     cursor: pointer;
     transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
 }
 
 .vk-close-btn:hover { background: #e74c3c; }
@@ -2541,7 +2544,7 @@ body.dark-mode {
     flex-direction: column;
     padding: 8px 6px 4px;
     gap: 6px;
-    min-height: 0;    /* allow flex shrink */
+    min-height: 0;
 }
 
 .vk-row {
@@ -2554,12 +2557,12 @@ body.dark-mode {
 
 .vk-key {
     flex: 1;
-    max-width: calc(100% / 10 - 5px);   /* never wider than 1/10 viewport */
+    max-width: calc(100% / 10 - 5px);
     height: 100%;
-    background: #2d2d4e;
-    border: 2px solid #4a4a7a;
+    background: #ffffff;
+    border: 2px solid #c0c8f0;
     border-radius: 8px;
-    color: #e8e8ff;
+    color: #1a1a3e;
     font-size: clamp(32px, 2.8vw, 64px);
     font-weight: 700;
     cursor: pointer;
@@ -2569,18 +2572,22 @@ body.dark-mode {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(102,126,234,0.12);
 }
 
-.vk-key:hover  { background: #667eea; border-color: #667eea; }
-.vk-key:active { transform: scale(0.93); background: #5568cc; }
+.vk-key:hover  { background: #667eea; border-color: #667eea; color: #fff; }
+.vk-key:active { transform: scale(0.93); background: #5568cc; color: #fff; }
 
 /* Disabled key — used in PL mode for keys without Polish variants */
 .vk-key-disabled {
-    background: #1a1a2e !important;
-    border-color: #2a2a3e !important;
-    color: #3a3a5a !important;
+    background: #e8eaff !important;
+    border-color: #d0d4f0 !important;
+    color: #aab0cc !important;
     cursor: not-allowed;
-    opacity: 0.35;
+    opacity: 0.5;
+    box-shadow: none !important;
 }
 
 /* ── Bottom action bar ── */
@@ -2589,8 +2596,8 @@ body.dark-mode {
     gap: 5px;
     padding: 6px 6px 8px;
     flex-shrink: 0;
-    background: #12121f;
-    border-top: 2px solid #2d2d4e;
+    background: #e4e8ff;
+    border-top: 2px solid #c0c8f0;
 }
 
 .vk-action-btn {
@@ -2606,6 +2613,8 @@ body.dark-mode {
     transition: opacity 0.15s, transform 0.08s;
     -webkit-user-select: none;
     user-select: none;
+    position: relative;
+    overflow: hidden;
 }
 
 .vk-action-btn:active { transform: scale(0.95); }
@@ -2613,7 +2622,7 @@ body.dark-mode {
 .vk-caps-btn     { background: #7b2fbe; flex: 0.8; }
 .vk-num-btn      { background: #2e6b9e; flex: 0.8; }
 .vk-pl-btn       { background: #1a6fc4; flex: 0.7; }
-.vk-space-btn    { background: #555577; flex: 3; }
+.vk-space-btn    { background: #7a7aaa; flex: 3; }
 .vk-backspace-btn{ background: #c87a0a; flex: 0.8; }
 .vk-delword-btn  { background: #8b4500; flex: 1.4; }
 .vk-clear-btn    { background: #b22222; flex: 0.7; }
@@ -2623,7 +2632,7 @@ body.dark-mode {
 .vk-caps-btn:hover      { background: #9b37e0; }
 .vk-num-btn:hover       { background: #3a84be; }
 .vk-pl-btn:hover        { background: #2280d8; }
-.vk-space-btn:hover     { background: #6666aa; }
+.vk-space-btn:hover     { background: #9090c0; }
 .vk-backspace-btn:hover { background: #e08910; }
 .vk-delword-btn:hover   { background: #a85500; }
 .vk-clear-btn:hover     { background: #dc2626; }
@@ -2635,4 +2644,37 @@ body.dark-mode {
     box-shadow: inset 0 0 0 3px rgba(255,255,255,0.6);
     filter: brightness(1.25);
 }
+
+/* Dwell animation for keyboard keys */
+.vk-key.dwell-active,
+.vk-action-btn.dwell-active,
+.vk-close-btn.dwell-active {
+    animation: dwell-blink 0.3s ease-in-out infinite;
+}
+
+/* ============================================
+   VIRTUAL KEYBOARD — dark-mode overrides
+   ============================================ */
+
+body.dark-mode .vk-fullscreen      { background: #1a1a2e; }
+body.dark-mode .vk-display-bar     { background: #12121f; }
+body.dark-mode .vk-display-text    { color: #e8e8ff; background: #0d0d1a; border-color: rgba(102,126,234,0.27); }
+body.dark-mode .vk-keys-area       { /* no change needed */ }
+body.dark-mode .vk-key {
+    background: #2d2d4e;
+    border-color: #4a4a7a;
+    color: #e8e8ff;
+    box-shadow: none;
+}
+body.dark-mode .vk-key:hover  { background: #667eea; border-color: #667eea; color: #fff; }
+body.dark-mode .vk-key:active { background: #5568cc; color: #fff; }
+body.dark-mode .vk-key-disabled {
+    background: #1a1a2e !important;
+    border-color: #2a2a3e !important;
+    color: #3a3a5a !important;
+    opacity: 0.35;
+}
+body.dark-mode .vk-action-bar  { background: #12121f; border-top-color: #2d2d4e; }
+body.dark-mode .vk-space-btn   { background: #555577; }
+body.dark-mode .vk-space-btn:hover { background: #6666aa; }
 
