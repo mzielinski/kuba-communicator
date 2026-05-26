@@ -18,20 +18,11 @@
                 <div class="demo-tooltip" data-i18n="demoBadgeTooltip">📝 Create account</div>
             </div>
             <button id="user-display-btn" class="manage-btn user-display-btn" title="Account">👤</button>
+            <button id="about-btn" class="manage-btn" data-i18n-title="aboutBtnTitle" title="O aplikacji">ⓘ️</button>
             <button id="manage-words-btn" class="manage-btn" data-i18n-title="manageWordsBtnTitle" title="Zarządzaj słowami">🛠️⚙️</button>
             <button id="logout-btn" class="manage-btn logout-btn" data-i18n-title="logoutBtnTitle" title="Wyloguj się">⏻</button>
         </div>
     </header>
-
-
-
-    <!-- Recent Messages Display -->
-    <div id="recent-messages-container" class="recent-messages-container">
-        <div class="recent-messages-label" data-i18n="recentMessagesLabel">Ostatnio kliknięte:</div>
-        <div id="recent-messages-list" class="recent-messages-list">
-            <!-- Generated dynamically -->
-        </div>
-    </div>
 
     <!-- Category Grid -->
     <main class="category-grid" id="categoryGrid" role="main">
@@ -365,6 +356,303 @@
             </div>
         </div>
     </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content about-modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="aboutModalTitle">ⓘ O aplikacji</h2>
+                <button class="modal-close" id="about-modal-close">&times;</button>
+            </div>
+            <div class="modal-body about-modal-body">
+                <div class="settings-layout">
+
+                    <!-- Left nav -->
+                    <nav class="settings-nav">
+                        <button class="about-nav-btn settings-nav-btn active" data-about-panel="about-panel-kuba" data-i18n="aboutNavKuba">💙 O Kubie</button>
+                        <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-me" data-i18n="aboutNavMe">👨‍💻 O mnie</button>
+                        <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-contact" data-i18n="aboutNavContact">📞 Kontakt</button>
+                        <button class="about-nav-btn settings-nav-btn about-nav-support" data-about-panel="about-panel-support" data-i18n="aboutNavSupport">💜 Wesprzyj</button>
+                        <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-faq" data-i18n="aboutNavFaq">❓ FAQ</button>
+                        <button class="about-nav-btn settings-nav-btn about-nav-privacy" data-about-panel="about-panel-privacy" data-i18n="aboutNavPrivacy">🔒 Prywatność</button>
+                    </nav>
+
+                    <!-- Right content -->
+                    <div class="settings-panels">
+
+                        <!-- About Me -->
+                        <div id="about-panel-me" class="about-panel settings-panel">
+                            <h3 data-i18n="aboutMeHeading">👨‍💻 O mnie</h3>
+                            <div class="about-profile-card">
+                                <div class="about-avatar">👨‍💻</div>
+                                <div class="about-profile-info">
+                                    <h4 class="about-profile-name">Maciej Zieliński</h4>
+                                    <p class="about-profile-role" data-i18n="aboutMeRole">Twórca aplikacji &amp; brat Kuby</p>
+                                </div>
+                            </div>
+                            <div class="about-text-block">
+                                <p data-i18n="aboutMeText1">Jestem Maciej — programista i brat Kuby. Stworzyłem tę aplikację, żeby ułatwić Kubie codzienną komunikację z rodziną i opiekunami.</p>
+                                <p data-i18n="aboutMeText2">Zależy mi, żeby Kuba mógł jak najpełniej wyrażać swoje potrzeby, emocje i myśli — mimo że mówienie sprawia mu trudność. Ta aplikacja to mój wkład w to, żeby każdy dzień był dla niego łatwiejszy.</p>
+                                <p data-i18n="aboutMeText3">Jeśli masz pytania, sugestie albo chcesz się ze mną skontaktować — napisz! Wszystkie opinie są mile widziane.</p>
+                            </div>
+                        </div>
+
+                        <!-- About Kuba -->
+                        <div id="about-panel-kuba" class="about-panel settings-panel active">
+                            <h3 data-i18n="aboutKubaHeading">💙 O Kubie</h3>
+                            <div class="about-profile-card">
+                                <div class="about-avatar about-avatar-kuba">💙</div>
+                                <div class="about-profile-info">
+                                    <h4 class="about-profile-name">Kuba</h4>
+                                    <p class="about-profile-role" data-i18n="aboutKubaRole">Bohater tej aplikacji</p>
+                                </div>
+                            </div>
+                            <div class="about-text-block">
+                                <p data-i18n="aboutKubaText1">Kuba jest moim bratem. Z powodu swojej choroby ma duże trudności z mówieniem i komunikacją werbalną, co sprawia, że wyrażanie codziennych potrzeb bywa dla niego wyzwaniem.</p>
+                                <p data-i18n="aboutKubaText2">Ta aplikacja powstała specjalnie dla niego — jako urządzenie wspomagające komunikację (AAC). Dzięki niej Kuba może wybierać słowa i kategorie, które są odczytywane na głos, a jego komunikaty mogą być też wysyłane do rodziny przez Telegram.</p>
+                                <p data-i18n="aboutKubaText3">Kuba jest niesamowitym człowiekiem — pełnym ciepła i humoru. Aplikacja ma sprawić, żeby jego głos był zawsze słyszany. 💙</p>
+                            </div>
+                            <a href="https://www.siepomaga.pl/jakub-zielinski" target="_blank" rel="noopener noreferrer" class="about-siepomaga-btn">
+                                <span>❤️</span>
+                                <span data-i18n="aboutKubaSiepomaga">Wesprzyj Kubę na siepomaga.pl</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+
+                        <!-- Contact -->
+                        <div id="about-panel-contact" class="about-panel settings-panel">
+                            <h3 data-i18n="aboutContactHeading">📞 Kontakt</h3>
+                            <div class="about-text-block">
+                                <p data-i18n="aboutContactIntro">Masz pytania, uwagi lub chcesz się ze mną skontaktować? Napisz do mnie:</p>
+                            </div>
+                            <div class="about-contact-list">
+                                <div class="about-contact-item">
+                                    <span class="about-contact-icon">✉️</span>
+                                    <div class="about-contact-detail">
+                                        <span class="about-contact-label" data-i18n="aboutContactEmail">Email</span>
+                                        <a href="mailto:maciejzielinski6@gmail.com" class="about-contact-value">maciejzielinski6@gmail.com</a>
+                                    </div>
+                                </div>
+                                <div class="about-contact-item">
+                                    <span class="about-contact-icon">📱</span>
+                                    <div class="about-contact-detail">
+                                        <span class="about-contact-label" data-i18n="aboutContactTelegram">Telegram</span>
+                                        <span class="about-contact-value">@maciezie</span>
+                                    </div>
+                                </div>
+                                <div class="about-contact-item">
+                                    <span class="about-contact-icon">
+                                        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"/></svg>
+                                    </span>
+                                    <div class="about-contact-detail">
+                                        <span class="about-contact-label">GitHub</span>
+                                        <a href="https://github.com/mzielinski" target="_blank" rel="noopener noreferrer" class="about-contact-value">github.com/mzielinski</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="about-text-block" style="margin-top: 16px;">
+                                <p class="form-hint" data-i18n="aboutContactNote">Odpowiadam zazwyczaj w ciągu 24–48 godzin. Jestem otwarty na sugestie dotyczące nowych funkcji i ulepszeń aplikacji.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ -->
+                        <div id="about-panel-faq" class="about-panel settings-panel">
+                            <h3 data-i18n="aboutFaqHeading">❓ Często zadawane pytania</h3>
+                            <div class="about-faq-list">
+
+                                <!-- GROUP: General -->
+                                <div class="faq-group-title" data-i18n="faqGroupGeneral">🔹 Ogólne</div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ1">Dla kogo jest ta aplikacja?</div>
+                                    <div class="about-faq-a" data-i18n="faqA1">Aplikacja jest przeznaczona dla osób, które mają trudności z komunikacją werbalną — szczególnie dla osób z niepełnosprawnościami ruchowymi lub neurologicznymi. Pierwotnie powstała dla Kuby, ale możesz jej używać dla siebie lub bliskiej osoby.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ2">Czy aplikacja jest darmowa?</div>
+                                    <div class="about-faq-a" data-i18n="faqA2">Tak, aplikacja jest w pełni darmowa. Możesz założyć konto i korzystać ze wszystkich funkcji bez żadnych opłat.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ3">Jak działa tryb demo?</div>
+                                    <div class="about-faq-a" data-i18n="faqA3">Tryb demo pozwala wypróbować aplikację bez zakładania konta. Możesz przeglądać słowa i kategorie, ale zmiany nie będą zapisywane. Aby korzystać w pełni, utwórz swoje konto.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ6">Czy mogę dodać swoje słowa i kategorie?</div>
+                                    <div class="about-faq-a" data-i18n="faqA6">Tak! Po zalogowaniu możesz swobodnie dodawać, edytować i usuwać kategorie oraz słowa. Możesz też ustawić kolory przycisków i ich rozmiar. Każde konto ma swój własny zestaw słów.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ7">Czy moje ustawienia są zapamiętywane?</div>
+                                    <div class="about-faq-a" data-i18n="faqA7">Tak — każdy użytkownik ma własne, niezależne preferencje przechowywane na serwerze. Dotyczy to języka, ustawień alarmu, klawiatury, trybu ciemnego, integracji z Telegramem oraz wszystkich słów i kategorii. Zmiana ustawień przez jedną osobę nie wpływa na konto innego użytkownika.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ8">Czy mogę zainstalować aplikację na komputerze lub tablecie?</div>
+                                    <div class="about-faq-a">
+                                        <p data-i18n="faqA8Intro">Tak! Możesz zainstalować aplikację jako skrót i przypiąć ją do paska zadań — działa jak osobna aplikacja, bez paska adresu przeglądarki.</p>
+                                        <ul class="faq-install-list">
+                                            <li><strong>Chrome:</strong> <span data-i18n="faqA8Chrome">menu (⋮) → Więcej narzędzi → Utwórz skrót → zaznacz „Otwórz jako okno" → Utwórz → prawym przyciskiem na skrócie → Przypnij do paska zadań</span></li>
+                                            <li><strong>Edge:</strong> <span data-i18n="faqA8Edge">menu (...) → Aplikacje → Zainstaluj tę witrynę jako aplikację</span></li>
+                                            <li><strong>iOS / Android:</strong> <span data-i18n="faqA8Mobile">Safari lub Chrome → Udostępnij → Dodaj do ekranu głównego</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- GROUP: Features -->
+                                <div class="faq-group-title" data-i18n="faqGroupFeatures">🔸 Funkcje</div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ4">Co to jest Dwell Time?</div>
+                                    <div class="about-faq-a" data-i18n="faqA4">Dwell Time to funkcja, która pozwala aktywować przycisk poprzez samo patrzenie na niego przez określony czas. Jest szczególnie przydatna dla osób, które mają trudności z klikaniem myszką lub dotykaniem ekranu.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ9">Jak działa przycisk alarmu?</div>
+                                    <div class="about-faq-a" data-i18n="faqA9">Alarm to specjalny przycisk, który możesz dodać do wybranej kategorii. Po jego kliknięciu włącza się głośny sygnał dźwiękowy — idealny do przywołania opiekuna. W ustawieniach możesz wybrać rodzaj dźwięku (wysokie, średnie lub niskie tony, syrena), czas trwania alarmu oraz urządzenie audio, na którym ma grać.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ10">Do czego służy wirtualna klawiatura?</div>
+                                    <div class="about-faq-a" data-i18n="faqA10">Wirtualna klawiatura pozwala użytkownikowi wpisać dowolny tekst, który zostanie odczytany na głos. Obsługuje język polski (ze znakami diakrytycznymi), wielkie i małe litery oraz cyfry. Klawiatura otwiera się jako pełnoekranowy widok i jest w pełni kompatybilna z funkcją Dwell Time.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ11">Czym są globalne słowa?</div>
+                                    <div class="about-faq-a" data-i18n="faqA11">Globalne słowa to zestaw przycisków, które automatycznie pojawiają się we wszystkich kategoriach (lub tylko w rozwijalnych). Dzięki temu często używane zwroty — np. „Tak", „Nie", „Dziękuję", „Pomoc" — są zawsze pod ręką, bez potrzeby dodawania ich do każdej kategorii osobno. Każde globalne słowo ma ustawiony zakres wyświetlania.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ12">Co to są rozwijalne kategorie?</div>
+                                    <div class="about-faq-a" data-i18n="faqA12">Rozwijalne kategorie otwierają się jako osobny, pełnoekranowy widok z większą siatką przycisków. Są idealne dla kategorii zawierających wiele słów — np. „Jedzenie", „Emocje" czy „Aktywności". Kliknięcie przycisku powrotu wraca do głównego widoku wszystkich kategorii.</div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ13">Jak dodać emoji do słowa lub kategorii?</div>
+                                    <div class="about-faq-a">
+                                        <p data-i18n="faqA13Intro">Podczas dodawania lub edytowania słowa oraz kategorii możesz wkleić emoji bezpośrednio w pole tekstowe. Emoji świetnie sprawdzają się jako wskazówka wizualna</p>
+                                        <p data-i18n="faqA13How">Na Windows użyj skrótu <strong>Win + .</strong> (kropka), na macOS <strong>Ctrl + Cmd + Spacja</strong>. Możesz też skorzystać z bazy emoji online:</p>
+                                        <a href="https://emojidb.org/info-emojis?utm_source=user_search" target="_blank" rel="noopener noreferrer" class="faq-emoji-link">
+                                            <span>😊</span>
+                                            <span data-i18n="faqA13Link">Przeglądaj emoji na emojidb.org</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="about-faq-item">
+                                    <div class="about-faq-q" data-i18n="faqQ5">Jak działa integracja z Telegramem?</div>
+                                    <div class="about-faq-a" data-i18n="faqA5">Po skonfigurowaniu Telegrama w ustawieniach, każde słowo lub wiadomość kliknięte przez użytkownika może być automatycznie wysłane na wybrany czat Telegram. Dzięki temu opiekunowie i rodzina mogą być na bieżąco, nawet gdy nie siedzą obok.</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Support / Donate -->
+                        <div id="about-panel-support" class="about-panel settings-panel">
+                            <div class="about-support-card">
+                                <div class="about-support-badge" data-i18n="supportBadge">Licencja „WinRAR"</div>
+                                <h3 class="about-support-heading" data-i18n="supportHeading">Używaj za darmo, wesprzyj jeśli chcesz</h3>
+                                <p class="about-support-text" data-i18n="supportText1">Aplikacja jest w pełni darmowa i nie ponosisz w związku z jej używaniem żadnych ukrytych opłat.</p>
+                                <p class="about-support-text" data-i18n="supportText2">Jeśli doceniasz moją pracę i chcesz przyczynić się do rozwoju projektu, możesz wesprzeć mnie dowolną kwotą — każda złotówka motywuje do dalszego rozwijania aplikacji dla Kuby. 💙</p>
+                                <a href="https://suppi.pl/kuba-communication-system" target="_blank" rel="noopener noreferrer" class="about-support-btn">
+                                    <span data-i18n="supportBtnLabel">Kup licencję (co łaska)</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path></svg>
+                                </a>
+                                <p class="about-support-note">suppi.pl/kuba-communication-system</p>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Policy -->
+                        <div id="about-panel-privacy" class="about-panel settings-panel">
+                            <h3 data-i18n="ppHeading">🔒 Polityka Prywatności</h3>
+                            <p class="pp-updated" data-i18n="ppLastUpdated">Ostatnia aktualizacja: Maj 2026</p>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS1Head">1. Administrator danych</h4>
+                                <p class="pp-text" data-i18n="ppS1Text">Administratorem danych osobowych jest Maciej Zieliński, twórca aplikacji (kontakt: maciejzielinski6@gmail.com). Aplikacja jest projektem prywatnym i niekomercyjnym.</p>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS2Head">2. Jakie dane zbieramy</h4>
+                                <ul class="pp-list">
+                                    <li data-i18n="ppS2Item1">Adres e-mail — wymagany do tworzenia konta i logowania.</li>
+                                    <li data-i18n="ppS2Item2">Hasło — przechowywane wyłącznie jako nieodwracalny hash bcrypt. Administrator nie zna i nie może odtworzyć Twojego hasła.</li>
+                                    <li data-i18n="ppS2Item3">Dane aplikacji — słowa, kategorie i preferencje (język, ustawienia alarmu, klawiatury i trybu ciemnego).</li>
+                                    <li data-i18n="ppS2Item4">Tymczasowy identyfikator sesji — ciasteczko sesyjne, usuwane automatycznie po wylogowaniu lub zamknięciu przeglądarki.</li>
+                                </ul>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS3Head">3. Czego NIE zbieramy</h4>
+                                <ul class="pp-list pp-list-no">
+                                    <li data-i18n="ppS3Item1">Nie zbieramy danych analitycznych, statystyk ani logów aktywności.</li>
+                                    <li data-i18n="ppS3Item2">Nie stosujemy śledzenia, profilowania, reklam ani ciasteczek śledzących.</li>
+                                    <li data-i18n="ppS3Item3">Nie sprzedajemy, nie udostępniamy ani nie przekazujemy danych osobom trzecim.</li>
+                                    <li data-i18n="ppS3Item4">Nie przechowujemy historii klikniętych słów poza tymczasową sesją.</li>
+                                    <li data-i18n="ppS3Item5">Nie zbieramy danych o urządzeniu, przeglądarce ani lokalizacji geograficznej.</li>
+                                </ul>
+                            </div>
+
+                            <div class="pp-section pp-section-highlight">
+                                <h4 class="pp-section-title" data-i18n="ppSMicHead">🎤 Uprawnienie do mikrofonu</h4>
+                                <p class="pp-text" data-i18n="ppSMicText1">Przeglądarka może poprosić o dostęp do mikrofonu — jest to wymóg techniczny przeglądarek, który umożliwia wybór konkretnego urządzenia wyjściowego audio (głośniki lub słuchawki) dla alarmu.</p>
+                                <p class="pp-text pp-tip" data-i18n="ppSMicText2">✅ Aplikacja nie nagrywa, nie przechowuje ani nie przesyła żadnego dźwięku z mikrofonu. Uprawnienie służy wyłącznie do odczytu listy dostępnych urządzeń audio w systemie.</p>
+                            </div>
+
+                            <div class="pp-section pp-section-highlight">
+                                <h4 class="pp-section-title" data-i18n="ppS4Head">4. Bezpieczeństwo haseł</h4>
+                                <p class="pp-text" data-i18n="ppS4Text1">Hasła są szyfrowane algorytmem bcrypt przed zapisem do bazy — operacja nieodwracalna. Administrator technicznie nie może odczytać Twojego hasła.</p>
+                                <p class="pp-text pp-tip" data-i18n="ppS4Text2">💡 Ważne: używaj unikalnego, silnego hasła — innego niż w innych serwisach. W przypadku podejrzenia naruszenia bezpieczeństwa natychmiast usuń konto i utwórz nowe.</p>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS5Head">5. Integracja z Telegramem</h4>
+                                <p class="pp-text" data-i18n="ppS5Text">Jeśli samodzielnie skonfigurujesz integrację z Telegramem, kliknięte słowa będą przesyłane na serwery Telegram Inc. — zewnętrznego podmiotu z własną polityką prywatności. Tę funkcję możesz wyłączyć w ustawieniach w dowolnym momencie.</p>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS6Head">6. Prawa użytkownika (RODO / GDPR)</h4>
+                                <p class="pp-text" data-i18n="ppS6Intro">Zgodnie z Rozporządzeniem (UE) 2016/679 (RODO) przysługują Ci następujące prawa:</p>
+                                <ul class="pp-list">
+                                    <li data-i18n="ppS6Item1">Prawo dostępu do danych osobowych.</li>
+                                    <li data-i18n="ppS6Item2">Prawo do sprostowania nieprawidłowych danych.</li>
+                                    <li data-i18n="ppS6Item3">Prawo do usunięcia danych — możesz usunąć konto bezpośrednio w aplikacji.</li>
+                                    <li data-i18n="ppS6Item4">Prawo do ograniczenia przetwarzania i prawo do przenoszenia danych.</li>
+                                    <li data-i18n="ppS6Item5">Prawo wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO, uodo.gov.pl) lub organu nadzorczego właściwego dla Twojego kraju.</li>
+                                </ul>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS7Head">7. Użytkownicy spoza UE</h4>
+                                <p class="pp-text" data-i18n="ppS7Text">Aplikacja stosuje standardy RODO/GDPR wobec wszystkich użytkowników, niezależnie od kraju zamieszkania. Użytkownicy z Kalifornii mogą korzystać z praw wynikających z CCPA (prawo dostępu, usunięcia i sprzeciwu wobec „sprzedaży" danych — której nie prowadzimy). Użytkownicy z Wielkiej Brytanii podlegają UK GDPR, które stosujemy analogicznie.</p>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS8Head">8. Dostępność usługi</h4>
+                                <p class="pp-text" data-i18n="ppS8Text">Aplikacja jest projektem prywatnym, tworzonym i utrzymywanym hobbystycznie. Nie gwarantujemy ciągłości działania usługi. Mogą wystąpić przerwy, awarie lub trwałe zakończenie usługi bez wcześniejszego powiadomienia. Usługa jest bezpłatna i jest udostępniana w dobrej woli, bez żadnych zobowiązań ze strony twórcy.</p>
+                            </div>
+
+                            <div class="pp-section pp-section-disclaimer">
+                                <h4 class="pp-section-title" data-i18n="ppS9Head">9. Wyłączenie odpowiedzialności</h4>
+                                <p class="pp-text" data-i18n="ppS9Text1">Aplikacja jest dziełem niezależnym. Korzystanie z niej odbywa się na własną odpowiedzialność użytkownika.</p>
+                                <p class="pp-text" data-i18n="ppS9Text2">Twórca nie ponosi odpowiedzialności za szkody wynikłe z korzystania lub niemożności korzystania z aplikacji, przerw w działaniu usługi, utraty danych ani za jakiekolwiek decyzje podjęte na podstawie treści wyświetlanych przez aplikację.</p>
+                                <p class="pp-text" data-i18n="ppS9Text3">Aplikacja stanowi wyłącznie narzędzie wspomagające komunikację — nie jest poradą medyczną, terapeutyczną, prawną ani żadną inną usługą profesjonalną.</p>
+                            </div>
+
+                            <div class="pp-section">
+                                <h4 class="pp-section-title" data-i18n="ppS10Head">10. Zmiany polityki prywatności</h4>
+                                <p class="pp-text" data-i18n="ppS10Text">Niniejsza polityka może być aktualizowana. Data ostatniej aktualizacji jest widoczna na górze tej sekcji. Dalsze korzystanie z aplikacji po opublikowaniu zmian oznacza ich akceptację. W razie pytań skontaktuj się z administratorem.</p>
+                            </div>
+                        </div>
+
+                    </div><!-- /.settings-panels -->
+                </div><!-- /.settings-layout -->
+            </div>
+        </div>
+    </div>
+
     <!-- User Management Modal -->
     <div id="user-modal" class="modal">
         <div class="modal-content">
@@ -377,6 +665,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Recent Messages Display -->
+    <div id="recent-messages-container" class="recent-messages-container">
+        <div class="recent-messages-label" data-i18n="recentMessagesLabel">Ostatnio kliknięte:</div>
+        <div id="recent-messages-list" class="recent-messages-list">
+            <!-- Generated dynamically -->
+        </div>
+    </div>
+
 </div>
 
 <script type="module" src="js/app.js"></script>

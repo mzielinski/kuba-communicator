@@ -11,6 +11,7 @@ import { renderCategoryGrid, renderRecentMessages } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
 import { initializeSettingsManagement } from './settingsManagement.js';
 import { initializeUserManagement } from './userManagement.js';
+import { initializeAboutModal } from './about.js';
 
 // Disable right-click context menu
 document.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -64,6 +65,7 @@ async function initializeApp() {
     await initializeSettingsManagement();
     initializeLogoutButton();
     initializeUserManagement();
+    initializeAboutModal();
 
     // Hide manage-words button for DEMO users
     if (state.userRole === 'DEMO') {
