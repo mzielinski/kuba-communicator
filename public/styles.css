@@ -2560,7 +2560,7 @@ body.dark-mode {
     border: 2px solid #4a4a7a;
     border-radius: 8px;
     color: #e8e8ff;
-    font-size: clamp(14px, 2.8vw, 32px);
+    font-size: clamp(32px, 2.8vw, 64px);
     font-weight: 700;
     cursor: pointer;
     transition: background 0.1s, transform 0.08s;
