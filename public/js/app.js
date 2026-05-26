@@ -61,7 +61,9 @@ async function initializeApp() {
 
     renderCategoryGrid();
     renderRecentMessages();
-    await initializeAudioDevices();
+    if (state.alarmButtonEnabled) {
+        await initializeAudioDevices();
+    }
     await initializeSettingsManagement();
     initializeLogoutButton();
     initializeUserManagement();

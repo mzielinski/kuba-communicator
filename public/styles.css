@@ -53,6 +53,54 @@ body {
     letter-spacing: 1px;
 }
 
+.app-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-heading-logo {
+    height: 44px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+/* Light mode: coloured icon visible, white icon hidden */
+.app-heading-logo--white { display: none; }
+.app-heading-logo--dark  { display: block; }
+
+/* Dark mode: white icon visible, coloured icon hidden */
+.dark-mode .app-heading-logo--dark  { display: none; }
+.dark-mode .app-heading-logo--white { display: block; }
+
+.app-heading-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.app-heading-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1a5f8a;
+    letter-spacing: -0.5px;
+}
+
+.app-heading-subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    color: #1a5f8a;
+    opacity: 0.75;
+    letter-spacing: 0.2px;
+    margin-top: 1px;
+}
+
+/* Dark mode text colours */
+.dark-mode .app-heading-title,
+.dark-mode .app-heading-subtitle {
+    color: #e0e0e0;
+}
+
 .status-bar {
     display: flex;
     gap: 15px;
@@ -2720,6 +2768,21 @@ body.dark-mode .vk-space-btn:hover { background: #6666aa; }
 
 .about-avatar-kuba {
     background: linear-gradient(135deg, #4facfe 0%, #667eea 100%);
+}
+
+/* ── Kuba photo ── */
+.about-kuba-photo-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 20px;
+}
+
+.about-kuba-photo {
+    width: 100%;
+    max-width: 340px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(102,126,234,0.25);
+    object-fit: cover;
 }
 
 .about-profile-name {

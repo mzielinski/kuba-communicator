@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuba – Communication Device</title>
+    <link rel="icon" type="image/png+xml" href="img/icon.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -26,9 +27,40 @@
             padding: 40px;
         }
 
-        .login-header { text-align: center; margin-bottom: 28px; }
-        .login-header h1 { color: #333; font-size: 28px; margin-bottom: 6px; }
-        .login-header p  { color: #888; font-size: 14px; }
+        .login-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #f0f6ff 0%, #e8eeff 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(102,126,234,.15);
+        }
+        .login-header img {
+            width: 80px;
+            height: auto;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
+        }
+        .login-header-text { display: flex; flex-direction: column; }
+        .login-header h1 {
+            color: #1a5f8a;
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+        .login-header-sub {
+            color: #1a5f8a;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+            opacity: 0.8;
+        }
+        .login-header p { color: #888; font-size: 13px; margin-top: 8px; }
 
         .form-group { margin-bottom: 18px; }
 
@@ -170,8 +202,11 @@
 
     <div class="login-container">
         <div class="login-header">
-            <h1>🧑 Kuba</h1>
-            <p id="header-sub"></p>
+            <img src="img/icon.png" alt="Kuba logo">
+            <div class="login-header-text">
+                <h1>Kuba</h1>
+                <p id="header-sub"></p>
+            </div>
         </div>
 
         <!-- LOGIN VIEW -->

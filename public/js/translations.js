@@ -36,7 +36,7 @@ export const translations = {
 
         // ── App ───────────────────────────────────────────────────────────────
         pageTitle:    'Kuba # System Komunikacyjny',
-        appHeading:   'Kuba # System Komunikacyjny',
+        appSubtitle:  'System Komunikacyjny',
 
         statusReady:   'Gotowe',
         statusSpeaking:'Mówię...',
@@ -312,7 +312,7 @@ export const translations = {
 
         // ─��� About modal ───────────────────────────────────────────────────────
         aboutBtnTitle:      'O aplikacji',
-        aboutModalTitle:    'ⓘ O aplikacji',
+        aboutModalTitle:    'O aplikacji',
         aboutNavMe:         '👨‍💻 O mnie',
         aboutNavKuba:       '💙 O Kubie',
         aboutNavContact:    '📞 Kontakt',
@@ -374,10 +374,10 @@ export const translations = {
 
         // ── Support panel ─────────────────────────────────────────────────────
         aboutNavSupport:  '💜 Wesprzyj',
-        supportBadge:     'Licencja „WinRAR"',
+        supportBadge:     'Apache License 2.0',
         supportHeading:   'Używaj za darmo, wesprzyj jeśli chcesz',
         supportText1:     'Aplikacja jest w pełni darmowa i nie ponosisz w związku z jej używaniem żadnych ukrytych opłat.',
-        supportText2:     'Jeśli doceniasz moją pracę i chcesz przyczynić się do rozwoju projektu, możesz wesprzeć mnie dowolną kwotą — każda złotówka motywuje do dalszego rozwijania aplikacji dla Kuby. 💙',
+        supportText2:     'Jeśli doceniasz moją pracę i chcesz przyczynić się do rozwoju projektu, możesz wesprzeć mnie dowolną kwotą — każda złotówka motywuje do dalszego rozwijania aplikacji. 💙',
         supportBtnLabel:  'Wesprzyj aplikację',
 
         // ── Privacy Policy ────────────────────────────────────────────────────
@@ -463,7 +463,7 @@ export const translations = {
 
         // ── App ───────────────────────────────────────────────────────────────
         pageTitle:    'Kuba # Communication System',
-        appHeading:   'Kuba # Communication System',
+        appSubtitle:  'Communication System',
 
         statusReady:    'Ready',
         statusSpeaking: 'Speaking...',
@@ -737,7 +737,7 @@ export const translations = {
 
         // ── About modal ───────────────────────────────────────────────────────
         aboutBtnTitle:      'About the app',
-        aboutModalTitle:    'ⓘ About',
+        aboutModalTitle:    'About',
         aboutNavMe:         '👨‍💻 About me',
         aboutNavKuba:       '💙 About Kuba',
         aboutNavContact:    '📞 Contact',
@@ -798,12 +798,13 @@ export const translations = {
         faqA13Link:  'Browse emojis on emojidb.org',
 
         // ── Support panel ─────────────────────────────────────────────────────
-        aboutNavSupport:  '💜 Support',
-        supportBadge:     '"WinRAR" Licence',
-        supportHeading:   'Free to use, support if you want',
-        supportText1:     'The app is completely free and you pay no hidden fees for using it.',
-        supportText2:     'If you appreciate my work and want to contribute to the project, you can support me with any amount — every contribution motivates me to keep developing the app for Kuba. 💙',
-        supportBtnLabel:  'Support the app',
+        aboutNavSupport:    '💜 Support',
+        supportBadge:       'Apache License 2.0',
+        supportHeading:     'Free to use, support if you want',
+        supportText1:       'The app is completely free and you pay no hidden fees for using it.',
+        supportText2:       'If you appreciate my work and want to contribute to the project, you can support me with any amount — every contribution motivates me to keep developing the app for Kuba. 💙',
+        supportBtnLabel:    'Support the app',
+        supportLicenceLink: '📄 Apache License 2.0 — full licence text',
 
         // ── Privacy Policy ────────────────────────────────────────────────────
         aboutNavPrivacy: '🔒 Privacy',

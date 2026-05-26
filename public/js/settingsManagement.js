@@ -856,10 +856,14 @@ export async function initializeSettingsManagement() {
     if (alarmBtnToggle) {
         alarmBtnToggle.checked = state.alarmButtonEnabled;
         updateAlarmBtnVisibility();
-        alarmBtnToggle.addEventListener('change', (e) => {
+        alarmBtnToggle.addEventListener('change', async (e) => {
             state.alarmButtonEnabled = e.target.checked;
             updateAlarmBtnVisibility();
             renderCategoryGrid();
+            if (e.target.checked) {
+                const { initializeAudioDevices } = await import('./alarm.js');
+                await initializeAudioDevices();
+            }
         });
     }
 
