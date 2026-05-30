@@ -4,12 +4,29 @@
 
 Options -Indexes
 
+FileETag None
+
 # Security Headers
 <IfModule mod_headers.c>
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Cache Control
+# JS, CSS, HTML: always revalidate — changes (e.g. translations) are picked up immediately without needing a hard refresh.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|html)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+        Header unset ETag
+    </FilesMatch>
+    # Images & fonts can be cached longer
+    <FilesMatch "\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico)$">
+        Header set Cache-Control "max-age=86400, public"
+    </FilesMatch>
 </IfModule>
 
 RewriteEngine On
