@@ -4,7 +4,19 @@
 
 Options -Indexes
 
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
 RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Allow direct access to email confirmation endpoint
 RewriteRule ^src/auth/confirm-email\.php - [L]
@@ -22,4 +34,3 @@ RewriteRule ^ - [L]
 
 # Route everything else through the PHP router
 RewriteRule ^ index.php [L,QSA]
-

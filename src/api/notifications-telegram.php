@@ -21,7 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // ============================================
 
 // Security
-define('ALLOWED_ORIGINS', ['http://localhost', 'http://localhost:3000', 'http://127.0.0.1']);
+define('ALLOWED_ORIGINS', [
+    'https://kuba-communication-system.eu',
+    'https://www.kuba-communication-system.eu',
+    'http://localhost',
+    'http://localhost:3000',
+    'http://127.0.0.1',
+]);
 define('REQUIRE_API_KEY', false);
 define('API_KEY', 'your-secret-key-here');
 
