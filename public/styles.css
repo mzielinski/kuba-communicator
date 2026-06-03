@@ -3062,6 +3062,53 @@ a.dark-mode .about-contact-value:hover { color: #8fa3ff; }
     white-space: pre-line;
 }
 
+.about-feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.about-feedback-email {
+    margin-top: 6px;
+    padding: 10px 14px;
+    border: 1px solid #e0e4ff;
+    border-radius: 8px;
+    background: #f8faff;
+    color: #333;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.about-feedback-select,
+.about-feedback-textarea {
+    width: 100%;
+    border: 1px solid #cfd7ff;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    font-size: 14px;
+    padding: 10px 12px;
+}
+
+.about-feedback-textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+}
+
+.about-feedback-select:focus,
+.about-feedback-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+}
+
+.about-feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .dark-mode .about-faq-item { border-color: #333; }
 .dark-mode .about-faq-q { background: #1e1e2e; color: #e0e0e0; border-left-color: #667eea; }
 .dark-mode .about-faq-q::after { color: #8fa3ff; }
@@ -3081,6 +3128,25 @@ a.dark-mode .about-contact-value:hover { color: #8fa3ff; }
 
 .dark-mode .about-changelog-date { color: #8fa3ff; }
 .dark-mode .about-changelog-description { color: #c0c0c0; }
+
+.dark-mode .about-feedback-email {
+    background: #181828;
+    border-color: #333;
+    color: #e0e0e0;
+}
+
+.dark-mode .about-feedback-select,
+.dark-mode .about-feedback-textarea {
+    background: #1e1e2e;
+    border-color: #333;
+    color: #e0e0e0;
+}
+
+.dark-mode .about-feedback-select:focus,
+.dark-mode .about-feedback-textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.16);
+}
 
 /* ── Support / Donate panel ── */
 

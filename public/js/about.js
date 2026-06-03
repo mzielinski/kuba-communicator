@@ -5,22 +5,28 @@
 
 import { state } from './state.js';
 import { translations } from './translations.js';
+import { showToast } from './utils.js';
+import { t } from './i18n.js';
 
 const CHANGELOG_LIMIT = 5;
 
 export function initializeAboutModal() {
     const btn   = document.getElementById('about-btn');
     const changelogBtn = document.getElementById('changelog-btn');
+    const feedbackBtn = document.getElementById('feedback-btn');
     const modal = document.getElementById('about-modal');
     const close = document.getElementById('about-modal-close');
 
     if (!btn || !modal || !close) return;
 
     setupFaqAccordion(modal);
+    setupFeedbackForm(modal);
     renderChangelogPanel(modal);
+    syncFeedbackEmail(modal);
 
     document.addEventListener('app:translations-applied', () => {
         renderChangelogPanel(modal);
+        syncFeedbackEmail(modal);
     });
 
     const openAboutModal = (panelId = 'about-panel-kuba') => {
@@ -28,6 +34,10 @@ export function initializeAboutModal() {
         activateAboutPanel(panelId);
         if (panelId === 'about-panel-changelog') {
             renderChangelogPanel(modal);
+        }
+        if (panelId === 'about-panel-feedback') {
+            syncFeedbackEmail(modal);
+            focusFeedbackMessage(modal);
         }
     };
 
@@ -39,6 +49,12 @@ export function initializeAboutModal() {
     if (changelogBtn) {
         changelogBtn.addEventListener('click', () => {
             openAboutModal('about-panel-changelog');
+        });
+    }
+
+    if (feedbackBtn) {
+        feedbackBtn.addEventListener('click', () => {
+            openAboutModal('about-panel-feedback');
         });
     }
 
@@ -65,8 +81,85 @@ export function initializeAboutModal() {
             if (target === 'about-panel-changelog') {
                 renderChangelogPanel(modal);
             }
+            if (target === 'about-panel-feedback') {
+                syncFeedbackEmail(modal);
+                focusFeedbackMessage(modal);
+            }
         });
     });
+}
+
+function setupFeedbackForm(modal) {
+    const form = modal.querySelector('#about-feedback-form');
+    if (!form) return;
+
+    const typeSelect = form.querySelector('#feedback-type');
+    const messageField = form.querySelector('#feedback-message');
+    const submitBtn = form.querySelector('#feedback-submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const type = (typeSelect?.value || '').trim();
+        const message = (messageField?.value || '').trim();
+
+        if (!type) {
+            showToast(t('feedbackTypeRequired'), 'error');
+            return;
+        }
+
+        if (!message) {
+            showToast(t('feedbackMessageRequired'), 'error');
+            messageField?.focus();
+            return;
+        }
+
+        const originalLabel = submitBtn?.textContent || t('btnSendFeedback');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = t('feedbackSending');
+        }
+
+        try {
+            const r = await fetch('api.php?action=send-feedback', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type, message, language: state.language }),
+            });
+            const data = await r.json();
+
+            if (r.ok && data.success) {
+                showToast(data.message || t('feedbackSent'), 'success');
+                form.reset();
+                if (typeSelect) typeSelect.value = 'bug';
+                if (messageField) messageField.value = '';
+            } else {
+                showToast(data.message || t('feedbackError'), 'error');
+            }
+        } catch (err) {
+            showToast(t('feedbackError'), 'error');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+            }
+        }
+    });
+}
+
+function syncFeedbackEmail(modal) {
+    const emailEl = modal.querySelector('[data-feedback-email]');
+    if (emailEl) {
+        emailEl.textContent = state.userEmail || '—';
+    }
+}
+
+function focusFeedbackMessage(modal) {
+    const messageField = modal.querySelector('#feedback-message');
+    if (messageField) {
+        setTimeout(() => messageField.focus(), 0);
+    }
 }
 
 function renderChangelogPanel(modal) {

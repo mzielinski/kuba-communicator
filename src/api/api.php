@@ -10,6 +10,7 @@ require_once __DIR__ . '/../core/auth.php';
 require_once __DIR__ . '/words-handler.php';
 require_once __DIR__ . '/preferences-handler.php';
 require_once __DIR__ . '/file-handler.php';
+require_once __DIR__ . '/feedback-handler.php';
 
 header('Content-Type: application/json');
 setCorsHeaders();
@@ -50,6 +51,9 @@ if ($method === 'POST') {
             break;
         case 'update-telegram-chat':
             PreferencesHandler::handleUpdateTelegramChat($input);
+            break;
+        case 'send-feedback':
+            handleSendFeedback($input);
             break;
         default:
             http_response_code(400);

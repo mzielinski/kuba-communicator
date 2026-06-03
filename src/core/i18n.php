@@ -32,6 +32,27 @@ class I18n {
             // ── Email subjects ─────────────────────────────────────────────────
             'email_confirm_subject'  => 'Potwierdź email – Kuba',
             'email_approved_subject' => 'Twoje konto zostało zatwierdzone – Kuba',
+            'feedback_subject_bug'   => 'Kuba – zgłoszenie błędu',
+            'feedback_subject_feature' => 'Kuba – propozycja nowej funkcji',
+            'feedback_subject_existing' => 'Kuba – opinia o istniejącej funkcji',
+
+            // ── Feedback form ──────────────────────────────────────────────────
+            'feedback_type_bug'      => 'Błąd',
+            'feedback_type_feature'  => 'Propozycja nowej funkcji',
+            'feedback_type_existing' => 'Opinia o istniejącej funkcji',
+            'feedback_email_greeting' => 'Nowa wiadomość z formularza opinii:',
+            'feedback_email_intro'   => 'Użytkownik wysłał wiadomość z formularza opinii. Poniżej szczegóły:',
+            'feedback_email_sender'  => 'Nadawca',
+            'feedback_email_type'    => 'Rodzaj',
+            'feedback_email_language' => 'Język',
+            'feedback_email_role'    => 'Rola',
+            'feedback_email_message' => 'Treść wiadomości',
+            'feedback_email_button'  => 'Otwórz aplikację',
+            'feedback_email_footer'  => 'Odpowiadając na tę wiadomość, wyślesz odpowiedź bezpośrednio do nadawcy.',
+            'feedback_sent'          => 'Dziękujemy! Twoja wiadomość została wysłana do administratora.',
+            'feedback_failed'        => 'Nie udało się wysłać wiadomości. Spróbuj ponownie.',
+            'feedback_invalid_type'   => 'Wybierz prawidłowy rodzaj wiadomości.',
+            'feedback_invalid_message'=> 'Wpisz treść wiadomości.',
 
             // ── Confirm-email page headings ────────────────────────────────────
             'confirm_invalid_link'   => 'Nieprawidłowy link',
@@ -83,6 +104,27 @@ class I18n {
             // ── Email subjects ─────────────────────────────────────────────────
             'email_confirm_subject'  => 'Confirm your email – Kuba',
             'email_approved_subject' => 'Your account has been approved – Kuba',
+            'feedback_subject_bug'   => 'Kuba – bug report',
+            'feedback_subject_feature' => 'Kuba – new feature suggestion',
+            'feedback_subject_existing' => 'Kuba – feedback about an existing feature',
+
+            // ── Feedback form ──────────────────────────────────────────────────
+            'feedback_type_bug'      => 'Bug',
+            'feedback_type_feature'  => 'New feature suggestion',
+            'feedback_type_existing' => 'Feedback about an existing feature',
+            'feedback_email_greeting' => 'You have received a new feedback message:',
+            'feedback_email_intro'   => 'A user has sent a message through the feedback form. Details below:',
+            'feedback_email_sender'  => 'Sender',
+            'feedback_email_type'    => 'Type',
+            'feedback_email_language' => 'Language',
+            'feedback_email_role'    => 'Role',
+            'feedback_email_message' => 'Message',
+            'feedback_email_button'  => 'Open app',
+            'feedback_email_footer'  => 'Replying to this email will send your response directly to the sender.',
+            'feedback_sent'          => 'Thanks! Your message has been sent to the administrator.',
+            'feedback_failed'        => 'Could not send the message. Please try again.',
+            'feedback_invalid_type'   => 'Please choose a valid message type.',
+            'feedback_invalid_message'=> 'Please enter a message.',
 
             // ── Confirm-email page headings ────────────────────────────────────
             'confirm_invalid_link'   => 'Invalid link',

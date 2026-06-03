@@ -27,6 +27,7 @@
             </div>
             <button id="user-display-btn" class="manage-btn user-display-btn" title="Account">👤</button>
             <button id="about-btn" class="manage-btn" data-i18n-title="aboutBtnTitle" title="O aplikacji">ⓘ️</button>
+            <button id="feedback-btn" class="manage-btn" data-i18n-title="feedbackBtnTitle" title="Formularz opinii">💬</button>
             <button id="changelog-btn" class="manage-btn" data-i18n-title="changelogBtnTitle" title="Dziennik zmian">📝</button>
             <button id="manage-words-btn" class="manage-btn" data-i18n-title="configurationBtnTitle" title="Zarządzaj słowami">🛠️⚙️</button>
             <button id="logout-btn" class="manage-btn logout-btn" data-i18n-title="logoutBtnTitle" title="Wyloguj się">⏻</button>
@@ -381,6 +382,7 @@
                         <button class="about-nav-btn settings-nav-btn active" data-about-panel="about-panel-kuba" data-i18n="aboutNavKuba">💙 O Kubie</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-me" data-i18n="aboutNavMe">👨‍💻 O mnie</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-contact" data-i18n="aboutNavContact">📞 Kontakt</button>
+                        <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-feedback" data-i18n="aboutNavFeedback">💬 Opinia</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-changelog" data-i18n="aboutNavChangelog">📝 Dziennik zmian</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-faq" data-i18n="aboutNavFaq">❓ FAQ</button>
                         <button class="about-nav-btn settings-nav-btn about-nav-privacy" data-about-panel="about-panel-privacy" data-i18n="aboutNavPrivacy">🔒 Prywatność</button>
@@ -455,6 +457,40 @@
                             <div class="about-text-block" style="margin-top: 16px;">
                                 <p class="form-hint" data-i18n="aboutContactNote">Odpowiadam zazwyczaj w ciągu 24–48 godzin. Jestem otwarty na sugestie dotyczące nowych funkcji i ulepszeń aplikacji.</p>
                             </div>
+                        </div>
+
+                        <!-- Feedback -->
+                        <div id="about-panel-feedback" class="about-panel settings-panel">
+                            <h3 data-i18n="aboutFeedbackHeading">💬 Formularz opinii</h3>
+                            <div class="about-text-block">
+                                <p data-i18n="aboutFeedbackIntro">Powiedz, co nie działa, co warto dodać albo co warto poprawić.</p>
+                            </div>
+
+                            <form id="about-feedback-form" class="about-feedback-form">
+                                <div class="form-group">
+                                    <label data-i18n="feedbackEmailLabel">Twój email:</label>
+                                    <div class="about-feedback-email" data-feedback-email></div>
+                                    <small class="form-hint" data-i18n="feedbackHint">Wiadomość zostanie wysłana do administratora razem z adresem Twojego konta.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="feedback-type" data-i18n="feedbackTypeLabel">Rodzaj wiadomości</label>
+                                    <select id="feedback-type" class="about-feedback-select" required>
+                                        <option value="bug" data-i18n="feedbackTypeBug">🐞 Błąd</option>
+                                        <option value="feature" data-i18n="feedbackTypeFeature">✨ Propozycja nowej funkcji</option>
+                                        <option value="existing" data-i18n="feedbackTypeExisting">💡 Opinia o istniejącej funkcji</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="feedback-message" data-i18n="feedbackMessageLabel">Treść wiadomości</label>
+                                    <textarea id="feedback-message" class="about-feedback-textarea" rows="7" maxlength="4000" data-i18n-placeholder="feedbackMessagePlaceholder" placeholder="Opisz problem, pomysł lub swoją opinię..." required></textarea>
+                                </div>
+
+                                <div class="form-action about-feedback-actions">
+                                    <button id="feedback-submit-btn" type="submit" class="btn-primary" data-i18n="btnSendFeedback">Wyślij wiadomość</button>
+                                </div>
+                            </form>
                         </div>
 
                         <!-- Changelog -->

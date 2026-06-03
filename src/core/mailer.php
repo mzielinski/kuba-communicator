@@ -72,14 +72,14 @@ function renderEmailTemplate(string $templateName, array $variables): string {
  * Send an HTML email via PHP's mail().
  * For production configure sendmail or an SMTP relay in php.ini.
  */
-function sendAppEmail(string $to, string $subject, string $html): bool {
+function sendAppEmail(string $to, string $subject, string $html, ?string $replyTo = null): bool {
     $cfg      = loadAppConfig();
     $from     = $cfg['SMTP_FROM']      ?? 'noreply@localhost';
     $fromName = $cfg['SMTP_FROM_NAME'] ?? 'Kuba';
 
     $headers = implode("\r\n", [
         "From: {$fromName} <{$from}>",
-        "Reply-To: {$from}",
+        'Reply-To: ' . ($replyTo ?: $from),
         "MIME-Version: 1.0",
         "Content-Type: text/html; charset=UTF-8",
         "X-Mailer: PHP/" . phpversion(),
