@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/../core/session.php';
 require_once __DIR__ . '/../core/credentials.php';
+require_once __DIR__ . '/../core/logger.php';
 require_once __DIR__ . '/../core/i18n.php';
 
 header('Content-Type: application/json');
@@ -66,7 +67,7 @@ if ($method === 'POST') {
         $user = findUserByEmail($email);
 
         if (!$user || !verifyPassword($password, $user['password'] ?? '')) {
-            error_log("Failed login attempt for email: {$email}");
+            writeAppLog("[Login] Failed login attempt for email: {$email}");
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => I18n::t('err_invalid_credentials', $lang)]);
             exit;

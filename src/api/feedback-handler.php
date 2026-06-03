@@ -8,6 +8,7 @@
 require_once __DIR__ . '/../core/credentials.php';
 require_once __DIR__ . '/../core/auth.php';
 require_once __DIR__ . '/../core/mailer.php';
+require_once __DIR__ . '/../core/logger.php';
 require_once __DIR__ . '/../core/i18n.php';
 
 function handleSendFeedback(array $input): void {
@@ -71,6 +72,7 @@ function handleSendFeedback(array $input): void {
 
     $sent = sendAppEmail(getAdminEmail(), $subject, $html, $email);
     if (!$sent) {
+        writeAppLog("[Feedback] Failed to send feedback email | sender: {$email} | type: {$type} | lang: {$lang} | subject: {$subject}");
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => I18n::t('feedback_failed', $lang)]);
         return;

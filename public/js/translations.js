@@ -317,8 +317,8 @@ export const translations = {
         aboutNavMe: '👨‍💻 O mnie',
         aboutNavKuba: '💙 O Kubie',
         aboutNavContact: '📞 Kontakt',
-        aboutNavFeedback: '💬 Opinia',
-        aboutNavChangelog: '📝 Dziennik zmian',
+        aboutNavFeedback: '📩 Opinia',
+        aboutNavChangelog: '🔎 Dziennik zmian',
         aboutNavFaq: '❓ FAQ',
 
         aboutMeHeading: '👨‍💻 O mnie',
@@ -773,8 +773,8 @@ export const translations = {
         aboutNavMe: '👨‍💻 About me',
         aboutNavKuba: '💙 About Kuba',
         aboutNavContact: '📞 Contact',
-        aboutNavFeedback: '💬 Feedback',
-        aboutNavChangelog: '📝 Changelog',
+        aboutNavFeedback: '📩 Feedback',
+        aboutNavChangelog: '🔎 Changelog',
         aboutNavFaq: '❓ FAQ',
 
         aboutMeHeading: '👨‍💻 About me',

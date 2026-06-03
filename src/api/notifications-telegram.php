@@ -4,6 +4,8 @@
 // ============================================
 
 require_once __DIR__ . '/../core/session.php';
+require_once __DIR__ . '/../core/logger.php';
+require_once __DIR__ . '/../core/config.php';
 
 header('Content-Type: application/json');
 setCorsHeaders();
@@ -35,77 +37,15 @@ define('API_KEY', 'your-secret-key-here');
 initializeSession();
 
 // ============================================
-// DEBUG LOGGING
-// ============================================
-$DEBUG_LOG = __DIR__ . '/../../debug.log';
-
-function writeDebugLog($message) {
-    global $DEBUG_LOG;
-    $timestamp = date('Y-m-d H:i:s');
-    $logEntry = "[{$timestamp}] {$message}\n";
-    file_put_contents($DEBUG_LOG, $logEntry, FILE_APPEND);
-}
-
-// Clear old debug log if it's larger than 1MB
-if (file_exists($DEBUG_LOG) && filesize($DEBUG_LOG) > 1024 * 1024) {
-    unlink($DEBUG_LOG);
-}
-
-// Load .env file for local development (if it exists)
-$envPath = __DIR__ . '/../../data/.env';
-$envLoaded = false;
-
-writeDebugLog("Checking for .env file at: {$envPath}");
-
-if (file_exists($envPath)) {
-    writeDebugLog(".env file found");
-    if (is_readable($envPath)) {
-        writeDebugLog(".env file is readable");
-        $envContent = file_get_contents($envPath);
-        $envLines = explode("\n", $envContent);
-        writeDebugLog("Processing " . count($envLines) . " lines from .env");
-
-        foreach ($envLines as $line) {
-            // Skip empty lines and comments
-            $line = trim($line);
-            if (empty($line) || strpos($line, '#') === 0) {
-                continue;
-            }
-
-            // Parse KEY=VALUE format
-            if (strpos($line, '=') !== false) {
-                list($key, $value) = explode('=', $line, 2);
-                $key = trim($key);
-                $value = trim($value);
-
-                // Remove quotes if present
-                if ((strpos($value, '"') === 0 && strrpos($value, '"') === strlen($value) - 1) ||
-                    (strpos($value, "'") === 0 && strrpos($value, "'") === strlen($value) - 1)) {
-                    $value = substr($value, 1, -1);
-                }
-
-                if (!empty($key) && !getenv($key)) {
-                    putenv("$key=$value");
-                    writeDebugLog("Set environment variable: {$key} (length: " . strlen($value) . ")");
-                    $envLoaded = true;
-                }
-            }
-        }
-        writeDebugLog("Finished loading .env - Total variables set: " . ($envLoaded ? "yes" : "no"));
-    } else {
-        writeDebugLog("ERROR: .env file exists at {$envPath} but is not readable. Check file permissions.");
-    }
-} else {
-    writeDebugLog("WARNING: .env file not found at {$envPath}");
-}
-
-// ============================================
 // TELEGRAM CONFIGURATION (loaded from .env)
 // ============================================
-define('TELEGRAM_BOT_TOKEN', getenv('TELEGRAM_BOT_TOKEN') ?: '');
-define('TELEGRAM_CHAT_ID', getenv('TELEGRAM_CHAT_ID') ?: '');
+$telegramConfig = loadDataEnvConfig([
+    'TELEGRAM_BOT_TOKEN' => '',
+    'TELEGRAM_CHAT_ID'   => '',
+]);
 
-writeDebugLog("TELEGRAM_BOT_TOKEN defined: " . (empty(TELEGRAM_BOT_TOKEN) ? "NO (empty)" : "YES (length: " . strlen(TELEGRAM_BOT_TOKEN) . ")"));
+define('TELEGRAM_BOT_TOKEN', $telegramConfig['TELEGRAM_BOT_TOKEN'] ?? '');
+define('TELEGRAM_CHAT_ID', $telegramConfig['TELEGRAM_CHAT_ID'] ?? '');
 
 // ============================================
 // REQUEST HANDLING
@@ -120,40 +60,34 @@ try {
         $data = json_decode($input, true);
 
         if (!$data) {
-            writeDebugLog("Invalid JSON payload");
+            writeAppLog("[Telegram] Invalid JSON payload");
             throw new Exception('Invalid JSON payload');
         }
 
         // Route based on action
         $action = $data['action'] ?? '';
-        writeDebugLog("Action requested: {$action}");
-
         if ($action === 'send-telegram-message') {
             // ============================================
             // SEND TELEGRAM MESSAGE ENDPOINT
             // ============================================
-
-            writeDebugLog("=== Send Telegram Message Request ===");
 
             // Extract message and chat ID
             $message = $data['message'] ?? null;
             $chatId = $data['chatId'] ?? null;
 
             if (!$message) {
-                writeDebugLog("ERROR: Message is empty");
+                writeAppLog("[Telegram] Message is empty");
                 throw new Exception('Message is required');
             }
 
             if (!$chatId) {
-                writeDebugLog("ERROR: Chat ID is empty");
+                writeAppLog("[Telegram] Chat ID is empty");
                 throw new Exception('Chat ID is required');
             }
 
-            writeDebugLog("Message length: " . strlen($message) . ", Chat ID: {$chatId}");
-
             // Validate API configuration
             if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === '') {
-                writeDebugLog("ERROR: Telegram bot token not configured");
+                writeAppLog("[Telegram] Telegram bot token not configured");
                 throw new Exception('Telegram bot token not configured. Please set up credentials on the server.');
             }
 
@@ -161,7 +95,6 @@ try {
             $result = sendTelegramMessage($message, $chatId);
 
             if ($result['success']) {
-                writeDebugLog("SUCCESS: Message sent");
                 http_response_code(200);
                 echo json_encode([
                     'success' => true,
@@ -170,7 +103,7 @@ try {
                     'messageId' => $result['messageId'] ?? null,
                 ]);
             } else {
-                writeDebugLog("ERROR: Failed to send message");
+                writeAppLog("[Telegram] Failed to send message | chatId: {$chatId} | error: " . ($result['error'] ?? 'Telegram API error'));
                 http_response_code(500);
                 echo json_encode([
                     'success' => false,
@@ -245,15 +178,15 @@ try {
                 ]);
             }
         } else {
-            writeDebugLog("ERROR: Invalid action: {$action}");
+            writeAppLog("[Telegram] Invalid action: {$action}");
             throw new Exception('Invalid action');
         }
      } else {
-        writeDebugLog("ERROR: Invalid request method: {$method}");
+        writeAppLog("[Telegram] Invalid request method: {$method}");
         throw new Exception('Invalid request method. Only POST is allowed.');
      }
 } catch (Exception $e) {
-    writeDebugLog("Exception caught: " . $e->getMessage());
+    writeAppLog("[Telegram] Exception caught: " . $e->getMessage());
     http_response_code(400);
     echo json_encode([
         'success' => false,
@@ -278,7 +211,7 @@ function sendTelegramMessage($message, $chatId): array {
         $botToken = TELEGRAM_BOT_TOKEN;
 
         if (empty($botToken)) {
-            writeDebugLog("sendTelegramMessage: No bot token");
+            writeAppLog("[Telegram] sendTelegramMessage: No bot token");
             return [
                 'success' => false,
                 'error' => 'Telegram bot token not configured'
@@ -286,7 +219,7 @@ function sendTelegramMessage($message, $chatId): array {
         }
 
         if (empty($chatId)) {
-            writeDebugLog("sendTelegramMessage: No chat ID");
+            writeAppLog("[Telegram] sendTelegramMessage: No chat ID");
             return [
                 'success' => false,
                 'error' => 'Telegram chat ID not configured'
@@ -300,8 +233,6 @@ function sendTelegramMessage($message, $chatId): array {
             'text' => $message,
             'parse_mode' => 'HTML',
         ];
-
-        writeDebugLog("Calling Telegram API: POST {$url}");
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -328,20 +259,16 @@ function sendTelegramMessage($message, $chatId): array {
         $curlError = curl_error($ch);
         curl_close($ch);
 
-        // Log the response for debugging
-        writeDebugLog("Telegram API Response (HTTP {$httpCode}): " . substr($response, 0, 200));
-
         if ($httpCode === 200) {
             $responseData = json_decode($response, true);
             if (isset($responseData['ok']) && $responseData['ok']) {
-                writeDebugLog("Message sent successfully");
                 return [
                     'success' => true,
                     'messageId' => $responseData['result']['message_id'] ?? null
                 ];
             } else {
                 $errorMsg = $responseData['description'] ?? 'Unknown Telegram error';
-                writeDebugLog("Telegram error: {$errorMsg}");
+                writeAppLog("[Telegram] Telegram error: {$errorMsg}");
                 return [
                     'success' => false,
                     'error' => $errorMsg
@@ -365,7 +292,7 @@ function sendTelegramMessage($message, $chatId): array {
                 $errorMsg = $responseData['description'];
             }
 
-            writeDebugLog("API error: {$errorMsg}");
+            writeAppLog("[Telegram] API error: {$errorMsg}");
             return [
                 'success' => false,
                 'error' => $errorMsg
@@ -373,7 +300,7 @@ function sendTelegramMessage($message, $chatId): array {
         }
 
     } catch (Exception $e) {
-        writeDebugLog("Exception in sendTelegramMessage: " . $e->getMessage());
+        writeAppLog("[Telegram] Exception in sendTelegramMessage: " . $e->getMessage());
         return [
             'success' => false,
             'error' => $e->getMessage()

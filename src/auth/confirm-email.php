@@ -45,9 +45,9 @@ if ($action === 'confirm') {
 
     // Notify admin
     $approvalLink = getAppUrl() . '/src/auth/confirm-email.php?action=approve&token=' . urlencode($user['admin_approval_token']);
-    error_log("[ConfirmEmail] Sending admin notification email for user: {$user['email']} to admin: " . getAdminEmail());
+    writeAppLog("[ConfirmEmail] Sending admin notification email for user: {$user['email']} to admin: " . getAdminEmail());
     $adminMailSent = sendAppEmail(getAdminEmail(), 'Kuba: New account awaiting approval – ' . $user['email'], buildAdminNotificationEmail($user, $approvalLink));
-    error_log("[ConfirmEmail] Admin notification email result: " . ($adminMailSent ? 'SUCCESS' : 'FAILED') . " | user: {$user['email']}");
+    writeAppLog("[ConfirmEmail] Admin notification email result: " . ($adminMailSent ? 'SUCCESS' : 'FAILED') . " | user: {$user['email']}");
 
     renderPage('success', $lang, I18n::t('confirm_success', $lang), I18n::t('confirm_success_body', $lang));
     exit;
@@ -77,7 +77,7 @@ if ($action === 'approve') {
     }
 
     activateUserData($user);
-    error_log("[ConfirmEmail] Sending approval notification email to user: {$user['email']}");
+    writeAppLog("[ConfirmEmail] Sending approval notification email to user: {$user['email']}");
     sendApprovedEmail($user);
 
     renderPage('success', 'en', I18n::t('approve_success', 'en'),
@@ -191,9 +191,9 @@ function sendApprovedEmail(array $user): void {
         'button_text' => I18n::t('email_approved_btn', $lang),
     ]);
 
-    error_log("[sendApprovedEmail] Sending approved email | To: {$user['email']} | Subject: {$subject} | Lang: {$lang}");
+    writeAppLog("[sendApprovedEmail] Sending approved email | To: {$user['email']} | Subject: {$subject} | Lang: {$lang}");
     $result = sendAppEmail($user['email'], $subject, $html);
-    error_log("[sendApprovedEmail] Result: " . ($result ? 'SUCCESS' : 'FAILED') . " | To: {$user['email']}");
+    writeAppLog("[sendApprovedEmail] Result: " . ($result ? 'SUCCESS' : 'FAILED') . " | To: {$user['email']}");
 }
 ?>
 

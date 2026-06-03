@@ -131,8 +131,9 @@ function setupFeedbackForm(modal) {
 
             if (r.ok && data.success) {
                 showToast(data.message || t('feedbackSent'), 'success');
+                const selectedType = type;
                 form.reset();
-                if (typeSelect) typeSelect.value = 'bug';
+                if (typeSelect) typeSelect.value = selectedType;
                 if (messageField) messageField.value = '';
             } else {
                 showToast(data.message || t('feedbackError'), 'error');

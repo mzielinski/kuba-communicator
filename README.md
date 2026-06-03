@@ -210,7 +210,7 @@ All HTTP requests are handled by `index.php` (enforced via `.htaccess`):
 ## Requirements
 
 - **PHP 7.4+** with `curl` extension (for Telegram) and `random_bytes` support.
-- PHP must be able to send email via `mail()` (configure sendmail or SMTP relay in `php.ini`).
+- PHP must be able to connect to the configured SMTP server over TLS/SSL (recommended ports: `587` / `465`).
 - A modern browser with ES Modules, Web Speech API, and Web Audio API support.
 
 ---
@@ -224,9 +224,7 @@ git clone <repo-url> kuba-komunikacja
 cd kuba-komunikacja
 ```
 
-### 2. Configure `.env` (app config)
-
-Create `.env` at the **project root**:
+### 2. Configure `data/.env` (single config file for Telegram + SMTP + app config)
 
 ```dotenv
 # Admin email — receives registration approval requests
@@ -235,18 +233,22 @@ ADMIN_EMAIL=admin@yourdomain.com
 # Public URL of the application — used in email confirmation links
 APP_URL=https://your-app-url.com
 
-# Email sender settings
-SMTP_FROM=noreply@yourdomain.com
+# Telegram
+TELEGRAM_BOT_TOKEN=<your-telegram-bot-token>
+
+# SMTP — required for outgoing email
+SMTP_HOST=interpolska-net.home.pl
+SMTP_PORT=587
+SMTP_ENCRYPTION=tls
+SMTP_AUTH=true
+SMTP_USERNAME=your-mailbox@domain.tld
+SMTP_PASSWORD=your-mailbox-password
+# On home.pl, SMTP_FROM should usually be the same as SMTP_USERNAME (the owned mailbox address)
+SMTP_FROM=your-mailbox@domain.tld
 SMTP_FROM_NAME=Kuba Communication System
 ```
 
-### 3. Configure `data/.env` (Telegram config)
-
-```dotenv
-TELEGRAM_BOT_TOKEN=<your-telegram-bot-token>
-```
-
-### 4. Update existing user emails in `credentials.json`
+### 3. Update existing user emails in `credentials.json`
 
 Edit `data/credentials.json` and set real email addresses for the existing accounts:
 
@@ -266,12 +268,12 @@ Edit `data/credentials.json` and set real email addresses for the existing accou
 > **Note:** The `email` field is the login identifier. The `data_dir` field maps each user to their data directory under
 `data/`.
 
-### 5. Set up predefined words template (optional)
+### 4. Set up predefined words template (optional)
 
 Edit `data/templates/words.json` to define the word categories that new users get when they register with "predefined
 words" enabled.
 
-### 6. Start the development server
+### 5. Start the development server
 
 ```bash
 bash dev-server.sh
@@ -373,6 +375,12 @@ ADMIN_EMAIL=admin@yourdomain.com
 APP_URL=http://localhost:8000
 SMTP_FROM=noreply@yourdomain.com
 SMTP_FROM_NAME=Kuba Communication System
+SMTP_HOST=yourdomain.com
+SMTP_PORT=587
+SMTP_ENCRYPTION=tls
+SMTP_AUTH=true
+SMTP_USERNAME=your-mailbox@yourdomain.com
+SMTP_PASSWORD=your-mailbox-password
 ```
 
 ---
