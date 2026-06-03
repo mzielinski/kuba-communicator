@@ -10,6 +10,9 @@ backed by a lightweight PHP server.
 
 - [Overview](#overview)
 - [Features](#features)
+- [About Modal](#about-modal)
+- [Changelog](#changelog)
+- [Feedback Form](#feedback-form)
 - [Project Structure](#project-structure)
 - [Requirements](#requirements)
 - [Installation & Setup](#installation--setup)
@@ -59,6 +62,27 @@ Accessed via the ⚙️ button in the header. The management modal has four tabs
 | **Manage Words**      | Add, edit (text, colour, font size), reorder, or delete words within a category |
 | **Global Words**      | Add words that appear across multiple categories with configurable scope        |
 | **Settings**          | Configure language, alarm, dwell time, dark mode, and Telegram integration      |
+
+### ℹ️ About Modal
+
+Accessed via the **ⓘ️** button in the header. The About modal includes:
+
+- information about Kuba and the app creator,
+- contact details,
+- FAQ (with collapsible questions/answers),
+- a small **changelog** view,
+- and a **feedback form** for bug reports, feature suggestions, and comments about existing functionality.
+
+### 📝 Changelog
+
+- The About modal includes a lightweight changelog panel showing the latest changes.
+- Changelog entries are stored in both Polish and English translations.
+
+### 💬 Feedback Form
+
+- Users can choose the message type: **bug**, **new feature suggestion**, or **feedback about existing functionality**.
+- Submitted messages are sent to the administrator by email.
+- The administrator receives the sender's email in the `Reply-To` header so they can respond directly.
 
 ### 👤 User Accounts & Self-Registration
 
@@ -121,6 +145,7 @@ kuba-komunikacja/
 │       ├── wordActions.js       # Word-click pipeline (speak → copy → Telegram)
 │       ├── speech.js            # Web Speech API wrapper
 │       ├── alarm.js             # Alarm sound generation (multiple profiles)
+│       ├── about.js             # About modal (FAQ accordion, changelog, feedback form)
 │       ├── dwell.js             # Dwell-time (hover-to-click) behaviour
 │       ├── i18n.js              # Internationalization (Polish / English)
 │       ├── translations.js      # Translation strings (pl / en)
@@ -132,6 +157,7 @@ kuba-komunikacja/
 │   │   ├── words-handler.php        # Load / save words.json
 │   │   ├── preferences-handler.php  # Load / save preferences.json, Telegram config
 │   │   ├── file-handler.php         # Generic file-get helper
+│   │   ├── feedback-handler.php     # Send feedback emails to the admin
 │   │   ├── users.php                # User management API (register, approve, delete, list)
 │   │   └── notifications-telegram.php  # Telegram message-sending backend
 │   ├── auth/
@@ -150,7 +176,8 @@ kuba-komunikacja/
     │   ├── global-words.json        # Predefined global words template
     │   └── emails/
     │       ├── admin-notification.html  # Email template: admin approval request
-    │       └── approved-email.html      # Email template: account approved notification
+    │       ├── approved-email.html      # Email template: account approved notification
+    │       └── feedback-email.html      # Email template: feedback form submission
     ├── admin/
     │   ├── words.json
     │   ├── global-words.json
@@ -382,15 +409,16 @@ All API endpoints are accessed via their **public URLs** (routed internally by `
 
 ### `api.php` → `src/api/` (words, preferences, Telegram)
 
-| Method | `action` param         | Auth (write blocked for DEMO) | Description            |
-|--------|------------------------|-------------------------------|------------------------|
-| `GET`  | `load-words`           | Required                      | Load words.json        |
-| `GET`  | `load-preferences`     | Optional                      | Load preferences.json  |
-| `GET`  | `load-global-words`    | Required                      | Load global-words.json |
-| `POST` | `save`                 | Required + write              | Save categories        |
-| `POST` | `save-global-words`    | Required + write              | Save global words      |
-| `POST` | `save-preferences`     | Required + write              | Save preferences       |
-| `POST` | `save-telegram-config` | Required + write              | Save Telegram settings |
+| Method | `action` param         | Auth (write blocked for DEMO) | Description                      |
+|--------|------------------------|-------------------------------|----------------------------------|
+| `GET`  | `load-words`           | Required                      | Load words.json                  |
+| `GET`  | `load-preferences`     | Optional                      | Load preferences.json            |
+| `GET`  | `load-global-words`    | Required                      | Load global-words.json           |
+| `POST` | `save`                 | Required + write              | Save categories                  |
+| `POST` | `save-global-words`    | Required + write              | Save global words                |
+| `POST` | `save-preferences`     | Required + write              | Save preferences                 |
+| `POST` | `save-telegram-config` | Required + write              | Save Telegram settings           |
+| `POST` | `send-feedback`        | Required                      | Send feedback email to the admin |
 
 ---
 
