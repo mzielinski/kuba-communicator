@@ -3020,10 +3020,67 @@ a.about-contact-value:hover {
 .dark-mode .about-contact-value { color: #e0e0e0; }
 a.dark-mode .about-contact-value:hover { color: #8fa3ff; }
 
+.about-changelog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.about-changelog-empty {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px dashed #c8d0ff;
+    border-radius: 8px;
+    background: #f8faff;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.about-changelog-item {
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e0e4ff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.06);
+}
+
+.about-changelog-date {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #667eea;
+}
+
+.about-changelog-description {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #555;
+    white-space: pre-line;
+}
+
 .dark-mode .about-faq-item { border-color: #333; }
 .dark-mode .about-faq-q { background: #1e1e2e; color: #e0e0e0; border-left-color: #667eea; }
 .dark-mode .about-faq-q::after { color: #8fa3ff; }
 .dark-mode .about-faq-a { background: #181828; color: #b0b0b0; }
+
+.dark-mode .about-changelog-empty {
+    background: #181828;
+    border-color: #333;
+    color: #b0b0b0;
+}
+
+.dark-mode .about-changelog-item {
+    background: #1e1e2e;
+    border-color: #333;
+    box-shadow: none;
+}
+
+.dark-mode .about-changelog-date { color: #8fa3ff; }
+.dark-mode .about-changelog-description { color: #c0c0c0; }
 
 /* ── Support / Donate panel ── */
 

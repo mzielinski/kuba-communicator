@@ -312,9 +312,11 @@ export const translations = {
         // About modal
         aboutBtnTitle: 'O aplikacji',
         aboutModalTitle: 'O aplikacji',
+        changelogBtnTitle: 'Dziennik zmian',
         aboutNavMe: '👨‍💻 O mnie',
         aboutNavKuba: '💙 O Kubie',
         aboutNavContact: '📞 Kontakt',
+        aboutNavChangelog: '📝 Dziennik zmian',
         aboutNavFaq: '❓ FAQ',
 
         aboutMeHeading: '👨‍💻 O mnie',
@@ -335,6 +337,11 @@ export const translations = {
         aboutContactEmail: 'Email',
         aboutContactTelegram: 'Telegram',
         aboutContactNote: 'Odpowiadam zazwyczaj w ciągu 24–48 godzin. Jestem otwarty na sugestie dotyczące nowych funkcji i ulepszeń aplikacji.',
+
+        aboutChangelogHeading: '📝 Dziennik zmian',
+        aboutChangelogIntro: 'Poniżej znajdziesz ostatnie zmiany w aplikacji. Lista pokazuje najnowsze wpisy jako pierwsze.',
+        aboutChangelogEmpty: 'Na razie brak zmian. Kiedy pojawią się nowe aktualizacje, zobaczysz je tutaj.',
+        changelogEntries: [],
 
         aboutFaqHeading: '❓ Często zadawane pytania',
         faqGroupGeneral: '🔹 Ogólne',
@@ -737,9 +744,11 @@ export const translations = {
         // About modal
         aboutBtnTitle: 'About the app',
         aboutModalTitle: 'About',
+        changelogBtnTitle: 'Changelog',
         aboutNavMe: '👨‍💻 About me',
         aboutNavKuba: '💙 About Kuba',
         aboutNavContact: '📞 Contact',
+        aboutNavChangelog: '📝 Changelog',
         aboutNavFaq: '❓ FAQ',
 
         aboutMeHeading: '👨‍💻 About me',
@@ -760,6 +769,11 @@ export const translations = {
         aboutContactEmail: 'Email',
         aboutContactTelegram: 'Telegram',
         aboutContactNote: 'I usually reply within 24–48 hours. I am open to suggestions for new features and improvements.',
+
+        aboutChangelogHeading: '📝 Changelog',
+        aboutChangelogIntro: 'Below you will find the latest changes in the app. The list shows the newest entries first.',
+        aboutChangelogEmpty: 'No changes yet. When new updates are added, you will see them here.',
+        changelogEntries: [],
 
         aboutFaqHeading: '❓ Frequently Asked Questions',
         faqGroupGeneral: '🔹 General',

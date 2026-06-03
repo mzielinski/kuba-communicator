@@ -38,4 +38,8 @@ export function applyTranslations() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
     });
+
+    document.dispatchEvent(new CustomEvent('app:translations-applied', {
+        detail: { language: state.language }
+    }));
 }

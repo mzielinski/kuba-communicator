@@ -27,6 +27,7 @@
             </div>
             <button id="user-display-btn" class="manage-btn user-display-btn" title="Account">👤</button>
             <button id="about-btn" class="manage-btn" data-i18n-title="aboutBtnTitle" title="O aplikacji">ⓘ️</button>
+            <button id="changelog-btn" class="manage-btn" data-i18n-title="changelogBtnTitle" title="Dziennik zmian">📝</button>
             <button id="manage-words-btn" class="manage-btn" data-i18n-title="configurationBtnTitle" title="Zarządzaj słowami">🛠️⚙️</button>
             <button id="logout-btn" class="manage-btn logout-btn" data-i18n-title="logoutBtnTitle" title="Wyloguj się">⏻</button>
         </div>
@@ -380,9 +381,10 @@
                         <button class="about-nav-btn settings-nav-btn active" data-about-panel="about-panel-kuba" data-i18n="aboutNavKuba">💙 O Kubie</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-me" data-i18n="aboutNavMe">👨‍💻 O mnie</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-contact" data-i18n="aboutNavContact">📞 Kontakt</button>
-                        <button class="about-nav-btn settings-nav-btn about-nav-support" data-about-panel="about-panel-support" data-i18n="aboutNavSupport">💜 Wesprzyj</button>
+                        <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-changelog" data-i18n="aboutNavChangelog">📝 Dziennik zmian</button>
                         <button class="about-nav-btn settings-nav-btn" data-about-panel="about-panel-faq" data-i18n="aboutNavFaq">❓ FAQ</button>
                         <button class="about-nav-btn settings-nav-btn about-nav-privacy" data-about-panel="about-panel-privacy" data-i18n="aboutNavPrivacy">🔒 Prywatność</button>
+                        <button class="about-nav-btn settings-nav-btn about-nav-support" data-about-panel="about-panel-support" data-i18n="aboutNavSupport">💜 Wesprzyj</button>
                     </nav>
 
                     <!-- Right content -->
@@ -453,6 +455,15 @@
                             <div class="about-text-block" style="margin-top: 16px;">
                                 <p class="form-hint" data-i18n="aboutContactNote">Odpowiadam zazwyczaj w ciągu 24–48 godzin. Jestem otwarty na sugestie dotyczące nowych funkcji i ulepszeń aplikacji.</p>
                             </div>
+                        </div>
+
+                        <!-- Changelog -->
+                        <div id="about-panel-changelog" class="about-panel settings-panel">
+                            <h3 data-i18n="aboutChangelogHeading">📝 Dziennik zmian</h3>
+                            <div class="about-text-block">
+                                <p class="form-hint" data-i18n="aboutChangelogIntro">Poniżej znajdziesz ostatnie zmiany w aplikacji. Lista pokazuje najnowsze wpisy jako pierwsze.</p>
+                            </div>
+                            <div class="about-changelog-list" id="about-changelog-list"></div>
                         </div>
 
                         <!-- FAQ -->

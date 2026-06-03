@@ -3,21 +3,44 @@
 // contact details and FAQ
 // ============================================
 
+import { state } from './state.js';
+import { translations } from './translations.js';
+
+const CHANGELOG_LIMIT = 5;
+
 export function initializeAboutModal() {
     const btn   = document.getElementById('about-btn');
+    const changelogBtn = document.getElementById('changelog-btn');
     const modal = document.getElementById('about-modal');
     const close = document.getElementById('about-modal-close');
 
     if (!btn || !modal || !close) return;
 
     setupFaqAccordion(modal);
+    renderChangelogPanel(modal);
+
+    document.addEventListener('app:translations-applied', () => {
+        renderChangelogPanel(modal);
+    });
+
+    const openAboutModal = (panelId = 'about-panel-kuba') => {
+        modal.classList.add('show');
+        activateAboutPanel(panelId);
+        if (panelId === 'about-panel-changelog') {
+            renderChangelogPanel(modal);
+        }
+    };
 
     // Open
     btn.addEventListener('click', () => {
-        modal.classList.add('show');
-        // Activate first nav item by default each time it opens
-        activateAboutPanel('about-panel-kuba');
+        openAboutModal('about-panel-kuba');
     });
+
+    if (changelogBtn) {
+        changelogBtn.addEventListener('click', () => {
+            openAboutModal('about-panel-changelog');
+        });
+    }
 
     // Close via × button
     close.addEventListener('click', () => modal.classList.remove('show'));
@@ -39,8 +62,59 @@ export function initializeAboutModal() {
         navBtn.addEventListener('click', () => {
             const target = navBtn.dataset.aboutPanel;
             activateAboutPanel(target);
+            if (target === 'about-panel-changelog') {
+                renderChangelogPanel(modal);
+            }
         });
     });
+}
+
+function renderChangelogPanel(modal) {
+    const list = modal.querySelector('#about-changelog-list');
+    if (!list) return;
+
+    const lang = state.language === 'en' ? 'en' : 'pl';
+    const dict = translations[lang] || translations.pl;
+    const entries = Array.isArray(dict.changelogEntries) ? dict.changelogEntries.slice(0, CHANGELOG_LIMIT) : [];
+
+    if (!entries.length) {
+        list.innerHTML = `<p class="about-changelog-empty">${escapeHtml(dict.aboutChangelogEmpty || '')}</p>`;
+        return;
+    }
+
+    list.innerHTML = entries.map((entry) => {
+        const date = formatChangelogDate(entry.date, lang);
+        const description = escapeHtml(entry.description || '');
+
+        return `
+            <article class="about-changelog-item">
+                <div class="about-changelog-date">${escapeHtml(date)}</div>
+                <div class="about-changelog-description">${description}</div>
+            </article>
+        `;
+    }).join('');
+}
+
+function formatChangelogDate(value, lang) {
+    if (!value) return '';
+
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return String(value);
+
+    return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'pl-PL', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(date);
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
 }
 
 function setupFaqAccordion(modal) {
