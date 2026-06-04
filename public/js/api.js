@@ -2,6 +2,7 @@
 // API — all HTTP / fetch calls to the backend
 // ============================================
 import {t} from './i18n.js';
+import { showToast } from './utils.js';
 
 /** Shared helper – fetch and parse preferences JSON */
 async function loadPreferences() {
@@ -10,6 +11,32 @@ async function loadPreferences() {
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return r.json();
+}
+
+/**
+ * Fire-and-forget usage event sender.
+ * Uses sendBeacon when available so clicks do not block the UI.
+ */
+export function recordUsageEvent() {
+    const body = JSON.stringify({});
+    const url = 'stats.php?action=record';
+
+    try {
+        if (navigator.sendBeacon) {
+            return navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+        }
+
+        fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body,
+            keepalive: true,
+        }).catch(() => {});
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 // ── Word data ─────────────────────────────────────────────────────────────────
@@ -21,8 +48,10 @@ export async function loadWordList() {
             credentials: 'include'
         });
         if (!r.ok) {
-            if (r.status === 401) return {categories: {}};
-            throw new Error(`HTTP ${r.status}`);
+            if (r.status !== 401) {
+                console.error(`Failed to load word list: HTTP ${r.status}`);
+            }
+            return {categories: {}};
         }
         const data = await r.json();
         if (Array.isArray(data.categories)) data.categories = {};
@@ -61,8 +90,10 @@ export async function loadGlobalWords() {
     try {
         const r = await fetch('api.php?action=load-global-words');
         if (!r.ok) {
-            if (r.status === 401) return {words: []};
-            throw new Error(`HTTP ${r.status}`);
+            if (r.status !== 401) {
+                console.error(`Failed to load global words: HTTP ${r.status}`);
+            }
+            return {words: []};
         }
         return await r.json();
     } catch (err) {

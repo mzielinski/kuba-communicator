@@ -150,6 +150,7 @@ if ($uri === '' || $uri[0] !== '/') {
 // 1. API endpoint map
 $endpointMap = [
     '/api.php'                    => '/src/api/api.php',
+    '/stats.php'                  => '/src/api/stats.php',
     '/login.php'                  => '/src/auth/login.php',
     '/user.php'                   => '/src/api/users.php',
     '/notifications-telegram.php' => '/src/api/notifications-telegram.php',

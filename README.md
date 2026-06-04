@@ -94,7 +94,7 @@ Accessed via the **ⓘ️** button in the header. The About modal includes:
 ### 👥 Admin User Management Panel
 
 - The **username button** (👤) in the header opens the user management panel.
-- **Admins** see all users: email, role, status, creation date, last update.
+- **Admins** see all users: email, role, status, creation date, last update, click totals, last activity, and most-used buttons.
 - Admins can **Approve** accounts (WAITING_FOR_APPROVAL → ACTIVE).
 - Admins can **Delete** any user account.
 - Regular users see only their own account and can delete it (self-service).
@@ -104,6 +104,7 @@ Accessed via the **ⓘ️** button in the header. The About modal includes:
 - A **"Try demo (no account)"** link on the login page auto-logs in a read-only demo session.
 - Demo users can explore the full UI but **cannot save** any changes.
 - A yellow banner is shown in demo mode with a link to create an account.
+- Demo usage stats are stored separately so the admin can see whether the demo is being used.
 
 ### 🚨 Alarm
 
@@ -158,6 +159,7 @@ kuba-komunikacja/
 │   │   ├── preferences-handler.php  # Load / save preferences.json, Telegram config
 │   │   ├── file-handler.php         # Generic file-get helper
 │   │   ├── feedback-handler.php     # Send feedback emails to the admin
+│   │   ├── stats.php                # Records button click usage stats
 │   │   ├── users.php                # User management API (register, approve, delete, list)
 │   │   └── notifications-telegram.php  # Telegram message-sending backend
 │   ├── auth/
@@ -184,11 +186,13 @@ kuba-komunikacja/
     │   └── preferences.json
     ├── demo/
     │   ├── words.json
-    │   └── preferences.json
+    │   ├── preferences.json
+    │   └── stats.json           # Usage stats for the demo account
     └── <derived-from-email>/    # Created automatically on account activation
         ├── words.json
         ├── global-words.json
-        └── preferences.json
+        ├── preferences.json
+        └── stats.json           # Per-user button click statistics
 ```
 
 ### URL Routing
@@ -427,6 +431,13 @@ All API endpoints are accessed via their **public URLs** (routed internally by `
 | `POST` | `save-preferences`     | Required + write              | Save preferences                 |
 | `POST` | `save-telegram-config` | Required + write              | Save Telegram settings           |
 | `POST` | `send-feedback`        | Required                      | Send feedback email to the admin |
+
+### `stats.php` → `src/api/stats.php`
+
+| Method | `action` param | Auth     | Description                                   |
+|--------|----------------|----------|-----------------------------------------------|
+| `POST` | `record`       | Required | Record a button click for the current session |
+| `GET`  | `current-summary` | Required | Return current user's usage summary         |
 
 ---
 

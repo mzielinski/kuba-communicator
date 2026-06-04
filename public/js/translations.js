@@ -308,6 +308,18 @@ export const translations = {
         demoBadgeTooltip: '📝 Utwórz konto',
         demoBannerText: '👁️ Tryb demo — tylko do odczytu. Utwórz konto, aby zapisywać dane.',
         demoBannerLink: 'Utwórz konto',
+        usageStatsTitle: 'Statystyki użycia',
+        usageTotalClicks: 'Łączna liczba kliknięć',
+        usageActiveUsers: 'Użytkownicy z aktywnością',
+        usageLastActivity: 'Ostatnia aktywność',
+        usageFirstClick: 'Pierwsze kliknięcie',
+        usageLastClick: 'Ostatnie kliknięcie',
+        usageNoClicks: 'Brak kliknięć',
+        usageNoRecentEvents: 'Brak ostatnich kliknięć',
+        colClicks: 'Kliknięcia',
+        colLastActivity: 'Ostatnia aktywność',
+        colTopButtons: 'Najczęściej używane',
+        demoStatsNote: 'Tryb demo zapisuje statystyki użycia osobno, aby administrator mógł sprawdzić, czy demo jest używane.',
 
         // About modal
         aboutBtnTitle: 'O aplikacji',
@@ -347,6 +359,10 @@ export const translations = {
             {
                 date: '2026-06-03',
                 description: 'Dodano formularz opinii, w którym użytkownik może zgłosić błąd, zaproponować nową funkcję albo opisać uwagi do istniejących funkcji.',
+            },
+            {
+                date: '2026-06-04',
+                description: 'Dodano statystyki użycia przycisków dla administratora i trybu demo, aby łatwiej sprawdzić, czy konto jest aktywne, czy porzucone.',
             },
         ],
 
@@ -424,15 +440,15 @@ export const translations = {
         ppS2Item3: 'Dane aplikacji — słowa, kategorie i preferencje (język, alarm, klawiatura, tryb ciemny).',
         ppS2Item4: 'Tymczasowy identyfikator sesji — ciasteczko sesyjne usuwane po wylogowaniu lub zamknięciu przeglądarki.',
 
-        ppS3Head: '3. Czego NIE zbieramy',
-        ppS3Item1: 'Nie zbieramy danych analitycznych, statystyk ani logów aktywności.',
-        ppS3Item2: 'Nie stosujemy śledzenia, profilowania, reklam ani ciasteczek śledzących.',
-        ppS3Item3: 'Nie sprzedajemy, nie udostępniamy ani nie przekazujemy danych osobom trzecim.',
-        ppS3Item4: 'Nie przechowujemy historii klikniętych słów poza tymczasową sesją.',
-        ppS3Item5: 'Nie zbieramy danych o urządzeniu, przeglądarce ani lokalizacji geograficznej.',
+        ppS3Head: '3. Dane zbierane automatycznie',
+        ppS3Item1: 'Zbieramy wyłącznie zagregowane statystyki użycia w ramach konta: liczbę kliknięć oraz datę pierwszego i ostatniego użycia. Służy to tylko do oceny, czy konto jest aktywne, czy porzucone.',
+        ppS3Item2: 'Nie zapisujemy, które konkretne przyciski były klikane, ani treści wypowiedzi. Statystyki są przechowywane wyłącznie na serwerze aplikacji, per użytkownik (w tym demo), i nie są przekazywane osobom trzecim.',
+        ppS3Item3: 'Nie stosujemy reklam, profilowania ani zewnętrznych ciasteczek śledzących.',
+        ppS3Item4: 'Nie zbieramy danych o lokalizacji geograficznej ani fingerprintingu urządzenia.',
+        ppS3Item5: 'Nie udostępniamy tych danych do celów marketingowych, reklamowych ani analitycznych dla podmiotów zewnętrznych.',
 
         ppSMicHead: '🎤 Uprawnienie do mikrofonu',
-        ppSMicText1: 'Przeglądarka może poprosić o dostęp do mikrofonu — jest to wymóg techniczny przeglądarek, który umożliwia wybór konkretnego urządzenia wyjściowego audio (głośniki lub słuchawki) dla alarmu.',
+        description: 'Dodano wyłącznie zagregowane statystyki użycia dla administratora i trybu demo, aby łatwiej sprawdzić, czy konto jest aktywne, czy porzucone.',
         ppSMicText2: '✅ Aplikacja nie nagrywa, nie przechowuje ani nie przesyła żadnego dźwięku z mikrofonu. Uprawnienie służy wyłącznie do odczytu listy dostępnych urządzeń audio w systemie.',
 
         ppS4Head: '4. Bezpieczeństwo haseł',
@@ -764,6 +780,18 @@ export const translations = {
         demoBadgeTooltip: '📝 Create account',
         demoBannerText: '👁️ Demo mode — read only. Create an account to save data.',
         demoBannerLink: 'Create account',
+        usageStatsTitle: 'Usage statistics',
+        usageTotalClicks: 'Total clicks',
+        usageActiveUsers: 'Users with activity',
+        usageLastActivity: 'Last activity',
+        usageFirstClick: 'First click',
+        usageLastClick: 'Last click',
+        usageNoClicks: 'No clicks yet',
+        usageNoRecentEvents: 'No recent clicks',
+        colClicks: 'Clicks',
+        colLastActivity: 'Last activity',
+        colTopButtons: 'Top buttons',
+        demoStatsNote: 'Demo mode stores usage statistics separately so the administrator can verify whether demo is being used.',
 
         // About modal
         aboutBtnTitle: 'About the app',
@@ -803,6 +831,10 @@ export const translations = {
             {
                 date: '2026-06-03',
                 description: 'Added a feedback form where users can report bugs, suggest new features, or leave comments about existing functionality.',
+            },
+            {
+                date: '2026-06-04',
+                description: 'Added button usage statistics for admins and demo mode so it is easier to tell whether an account is active or abandoned.',
             },
         ],
 
@@ -881,15 +913,15 @@ export const translations = {
         ppS2Item3: 'App data — your words, categories and preferences (language, alarm, keyboard, dark mode).',
         ppS2Item4: 'Temporary session identifier — a session cookie that is deleted when you log out or close the browser.',
 
-        ppS3Head: '3. Data We Do NOT Collect',
-        ppS3Item1: 'We do not collect analytics, usage statistics or activity logs.',
-        ppS3Item2: 'We do not use tracking, profiling, advertising or tracking cookies.',
-        ppS3Item3: 'We do not sell, share or transfer your data to third parties.',
-        ppS3Item4: 'We do not store a history of clicked words beyond the active session.',
-        ppS3Item5: 'We do not collect device, browser or geographic location data.',
+        ppS3Head: '3. Data Collected Automatically',
+        ppS3Item1: 'We collect only aggregated usage statistics per account: the number of clicks and the first and last usage timestamps. This is used only to determine whether the account is active or abandoned.',
+        ppS3Item2: 'We do not store which specific buttons were clicked, or the content that was spoken. The statistics are stored only on the application server, per user (including demo), and are not shared with third parties.',
+        ppS3Item3: 'We do not use advertising, profiling or external tracking cookies.',
+        ppS3Item4: 'We do not collect geographic location data or device fingerprinting.',
+        ppS3Item5: 'We do not share this data with third parties for marketing, advertising or external analytics purposes.',
 
         ppSMicHead: '🎤 Microphone Permission',
-        ppSMicText1: 'The browser may ask for microphone access — this is a technical browser requirement that enables selection of a specific audio output device (speakers or headphones) for the alarm.',
+        description: 'Added aggregated usage statistics for admins and demo mode so it is easier to tell whether an account is active or abandoned.',
         ppSMicText2: '✅ The app does not record, store or transmit any audio from the microphone. The permission is used solely to read the list of available audio devices on the system.',
 
         ppS4Head: '4. Password Security',

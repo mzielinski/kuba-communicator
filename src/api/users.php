@@ -10,6 +10,7 @@ require_once __DIR__ . '/../core/credentials.php';
 require_once __DIR__ . '/../core/auth.php';
 require_once __DIR__ . '/../core/mailer.php';
 require_once __DIR__ . '/../core/i18n.php';
+require_once __DIR__ . '/../core/usage-stats.php';
 
 header('Content-Type: application/json');
 setCorsHeaders();
@@ -275,6 +276,7 @@ function handleListUsers(): void {
             'language'   => $u['language'] ?? 'pl',
             'created_at' => $u['created_at'] ?? '',
             'updated_at' => $u['updated_at'] ?? '',
+            'usage_stats'=> summarizeUsageStats(readUsageStatsByDataDir($u['data_dir'] ?? '')),
         ];
     }
 
@@ -302,6 +304,7 @@ function handleGetCurrentUser(): void {
             'language'   => $user['language'],
             'created_at' => $user['created_at'],
             'updated_at' => $user['updated_at'],
+            'usage_stats'=> summarizeUsageStats(readUsageStatsByDataDir($user['data_dir'] ?? '')),
         ],
     ]);
 }

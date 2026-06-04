@@ -5,7 +5,6 @@
 import { state } from './state.js';
 import { showToast, showConfirmDialog } from './utils.js';
 import { t } from './i18n.js';
-import { handleLogout } from './auth.js';
 
 const STATUS_LABELS = {
     NEW:                      { pl: 'NOWE',                     en: 'NEW' },
@@ -21,6 +20,12 @@ const STATUS_COLORS = {
     WAITING_FOR_APPROVAL:     '#ffc107',
     ACTIVE:                   '#28a745',
     DELETED:                  '#dc3545',
+};
+
+const EMPTY_USAGE_STATS = {
+    total_clicks: 0,
+    first_click_at: null,
+    last_click_at: null,
 };
 
 export function initializeUserManagement() {
@@ -74,7 +79,7 @@ async function loadUserManagementContent() {
             ? buildAdminView(data.users)
             : buildUserView(data.users);
 
-        if (isAdmin) wireAdminActions(data.users);
+        if (isAdmin) wireAdminActions();
         wireDeleteActions();
     } catch (err) {
         console.error('User management error:', err);
@@ -91,12 +96,21 @@ function buildAdminView(users) {
         return `<p class="empty-placeholder">${t('noUsers')}</p>`;
     }
 
+    const totalClicks = users.reduce((sum, user) => sum + getUsageStats(user).total_clicks, 0);
+    const activeUsers = users.filter(user => getUsageStats(user).total_clicks > 0).length;
+    const latestActivityList = users
+        .map(user => getUsageStats(user).last_click_at)
+        .filter(Boolean)
+        .sort();
+    const latestActivity = latestActivityList.length ? latestActivityList[latestActivityList.length - 1] : null;
+
     const rows = users.map(u => {
         const statusLabel = (STATUS_LABELS[u.status] || {})[lang] || u.status;
         const color       = STATUS_COLORS[u.status] || '#6c757d';
         const created     = formatDate(u.created_at);
         const updated     = formatDate(u.updated_at);
         const isSelf      = u.email === state.userEmail;
+        const stats       = getUsageStats(u);
 
         const approveBtn = u.status === 'WAITING_FOR_APPROVAL'
             ? `<button class="btn-primary btn-sm approve-user-btn" data-email="${esc(u.email)}">${t('btnApprove')}</button>`
@@ -112,6 +126,8 @@ function buildAdminView(users) {
             <div class="user-meta">${esc(u.role)}${isSelf ? ' (' + t('you') + ')' : ''}</div>
           </td>
           <td><span class="status-badge" style="background:${color}">${statusLabel}</span></td>
+          <td class="usage-count-cell">${formatCount(stats.total_clicks)}</td>
+          <td class="date-cell">${stats.last_click_at ? formatDate(stats.last_click_at) : '—'}</td>
           <td class="date-cell">${created}</td>
           <td class="date-cell">${updated}</td>
           <td class="action-cell">${approveBtn} ${deleteBtn}</td>
@@ -119,12 +135,22 @@ function buildAdminView(users) {
     }).join('');
 
     return `
+    <div class="usage-stats-card usage-stats-card--admin">
+      <h3>${t('usageStatsTitle')}</h3>
+      <div class="usage-stats-grid usage-stats-grid--admin">
+        <div class="usage-stat-item"><span>${t('usageTotalClicks')}</span><strong>${formatCount(totalClicks)}</strong></div>
+        <div class="usage-stat-item"><span>${t('usageActiveUsers')}</span><strong>${formatCount(activeUsers)}</strong></div>
+        <div class="usage-stat-item"><span>${t('usageLastActivity')}</span><strong>${latestActivity ? formatDate(latestActivity) : '—'}</strong></div>
+      </div>
+    </div>
     <div class="user-table-wrapper">
       <table class="user-table">
         <thead>
           <tr>
             <th>${t('colEmail')}</th>
             <th>${t('colStatus')}</th>
+            <th>${t('colClicks')}</th>
+            <th>${t('colLastActivity')}</th>
             <th>${t('colCreated')}</th>
             <th>${t('colUpdated')}</th>
             <th>${t('colActions')}</th>
@@ -135,7 +161,7 @@ function buildAdminView(users) {
     </div>`;
 }
 
-function wireAdminActions(users) {
+function wireAdminActions() {
     document.querySelectorAll('.approve-user-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
             const email = btn.dataset.email;
@@ -177,6 +203,7 @@ function buildUserView(users) {
     const statusLabel = (STATUS_LABELS[me.status] || {})[lang] || me.status;
     const color       = STATUS_COLORS[me.status] || '#6c757d';
     const isDemo      = state.userRole === 'DEMO';
+    const stats       = getUsageStats(me);
 
     return `
     <div class="my-account-card">
@@ -187,6 +214,16 @@ function buildUserView(users) {
         <span class="status-badge" style="background:${color}">${statusLabel}</span>
       </div>
       <div class="account-row"><span class="account-label">${t('colCreated')}</span><span>${formatDate(me.created_at)}</span></div>
+      <div class="account-row"><span class="account-label">${t('colClicks')}</span><span>${formatCount(stats.total_clicks)}</span></div>
+      <div class="account-row"><span class="account-label">${t('colLastActivity')}</span><span>${stats.last_click_at ? formatDate(stats.last_click_at) : '—'}</span></div>
+      <div class="usage-stats-card usage-stats-card--self">
+        <h3>${t('usageStatsTitle')}</h3>
+        <div class="usage-stats-grid">
+          <div class="usage-stat-item"><span>${t('usageTotalClicks')}</span><strong>${formatCount(stats.total_clicks)}</strong></div>
+          <div class="usage-stat-item"><span>${t('usageFirstClick')}</span><strong>${stats.first_click_at ? formatDate(stats.first_click_at) : '—'}</strong></div>
+          <div class="usage-stat-item"><span>${t('usageLastClick')}</span><strong>${stats.last_click_at ? formatDate(stats.last_click_at) : '—'}</strong></div>
+        </div>
+      </div>
       ${isDemo ? `<p class="form-hint" style="margin-top:16px">${t('demoAccountNote')}</p>` : `
       <div style="margin-top:24px">
         <button class="btn-secondary delete-user-btn" data-email="${esc(me.email)}"
@@ -246,6 +283,18 @@ function formatDate(iso) {
         });
     } catch { return iso; }
 }
+
+function formatCount(value) {
+    return new Intl.NumberFormat(state.language === 'pl' ? 'pl-PL' : 'en-GB').format(Number(value) || 0);
+}
+
+function getUsageStats(user) {
+    return {
+        ...EMPTY_USAGE_STATS,
+        ...(user?.usage_stats || {}),
+    };
+}
+
 
 function esc(str) {
     return String(str ?? '')

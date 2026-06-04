@@ -19,6 +19,10 @@ function createWordButton(word, extraClass = '', defaultSize = '30px', categoryN
     const btn = document.createElement('button');
     btn.className = 'word-button' + (extraClass ? ' ' + extraClass : '');
     btn.setAttribute('data-word-id', word.id);
+    btn.setAttribute('data-usage-key', `word:${word.id}${categoryName ? ':' + categoryName : ''}`);
+    btn.setAttribute('data-usage-label', word.text);
+    btn.setAttribute('data-usage-type', 'word');
+    if (categoryName) btn.setAttribute('data-category-name', categoryName);
     btn.textContent = word.text;
     btn.setAttribute('type', 'button');
 
@@ -68,6 +72,9 @@ export function renderCategoryGrid() {
             btn.textContent = catName;
             btn.type = 'button';
             btn.setAttribute('data-category-name', catName);
+            btn.setAttribute('data-usage-key', `category:${catName}`);
+            btn.setAttribute('data-usage-label', catName);
+            btn.setAttribute('data-usage-type', 'category');
             btn.addEventListener('click', () => {
                 state.expandedCategory = catName;
                 const plain = stripEmojiFromText(catName);
@@ -139,6 +146,9 @@ export function renderExpandedCategoryView(catName) {
     backBtn.className = 'word-button expanded-word-button back-button-expanded';
     backBtn.textContent = t('backButton');
     backBtn.type = 'button';
+    backBtn.setAttribute('data-usage-key', 'navigation:back');
+    backBtn.setAttribute('data-usage-label', t('backButton'));
+    backBtn.setAttribute('data-usage-type', 'navigation');
     backBtn.style.background = '#28a745';
     backBtn.style.boxShadow  = '0 4px 10px rgba(40,167,69,0.4)';
     const goBack = () => { state.expandedCategory = null; renderCategoryGrid(); };
@@ -184,6 +194,9 @@ export function renderRecentMessages() {
         const item = document.createElement('button');
         item.className = 'recent-message-item';
         item.type = 'button';
+        item.setAttribute('data-usage-key', `recent:${msg.word?.id || msg.text}:${msg.category}`);
+        item.setAttribute('data-usage-label', msg.text);
+        item.setAttribute('data-usage-type', 'recent');
 
         const text = document.createElement('div');
         text.className = 'recent-message-text';

@@ -5,7 +5,7 @@
 import { state } from './state.js';
 import { showToast } from './utils.js';
 import { t, applyTranslations } from './i18n.js';
-import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference, loadGlobalWords, loadAlarmButtonPreferences, loadKeyboardPreferences } from './api.js';
+import { loadWordList, loadDwellTimePreference, loadDwellEnabledPreference, loadDarkModePreference, loadAlarmDurationPreference, loadLanguagePreference, loadGlobalWords, loadAlarmButtonPreferences, loadKeyboardPreferences, recordUsageEvent } from './api.js';
 import { checkSession, initializeLogoutButton } from './auth.js';
 import { renderCategoryGrid, renderRecentMessages } from './renderer.js';
 import { initializeAudioDevices } from './alarm.js';
@@ -15,6 +15,16 @@ import { initializeAboutModal } from './about.js';
 
 // Disable right-click context menu
 document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Track button usage centrally so every user interaction gets recorded once.
+document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const button = target ? target.closest('button') : null;
+    if (!button) return;
+
+    recordUsageEvent();
+}, true);
+
 
 async function initializeApp() {
     console.log('Initializing KUBA App…');
