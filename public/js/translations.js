@@ -448,7 +448,7 @@ export const translations = {
         ppS3Item5: 'Nie udostępniamy tych danych do celów marketingowych, reklamowych ani analitycznych dla podmiotów zewnętrznych.',
 
         ppSMicHead: '🎤 Uprawnienie do mikrofonu',
-        description: 'Dodano wyłącznie zagregowane statystyki użycia dla administratora i trybu demo, aby łatwiej sprawdzić, czy konto jest aktywne, czy porzucone.',
+        ppSMicText1: 'Przeglądarka może poprosić o dostęp do mikrofonu — jest to wymóg techniczny przeglądarek, który umożliwia wybór konkretnego urządzenia wyjściowego audio (głośniki lub słuchawki) dla alarmu.',
         ppSMicText2: '✅ Aplikacja nie nagrywa, nie przechowuje ani nie przesyła żadnego dźwięku z mikrofonu. Uprawnienie służy wyłącznie do odczytu listy dostępnych urządzeń audio w systemie.',
 
         ppS4Head: '4. Bezpieczeństwo haseł',
@@ -921,7 +921,7 @@ export const translations = {
         ppS3Item5: 'We do not share this data with third parties for marketing, advertising or external analytics purposes.',
 
         ppSMicHead: '🎤 Microphone Permission',
-        description: 'Added aggregated usage statistics for admins and demo mode so it is easier to tell whether an account is active or abandoned.',
+        ppSMicText1: 'The browser may ask for microphone access — this is a technical browser requirement that enables selection of a specific audio output device (speakers or headphones) for the alarm.',
         ppSMicText2: '✅ The app does not record, store or transmit any audio from the microphone. The permission is used solely to read the list of available audio devices on the system.',
 
         ppS4Head: '4. Password Security',

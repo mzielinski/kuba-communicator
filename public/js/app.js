@@ -20,8 +20,7 @@ document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('click', (event) => {
     const target = event.target instanceof Element ? event.target : null;
     const button = target ? target.closest('button') : null;
-    if (!button) return;
-
+    if (!button || !button.matches('.word-button, .category-expand-button, .recent-message-item')) return;
     recordUsageEvent();
 }, true);
 

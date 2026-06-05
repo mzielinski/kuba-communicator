@@ -1027,6 +1027,7 @@ body {
 /* Test alarm sound button */
 #test-alarm-sound-btn {
     padding: 8px 16px;
+    margin: 10px 0 0 0;
     white-space: nowrap;
     flex-shrink: 0;
 }
