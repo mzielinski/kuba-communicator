@@ -2431,11 +2431,14 @@ body.dark-mode {
 #user-modal .modal-content {
     max-width: 96vw;
     width: 96vw;
-    overflow: hidden;
+    max-height: 90vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #user-modal .modal-body {
     overflow-x: auto;
+    overflow-y: visible;
 }
 
 #user-modal .modal-body > * {
@@ -3481,6 +3484,5 @@ a.about-contact-value:hover {
 .dark-mode .pp-section-disclaimer { background: #2c1200; border-color: #7c2d12; }
 .dark-mode .pp-section-disclaimer .pp-section-title { color: #fca5a5; }
 .dark-mode .pp-section-disclaimer .pp-text { color: #fca5a5; }
-
 
 
