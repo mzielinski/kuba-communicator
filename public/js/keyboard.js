@@ -18,13 +18,27 @@ const SPECIAL_ROWS  = [
 const LETTER_ROWS = [
     ['q','w','e','r','t','y','u','i','o','p'],
     ['a','s','d','f','g','h','j','k','l'],
-    ['z','x','c','v','b','n','m','.'],
+    ['z','x','c','v','b','n','m','. '],
 ];
 
 const POLISH_MAP = {
     'a':'ą', 'e':'ę', 'o':'ó', 's':'ś',
     'z':'ź', 'x':'ż', 'c':'ć', 'n':'ń', 'l':'ł'
 };
+
+const DOUBLE_CLICK_SUPPRESSION_MS = 300;
+const recentButtonActivations = new Map();
+
+function shouldIgnoreRepeatedClick(actionId, event) {
+    if (event.detail > 1) return true;
+
+    const now = Date.now();
+    const lastActivation = recentButtonActivations.get(actionId) || 0;
+    if (now - lastActivation < DOUBLE_CLICK_SUPPRESSION_MS) return true;
+
+    recentButtonActivations.set(actionId, now);
+    return false;
+}
 
 export function openVirtualKeyboard() {
     if (keyboardOverlay) return;
@@ -55,7 +69,8 @@ export function openVirtualKeyboard() {
         speakBarBtn.type = 'button';
         speakBarBtn.style.maxWidth = '240px';
         speakBarBtn.innerHTML = '🔊 ' + (t('virtualKeyboardSpeak') || 'Mów');
-        speakBarBtn.addEventListener('click', () => {
+        speakBarBtn.addEventListener('click', (event) => {
+            if (shouldIgnoreRepeatedClick('speak', event)) return;
             const text = currentText.trim();
             if (text) speakWord(text);
         });
@@ -67,7 +82,8 @@ export function openVirtualKeyboard() {
         copyBarBtn.type = 'button';
         copyBarBtn.style.maxWidth = '240px';
         copyBarBtn.innerHTML = '📋 ' + (t('virtualKeyboardCopy') || 'Kopiuj');
-        copyBarBtn.addEventListener('click', () => {
+        copyBarBtn.addEventListener('click', (event) => {
+            if (shouldIgnoreRepeatedClick('copy', event)) return;
             const text = currentText.trim();
             if (text) copyToClipboard(text);
         });
@@ -84,7 +100,10 @@ export function openVirtualKeyboard() {
         closeBtn.className = 'vk-close-btn';
         closeBtn.type = 'button';
         closeBtn.textContent = '✕';
-        closeBtn.addEventListener('click', closeVirtualKeyboard);
+        closeBtn.addEventListener('click', (event) => {
+            if (shouldIgnoreRepeatedClick('close', event)) return;
+            closeVirtualKeyboard();
+        });
         initializeDwellTime(closeBtn);
         displayBar.appendChild(closeBtn);
         keyboardOverlay.appendChild(displayBar);
@@ -132,47 +151,50 @@ export function openVirtualKeyboard() {
         const actionBar = document.createElement('div');
         actionBar.className = 'vk-action-bar';
 
-        const makeBtn = (label, cls, handler) => {
+        const makeBtn = (label, cls, actionId, handler) => {
             const btn = document.createElement('button');
             btn.className = `vk-action-btn ${cls}`;
             btn.type = 'button';
             btn.innerHTML = label;
-            btn.addEventListener('click', handler);
+            btn.addEventListener('click', (event) => {
+                if (shouldIgnoreRepeatedClick(actionId, event)) return;
+                handler();
+            });
             initializeDwellTime(btn);
             return btn;
         };
 
-        actionBar.appendChild(makeBtn(`⇪ CAPS`, `vk-caps-btn${capsLock ? ' vk-active' : ''}`, () => {
+        actionBar.appendChild(makeBtn(`⇪ CAPS`, `vk-caps-btn${capsLock ? ' vk-active' : ''}`, 'caps', () => {
             capsLock = !capsLock; render();
         }));
 
-        actionBar.appendChild(makeBtn('123 / !?', `vk-num-btn${numbersMode ? ' vk-active' : ''}`, () => {
+        actionBar.appendChild(makeBtn('123 / !?', `vk-num-btn${numbersMode ? ' vk-active' : ''}`, 'numbers', () => {
             numbersMode = !numbersMode; render();
         }));
 
         // PL button only when app language is Polish
         if (isPolishLang) {
-            actionBar.appendChild(makeBtn('PL', `vk-pl-btn${polishMode ? ' vk-active' : ''}`, () => {
+            actionBar.appendChild(makeBtn('PL', `vk-pl-btn${polishMode ? ' vk-active' : ''}`, 'pl', () => {
                 polishMode = !polishMode; render();
             }));
         }
 
-        actionBar.appendChild(makeBtn(t('virtualKeyboardSpace') || 'Spacja', 'vk-space-btn', () => {
+        actionBar.appendChild(makeBtn(t('virtualKeyboardSpace') || 'Spacja', 'vk-space-btn', 'space', () => {
             currentText += ' '; updateDisplay();
         }));
 
-        actionBar.appendChild(makeBtn('⌫', 'vk-backspace-btn', () => {
+        actionBar.appendChild(makeBtn('⌫', 'vk-backspace-btn', 'backspace', () => {
             currentText = currentText.slice(0, -1); updateDisplay();
         }));
 
-        actionBar.appendChild(makeBtn('⌫ ' + (t('virtualKeyboardDelWord') || 'Słowo'), 'vk-delword-btn', () => {
+        actionBar.appendChild(makeBtn('⌫ ' + (t('virtualKeyboardDelWord') || 'Słowo'), 'vk-delword-btn', 'delete-word', () => {
             const trimmed = currentText.trimEnd();
             const lastSpace = trimmed.lastIndexOf(' ');
             currentText = lastSpace >= 0 ? trimmed.slice(0, lastSpace + 1) : '';
             updateDisplay();
         }));
 
-        actionBar.appendChild(makeBtn('✕', 'vk-clear-btn', () => {
+        actionBar.appendChild(makeBtn('✕', 'vk-clear-btn', 'clear', () => {
             currentText = ''; updateDisplay();
         }));
 
@@ -189,7 +211,11 @@ export function openVirtualKeyboard() {
             btn.disabled = true;
         } else {
             btn.className = 'vk-key';
-            btn.addEventListener('click', () => { currentText += displayChar; updateDisplay(); });
+            btn.addEventListener('click', (event) => {
+                if (shouldIgnoreRepeatedClick(`letter:${key}`, event)) return;
+                currentText += displayChar;
+                updateDisplay();
+            });
             initializeDwellTime(btn);
         }
         return btn;
