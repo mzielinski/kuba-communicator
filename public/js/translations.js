@@ -241,6 +241,8 @@ export const translations = {
         backButtonPositionRight: 'Prawa',
         backButtonSizeNormal: 'Normalny',
         backButtonSizeBig: 'Duży',
+        backButtonSizeCustom: 'Własny',
+        labelBackButtonCustomRows: 'Wysokość przycisku (liczba rzędów):',
 
         noCategories: 'Brak kategorii',
         backButton: '🔙 Powrót',
@@ -364,7 +366,7 @@ export const translations = {
         changelogEntries: [
             {
                 date: '2026-07-19',
-                description: 'Dodano konfigurację przycisku „Powrót” dla rozwijalnych kategorii: pozycja lewa/prawa oraz rozmiar normalny/duży. Domyślne ustawienie pozostaje bez zmian.',
+                description: 'Rozszerzono konfigurację przycisku „Powrót” dla rozwijalnych kategorii: pozycja lewa/prawa oraz rozmiar normalny/duży/własny. Dla rozmiaru własnego można ustawić wysokość przycisku w liczbie rzędów.',
             },
             {
                 date: '2026-06-03',
@@ -723,6 +725,8 @@ export const translations = {
         backButtonPositionRight: 'Right',
         backButtonSizeNormal: 'Normal',
         backButtonSizeBig: 'Big',
+        backButtonSizeCustom: 'Custom',
+        labelBackButtonCustomRows: 'Button height (number of rows):',
 
         noCategories: 'No categories',
         backButton: '🔙 Back',
@@ -846,7 +850,7 @@ export const translations = {
         changelogEntries: [
             {
                 date: '2026-07-19',
-                description: 'Added back-button configuration for expandable categories: left/right position and normal/big size. The default behavior stays unchanged.',
+                description: 'Extended back-button configuration for expandable categories: left/right position and normal/big/custom size. Custom size lets you set button height by number of rows.',
             },
             {
                 date: '2026-06-03',

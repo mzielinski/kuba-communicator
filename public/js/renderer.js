@@ -148,7 +148,10 @@ export function renderExpandedCategoryView(catName) {
         || {}
     );
     const backButtonPosition = backButtonConfig.position === 'right' ? 'right' : 'left';
-    const backButtonSize = backButtonConfig.size === 'big' ? 'big' : 'normal';
+    const backButtonSize = ['normal', 'big', 'custom'].includes(backButtonConfig.size) ? backButtonConfig.size : 'normal';
+    const backButtonCustomRows = Number.isFinite(Number(backButtonConfig.rows)) && Number(backButtonConfig.rows) > 0
+        ? Math.floor(Number(backButtonConfig.rows))
+        : 2;
     const getBigBackWordColumns = () => {
         if (window.innerWidth <= 768) return 1;
         if (window.innerWidth <= 1024) return 2;
@@ -158,7 +161,7 @@ export function renderExpandedCategoryView(catName) {
         + (state.alarmButtonEnabled && state.alarmButtonCategory === catName ? 1 : 0)
         + (state.keyboardEnabled && state.keyboardCategory === catName ? 1 : 0)
         + catData.words.length;
-    if (backButtonSize === 'big') {
+    if (backButtonSize === 'big' || backButtonSize === 'custom') {
         wordsWrap.classList.add('expanded-words-big-back');
     }
 
@@ -166,9 +169,15 @@ export function renderExpandedCategoryView(catName) {
     const backBtn = document.createElement('button');
     backBtn.className = 'word-button expanded-word-button back-button-expanded';
     backBtn.classList.add(`back-button-position-${backButtonPosition}`);
-    if (backButtonSize === 'big') {
+    if (backButtonSize === 'big' || backButtonSize === 'custom') {
         backBtn.classList.add('back-button-size-big');
-        const rows = Math.max(1, Math.ceil(totalWordButtons / getBigBackWordColumns()));
+        if (backButtonSize === 'custom') {
+            backBtn.classList.add('back-button-size-custom');
+        }
+        const totalRows = Math.max(1, Math.ceil(totalWordButtons / getBigBackWordColumns()));
+        const rows = backButtonSize === 'big'
+            ? totalRows
+            : Math.min(backButtonCustomRows, totalRows);
         backBtn.style.gridRow = `1 / span ${rows}`;
     }
     backBtn.textContent = t('backButton');

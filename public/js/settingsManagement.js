@@ -696,7 +696,10 @@ export async function initializeSettingsManagement() {
             || {}
         );
         const backButtonPosition = backButtonConfig.position === 'right' ? 'right' : 'left';
-        const backButtonSize = backButtonConfig.size === 'big' ? 'big' : 'normal';
+        const backButtonSize = ['normal', 'big', 'custom'].includes(backButtonConfig.size) ? backButtonConfig.size : 'normal';
+        const backButtonRows = Number.isFinite(Number(backButtonConfig.rows)) && Number(backButtonConfig.rows) > 0
+            ? Math.floor(Number(backButtonConfig.rows))
+            : 2;
         const container = document.createElement('div');
         container.id = 'edit-category-dialog-container';
         container.innerHTML = `
@@ -733,7 +736,12 @@ export async function initializeSettingsManagement() {
                         <select id="edit-cat-back-button-size">
                             <option value="normal" ${backButtonSize === 'normal' ? 'selected' : ''}>${t('backButtonSizeNormal')}</option>
                             <option value="big" ${backButtonSize === 'big' ? 'selected' : ''}>${t('backButtonSizeBig')}</option>
+                            <option value="custom" ${backButtonSize === 'custom' ? 'selected' : ''}>${t('backButtonSizeCustom')}</option>
                         </select>
+                    </div>
+                    <div class="dialog-group" id="edit-cat-back-button-rows-wrap" style="display:${backButtonSize === 'custom' ? 'block' : 'none'};">
+                        <label>${t('labelBackButtonCustomRows')}</label>
+                        <input type="number" id="edit-cat-back-button-rows" min="1" max="99" step="1" value="${backButtonRows}">
                     </div>
                 </div>
                 <div class="dialog-buttons">
@@ -748,8 +756,13 @@ export async function initializeSettingsManagement() {
         const close = () => container.remove();
         const expandCheckbox = document.getElementById('edit-cat-expand');
         const expandConfigSection = document.getElementById('edit-cat-expand-config');
+        const backButtonSizeSelect = document.getElementById('edit-cat-back-button-size');
+        const customRowsWrap = document.getElementById('edit-cat-back-button-rows-wrap');
         expandCheckbox.addEventListener('change', () => {
             expandConfigSection.style.display = expandCheckbox.checked ? 'block' : 'none';
+        });
+        backButtonSizeSelect.addEventListener('change', () => {
+            customRowsWrap.style.display = backButtonSizeSelect.value === 'custom' ? 'block' : 'none';
         });
 
         document.getElementById('save-edit-cat-btn').addEventListener('click', () => {
@@ -758,6 +771,8 @@ export async function initializeSettingsManagement() {
             const newExpand = document.getElementById('edit-cat-expand').checked;
             const newBackButtonPosition = document.getElementById('edit-cat-back-button-position').value;
             const newBackButtonSize = document.getElementById('edit-cat-back-button-size').value;
+            const newBackButtonRowsRaw = parseInt(document.getElementById('edit-cat-back-button-rows').value, 10);
+            const newBackButtonRows = Number.isFinite(newBackButtonRowsRaw) && newBackButtonRowsRaw > 0 ? newBackButtonRowsRaw : 2;
             if (!newName) {
                 showToast(t('errorCatNameEmptyEdit'), 'error');
                 return;
@@ -781,9 +796,14 @@ export async function initializeSettingsManagement() {
                     backButton: {
                         ...previousBackButton,
                         position: newBackButtonPosition === 'right' ? 'right' : 'left',
-                        size: newBackButtonSize === 'big' ? 'big' : 'normal'
+                        size: ['normal', 'big', 'custom'].includes(newBackButtonSize) ? newBackButtonSize : 'normal'
                     }
                 };
+                if (state.categories[newName].expand.backButton.size === 'custom') {
+                    state.categories[newName].expand.backButton.rows = newBackButtonRows;
+                } else {
+                    delete state.categories[newName].expand.backButton.rows;
+                }
             } else {
                 state.categories[newName].expand = {
                     ...previousExpandObject,

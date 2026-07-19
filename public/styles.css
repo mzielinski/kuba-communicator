@@ -521,13 +521,11 @@ body {
 
 .expanded-word-button {
     flex: none !important;
-    min-height: 140px;
     font-size: 40px !important;
     padding: 16px 12px;
 }
 
 .expanded-words-container.expanded-words-big-back .expanded-word-button:not(.back-button-expanded) {
-    min-height: 140px;
     font-size: 40px !important;
     padding: 16px 12px;
 }
