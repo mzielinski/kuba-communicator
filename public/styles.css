@@ -505,6 +505,7 @@ body {
 .expanded-words-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    grid-auto-flow: row dense;
     gap: 16px;
     padding: 16px;
     background: rgba(255, 255, 255, 0.95);
@@ -514,8 +515,18 @@ body {
     width: 100%;
 }
 
+.expanded-words-container.expanded-words-big-back {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .expanded-word-button {
     flex: none !important;
+    min-height: 140px;
+    font-size: 40px !important;
+    padding: 16px 12px;
+}
+
+.expanded-words-container.expanded-words-big-back .expanded-word-button:not(.back-button-expanded) {
     min-height: 140px;
     font-size: 40px !important;
     padding: 16px 12px;
@@ -525,6 +536,18 @@ body {
     background: #28a745 !important;
     box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4) !important;
     font-size: 40px !important;
+}
+
+.back-button-expanded.back-button-position-right {
+    grid-column: -2 / -1;
+    grid-row: 1;
+}
+
+.back-button-expanded.back-button-size-big {
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .back-button-expanded:hover {
@@ -699,7 +722,16 @@ body {
         padding: 12px;
     }
 
+    .expanded-words-container.expanded-words-big-back {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .expanded-word-button {
+        min-height: 120px;
+        padding: 12px;
+    }
+
+    .expanded-words-container.expanded-words-big-back .expanded-word-button:not(.back-button-expanded) {
         min-height: 120px;
         padding: 12px;
     }
@@ -807,7 +839,17 @@ body {
         padding: 8px;
     }
 
+    .expanded-words-container.expanded-words-big-back {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .expanded-word-button {
+        min-height: 100px;
+        font-size: 14px !important;
+        padding: 10px;
+    }
+
+    .expanded-words-container.expanded-words-big-back .expanded-word-button:not(.back-button-expanded) {
         min-height: 100px;
         font-size: 14px !important;
         padding: 10px;
@@ -3484,5 +3526,3 @@ a.about-contact-value:hover {
 .dark-mode .pp-section-disclaimer { background: #2c1200; border-color: #7c2d12; }
 .dark-mode .pp-section-disclaimer .pp-section-title { color: #fca5a5; }
 .dark-mode .pp-section-disclaimer .pp-text { color: #fca5a5; }
-
-

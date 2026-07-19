@@ -61,11 +61,12 @@ export function renderCategoryGrid() {
     }
 
     sorted.forEach(([catName, catData]) => {
+        const isExpandable = catData.expand === true || (typeof catData.expand === 'object' && catData.expand?.enabled === true);
         const tile = document.createElement('div');
-        tile.className = 'category-tile' + (catData.expand ? ' expandable-category' : '');
+        tile.className = 'category-tile' + (isExpandable ? ' expandable-category' : '');
         if (catData.size) tile.classList.add(`size-${catData.size}`);
 
-        if (catData.expand) {
+        if (isExpandable) {
             // Expandable: a single button that opens the full category view
             const btn = document.createElement('button');
             btn.className = 'category-expand-button';
@@ -141,9 +142,35 @@ export function renderExpandedCategoryView(catName) {
     const wordsWrap = document.createElement('div');
     wordsWrap.className = 'expanded-words-container';
 
+    const backButtonConfig = (
+        (typeof catData.expand === 'object' && catData.expand?.backButton)
+        || catData.expandConfig?.backButton
+        || {}
+    );
+    const backButtonPosition = backButtonConfig.position === 'right' ? 'right' : 'left';
+    const backButtonSize = backButtonConfig.size === 'big' ? 'big' : 'normal';
+    const getBigBackWordColumns = () => {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+    };
+    const totalWordButtons = (state.globalWords || []).length
+        + (state.alarmButtonEnabled && state.alarmButtonCategory === catName ? 1 : 0)
+        + (state.keyboardEnabled && state.keyboardCategory === catName ? 1 : 0)
+        + catData.words.length;
+    if (backButtonSize === 'big') {
+        wordsWrap.classList.add('expanded-words-big-back');
+    }
+
     // Back button – first item in the grid
     const backBtn = document.createElement('button');
     backBtn.className = 'word-button expanded-word-button back-button-expanded';
+    backBtn.classList.add(`back-button-position-${backButtonPosition}`);
+    if (backButtonSize === 'big') {
+        backBtn.classList.add('back-button-size-big');
+        const rows = Math.max(1, Math.ceil(totalWordButtons / getBigBackWordColumns()));
+        backBtn.style.gridRow = `1 / span ${rows}`;
+    }
     backBtn.textContent = t('backButton');
     backBtn.type = 'button';
     backBtn.setAttribute('data-usage-key', 'navigation:back');

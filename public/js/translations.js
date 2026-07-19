@@ -235,6 +235,12 @@ export const translations = {
         sizeMedium: 'Średni (medium)',
         sizeLarge: 'Duży (large)',
         labelExpandable: 'Rozwijalna kategoria (otwiera osobny widok)',
+        labelBackButtonPosition: 'Pozycja przycisku Powrót:',
+        labelBackButtonSize: 'Rozmiar przycisku Powrót:',
+        backButtonPositionLeft: 'Lewa',
+        backButtonPositionRight: 'Prawa',
+        backButtonSizeNormal: 'Normalny',
+        backButtonSizeBig: 'Duży',
 
         noCategories: 'Brak kategorii',
         backButton: '🔙 Powrót',
@@ -356,6 +362,10 @@ export const translations = {
         aboutChangelogIntro: 'Poniżej znajdziesz ostatnie zmiany w aplikacji. Lista pokazuje najnowsze wpisy jako pierwsze.',
         aboutChangelogEmpty: 'Na razie brak zmian. Kiedy pojawią się nowe aktualizacje, zobaczysz je tutaj.',
         changelogEntries: [
+            {
+                date: '2026-07-19',
+                description: 'Dodano konfigurację przycisku „Powrót” dla rozwijalnych kategorii: pozycja lewa/prawa oraz rozmiar normalny/duży. Domyślne ustawienie pozostaje bez zmian.',
+            },
             {
                 date: '2026-06-03',
                 description: 'Dodano formularz opinii, w którym użytkownik może zgłosić błąd, zaproponować nową funkcję albo opisać uwagi do istniejących funkcji.',
@@ -707,6 +717,12 @@ export const translations = {
         sizeMedium: 'Medium',
         sizeLarge: 'Large',
         labelExpandable: 'Expandable category (opens separate view)',
+        labelBackButtonPosition: 'Back button position:',
+        labelBackButtonSize: 'Back button size:',
+        backButtonPositionLeft: 'Left',
+        backButtonPositionRight: 'Right',
+        backButtonSizeNormal: 'Normal',
+        backButtonSizeBig: 'Big',
 
         noCategories: 'No categories',
         backButton: '🔙 Back',
@@ -828,6 +844,10 @@ export const translations = {
         aboutChangelogIntro: 'Below you will find the latest changes in the app. The list shows the newest entries first.',
         aboutChangelogEmpty: 'No changes yet. When new updates are added, you will see them here.',
         changelogEntries: [
+            {
+                date: '2026-07-19',
+                description: 'Added back-button configuration for expandable categories: left/right position and normal/big size. The default behavior stays unchanged.',
+            },
             {
                 date: '2026-06-03',
                 description: 'Added a feedback form where users can report bugs, suggest new features, or leave comments about existing functionality.',
@@ -954,4 +974,3 @@ export const translations = {
         ppS10Text: 'This policy may be updated from time to time. The date of the last update is shown at the top of this section. Continued use of the application after changes are published constitutes acceptance of those changes.'
     }
 };
-

@@ -633,7 +633,9 @@ export async function initializeSettingsManagement() {
             size: 'medium',
             cols: 2,
             rows: 1,
-            expand: false,
+            expand: {
+                enabled: false
+            },
             words: []
         };
         renderCategoryGrid();
@@ -687,6 +689,14 @@ export async function initializeSettingsManagement() {
     }
 
     function openEditCategoryDialog(catName, catData) {
+        const expandEnabled = catData.expand === true || (typeof catData.expand === 'object' && catData.expand?.enabled === true);
+        const backButtonConfig = (
+            (typeof catData.expand === 'object' && catData.expand?.backButton)
+            || catData.expandConfig?.backButton
+            || {}
+        );
+        const backButtonPosition = backButtonConfig.position === 'right' ? 'right' : 'left';
+        const backButtonSize = backButtonConfig.size === 'big' ? 'big' : 'normal';
         const container = document.createElement('div');
         container.id = 'edit-category-dialog-container';
         container.innerHTML = `
@@ -706,9 +716,25 @@ export async function initializeSettingsManagement() {
                 </div>
                 <div class="dialog-group">
                     <label style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" id="edit-cat-expand" ${catData.expand ? 'checked' : ''}>
+                        <input type="checkbox" id="edit-cat-expand" ${expandEnabled ? 'checked' : ''}>
                         <span>${t('labelExpandable')}</span>
                     </label>
+                </div>
+                <div id="edit-cat-expand-config" style="display:${expandEnabled ? 'block' : 'none'};">
+                    <div class="dialog-group">
+                        <label>${t('labelBackButtonPosition')}</label>
+                        <select id="edit-cat-back-button-position">
+                            <option value="left" ${backButtonPosition === 'left' ? 'selected' : ''}>${t('backButtonPositionLeft')}</option>
+                            <option value="right" ${backButtonPosition === 'right' ? 'selected' : ''}>${t('backButtonPositionRight')}</option>
+                        </select>
+                    </div>
+                    <div class="dialog-group">
+                        <label>${t('labelBackButtonSize')}</label>
+                        <select id="edit-cat-back-button-size">
+                            <option value="normal" ${backButtonSize === 'normal' ? 'selected' : ''}>${t('backButtonSizeNormal')}</option>
+                            <option value="big" ${backButtonSize === 'big' ? 'selected' : ''}>${t('backButtonSizeBig')}</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="dialog-buttons">
                     <button id="save-edit-cat-btn" class="btn-primary" style="flex:1;padding:10px;">${t('btnSave')}</button>
@@ -720,10 +746,18 @@ export async function initializeSettingsManagement() {
         document.body.appendChild(container);
 
         const close = () => container.remove();
+        const expandCheckbox = document.getElementById('edit-cat-expand');
+        const expandConfigSection = document.getElementById('edit-cat-expand-config');
+        expandCheckbox.addEventListener('change', () => {
+            expandConfigSection.style.display = expandCheckbox.checked ? 'block' : 'none';
+        });
+
         document.getElementById('save-edit-cat-btn').addEventListener('click', () => {
             const newName = document.getElementById('edit-cat-name').value.trim();
             const newSize = document.getElementById('edit-cat-size').value;
             const newExpand = document.getElementById('edit-cat-expand').checked;
+            const newBackButtonPosition = document.getElementById('edit-cat-back-button-position').value;
+            const newBackButtonSize = document.getElementById('edit-cat-back-button-size').value;
             if (!newName) {
                 showToast(t('errorCatNameEmptyEdit'), 'error');
                 return;
@@ -737,7 +771,26 @@ export async function initializeSettingsManagement() {
                 delete state.categories[catName];
             }
             state.categories[newName].size = newSize;
-            state.categories[newName].expand = newExpand;
+            const previousExpand = state.categories[newName].expand;
+            const previousExpandObject = (typeof previousExpand === 'object' && previousExpand !== null) ? previousExpand : {};
+            const previousBackButton = previousExpandObject.backButton || state.categories[newName].expandConfig?.backButton || {};
+            if (newExpand) {
+                state.categories[newName].expand = {
+                    ...previousExpandObject,
+                    enabled: true,
+                    backButton: {
+                        ...previousBackButton,
+                        position: newBackButtonPosition === 'right' ? 'right' : 'left',
+                        size: newBackButtonSize === 'big' ? 'big' : 'normal'
+                    }
+                };
+            } else {
+                state.categories[newName].expand = {
+                    ...previousExpandObject,
+                    enabled: false
+                };
+                delete state.categories[newName].expand.backButton;
+            }
             renderCategoryGrid();
             renderCategoriesManagement();
             updateCatSelect();
